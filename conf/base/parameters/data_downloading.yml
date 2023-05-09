@@ -1,0 +1,10 @@
+# This is a boilerplate parameters config generated for pipeline 'data_downloading'
+# using Kedro 0.18.8.
+#
+# Documentation for this file format can be found in "Parameters"
+# Link: https://docs.kedro.org/en/0.18.8/kedro_project_setup/configuration.html#parameters
+
+# ares_dataset_url: https://stacks.stanford.edu/file/druid:bn398fc4306/classics_train_val.tar # original link
+ares_dataset_url: https://dl.dropboxusercontent.com/s/r4hgjs4xgmkmaxj/classics_train_val.tar?dl=0
+ares_archive_path: "data/00_temp"
+ares_dataset_path: "data/01_raw"

@@ -8,6 +8,15 @@ To start Kedro-Viz, enter the following in your terminal:
 kedro viz
 ```
 
+# Venv
+Nie zapomnijcie skonfigurować wirtualnego środowiska
+
+    python -m venv .venv
+    source .venv/bin/activate # macOS / Linux
+    source .venv/Script/activate # Windows Bash
+    .\.venv\Scripts\activate  # Windows
+    pip install -r src/requirements.txt
+
 # Opis od Kedro
 
 ## Overview
