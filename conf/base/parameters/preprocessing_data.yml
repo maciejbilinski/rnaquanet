@@ -1,0 +1,14 @@
+# This is a boilerplate parameters config generated for pipeline 'preprocessing_data'
+# using Kedro 0.18.8.
+#
+# Documentation for this file format can be found in "Parameters"
+# Link: https://docs.kedro.org/en/0.18.8/kedro_project_setup/configuration.html#parameters
+
+# Maps which files/directories to move and where
+catalog_mappings:
+- src: data/01_raw/example_train
+  dest: data/02_intermediate/train
+- src: data/01_raw/example_val
+  dest: data/02_intermediate/test
+- src: data/01_raw/scores.sc
+  dest: data/02_intermediate/scores.sc
