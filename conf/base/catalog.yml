@@ -2,3 +2,10 @@
 #
 # Documentation for this file format can be found in "The Data Catalog"
 # Link: https://docs.kedro.org/en/stable/data/data_catalog.html
+#
+train_df:
+  type: pandas.CSVDataSet
+  filepath: data/04_feature/train_df.csv
+test_df:
+  type: pandas.CSVDataSet
+  filepath: data/04_feature/test_df.csv
