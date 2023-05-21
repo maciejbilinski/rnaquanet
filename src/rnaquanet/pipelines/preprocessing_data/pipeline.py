@@ -4,14 +4,20 @@ generated using Kedro 0.18.8
 """
 
 from kedro.pipeline import Pipeline, node, pipeline
-from .nodes import prepare_catalogs
+from .nodes import prepare_catalogs, filter_files
 
 def create_pipeline(**kwargs) -> Pipeline:
     return pipeline([
         node(
             func=prepare_catalogs,
-            inputs='params:catalog_mappings',
-            outputs=None,
+            inputs=['params:prepare_catalogs_src', 'params:prepare_catalogs_dest', 'params:mappings'],
+            outputs='prepared_dir',
             name='prepare_catalogs_node'
+        ),
+        node(
+            func=filter_files,
+            inputs=['prepared_dir', 'params:filter_files_dest'],
+            outputs=None,
+            name='filter_files_node'
         )
     ])
