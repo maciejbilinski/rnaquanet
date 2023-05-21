@@ -10,9 +10,9 @@ generated using Kedro 0.18.8
 
 def extract_features_from_structure_file_using_docker(train: bool,structure_descriptor_params) -> None:
     """Extract features from files
-
     Args:
         train: is it training.
+        structure_descriptor_params: params for structure descriptor
     Returns:
         None
     """
@@ -21,7 +21,7 @@ def extract_features_from_structure_file_using_docker(train: bool,structure_desc
         destination_directory=os.path.join('data/03_primary','train')
     else:
         source_directory=os.path.join('data/02_intermediate','test')
-        destination_directory=os.path.join('data/03_primary','train')
+        destination_directory=os.path.join('data/03_primary','test')
     for structure_file in glob.glob(os.path.join(source_directory,'*.pdb')):
         s=subprocess.Popen(['docker',
                             'run',
@@ -35,7 +35,10 @@ def extract_features_from_structure_file_using_docker(train: bool,structure_desc
                         stdout=subprocess.PIPE)
         s.wait()
     if not os.path.exists(destination_directory):
+        os.removedirs(destination_directory)
         os.mkdir(destination_directory)
+
     for feature_file in list(set(glob.glob(source_directory+'/*.*')) - set(glob.glob(os.path.join(source_directory,'*.pdb')))):
         shutil.move(feature_file,destination_directory)
+
 
