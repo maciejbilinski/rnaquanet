@@ -5,10 +5,15 @@
 # Link: https://docs.kedro.org/en/0.18.8/kedro_project_setup/configuration.html#parameters
 
 # Maps which files/directories to move and where
-catalog_mappings:
-- src: data/01_raw/example_train
-  dest: data/02_intermediate/train
-- src: data/01_raw/example_val
-  dest: data/02_intermediate/test
-- src: data/01_raw/scores.sc
-  dest: data/02_intermediate/scores.sc
+prepare_catalogs_src: data/01_raw
+prepare_catalogs_dest: data/02_intermediate
+
+mappings:
+- src: example_train
+  dest: train
+- src: example_val
+  dest: test
+- src: scores.sc
+  dest: scores.sc
+
+filter_files_dest: data/03_filtered
