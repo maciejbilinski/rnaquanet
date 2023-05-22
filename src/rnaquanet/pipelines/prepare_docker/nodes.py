@@ -1,5 +1,6 @@
 import os
 import shutil
+import sys
 import tarfile
 import requests
 import subprocess
@@ -32,7 +33,7 @@ def download_structure_descriptor_docker_file(url: str, path: str) -> None:
                 file.write(data)
         progress_bar.close()
 
-def add_docker_image(path: str) -> None:
+def add_docker_image(path: str, raise_on_error: bool) -> None:
     """Add docker image
 
     Args:
@@ -40,8 +41,8 @@ def add_docker_image(path: str) -> None:
     Returns:
         None
     """
-    if os.path.exists('/var/run/docker.pid'):
-        s=subprocess.Popen(['docker','load','--input',os.path.join(path, 'docker_image.tar')], stdout=subprocess.PIPE)
-        s.wait()
-    else:
+    s=subprocess.Popen(['docker','load','--input',os.path.join(path, 'docker_image.tar')], stdout=subprocess.PIPE, text=True)
+    s.wait()
+    output = s.stdout.read()
+    if 'Loaded image: describe_structure:latest' not in output and raise_on_error:
         raise DockerServiceDoesNotStartedError
