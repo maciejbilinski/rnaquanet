@@ -16,4 +16,4 @@ mappings:
 - src: scores.sc
   dest: scores.sc
 
-filter_files_dest: data/03_primary
+filter_files_dest: data/03_filtered
