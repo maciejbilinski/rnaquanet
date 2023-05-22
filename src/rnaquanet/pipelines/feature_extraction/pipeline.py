@@ -9,9 +9,15 @@ from .nodes import extract_features_from_structure_file_using_docker
 def create_pipeline(**kwargs) -> Pipeline:
     return pipeline([
         node(
-            func=extract_features_from_structure_file_using_docker,
-            inputs=["params:train", "params:structure_descriptor_params"],
+            func=lambda *args: extract_features_from_structure_file_using_docker(True, *args),
+            inputs=["params:path", "params:structure_descriptor_params"],
             outputs=None,
-            name="extract_features_from_structure_file_using_docker"
+            name="extract_features_from_train_structure_file_using_docker"
+        ),
+        node(
+            func=lambda *args: extract_features_from_structure_file_using_docker(False, *args),
+            inputs=["params:path", "params:structure_descriptor_params"],
+            outputs=None,
+            name="extract_features_from_test_structure_file_using_docker"
         ),
     ])
