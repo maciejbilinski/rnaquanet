@@ -15,3 +15,5 @@ pytest~=7.2
 kedro-viz~=6.1.0
 kedro-datasets~=1.2.0
 tqdm~=4.65.0
+RNApolis==0.1.1
+biopython==1.81
