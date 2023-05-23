@@ -16,7 +16,7 @@ def create_pipeline(**kwargs) -> Pipeline:
         ),
         node(
             func=add_docker_image,
-            inputs=["params:docker_image_path"],
+            inputs=["params:docker_image_path", "params:raise_on_error"],
             outputs=None,
             name="add_docker_image"
         ),
