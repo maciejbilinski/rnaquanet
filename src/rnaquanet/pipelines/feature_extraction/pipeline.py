@@ -16,7 +16,7 @@ def create_pipeline(**kwargs) -> Pipeline:
         ),
         node(
             func=generate_features,
-            inputs=[ "params:score_file_path"],
+            inputs=[ "params:path", "params:score_file_path"],
             outputs=['train_df','test_df'],
             name="generate_features"
         ),

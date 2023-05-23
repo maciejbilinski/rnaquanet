@@ -47,7 +47,7 @@ def extract_features_from_structure_file_using_docker(structure_descriptor_param
         for feature_file in list(set(glob.glob(source_directory+'/*.*'))):
             shutil.move(feature_file,destination_directory)
 
-def generate_features(score_file_path:str)-> Tuple:
+def generate_features(paths, score_file_path:str)-> Tuple:
     """Extract features from files
     Args:
         score_file_path: path to score.sc file 
@@ -58,9 +58,9 @@ def generate_features(score_file_path:str)-> Tuple:
     test_df =pd.DataFrame()
     for train in [True,False]:
         if train:
-            source_directory=os.path.join('data/03_primary','train')
+            source_directory=os.path.join(paths['src'],'train')
         else:
-            source_directory=os.path.join('data/03_primary','test')
+            source_directory=os.path.join(paths['src'],'test')
 
         extracted_structures = set([filename.split('/')[-1].split('.')[0] for filename in glob.glob(source_directory+'/*.pdb')])
         column_to_save=['description','new_rms']

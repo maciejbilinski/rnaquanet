@@ -5,7 +5,7 @@
 #
 train_df:
   type: pandas.CSVDataSet
-  filepath: data/04_feature/train_df.csv
+  filepath: data/05_feature/train_df.csv
 test_df:
   type: pandas.CSVDataSet
-  filepath: data/04_feature/test_df.csv
+  filepath: data/05_feature/test_df.csv
