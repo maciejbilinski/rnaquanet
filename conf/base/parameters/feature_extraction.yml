@@ -8,6 +8,7 @@
 structure_descriptor_params:
   atom_for_distance_calculations: "C1'"
   max_euclidean_distance: 16.0
+score_file_path: 'data/01_raw/scores.sc' #FIXME:jeżeli się da pobrać ten parametr z preprocessing_data.yml to usuncie to
 path:
   src: data/03_filtered
   dest: data/04_primary
