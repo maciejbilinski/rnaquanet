@@ -16,7 +16,7 @@ def create_pipeline(**kwargs) -> Pipeline:
         ),
         node(
             func=lambda *args: extract_features_from_structure_file_using_docker(False, *args),
-            inputs=["params:path", "params:structure_descriptor_params",'prepare_docker_end'],
+            inputs=["params:path", "params:structure_descriptor_params",'prepared_files','prepare_docker_end'],
             outputs='feature_extraction_test',
             name="extract_features_from_test_structure_file_using_docker"
         ),
