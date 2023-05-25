@@ -8,13 +8,16 @@ import pandas as pd
 from pathlib import Path
 from Bio.PDB import PDBParser
 from rnapolis import parser, annotator, tertiary
+from tqdm import tqdm
+from rnaquanet.utils.docker_handler import check_docker_image
+from rnaquanet.utils.docker_handler import check_docker_run
 
 """
 This is a boilerplate pipeline 'feature_extraction'
 generated using Kedro 0.18.8
 """
 
-def extract_features_from_structure_file_using_docker(train: bool, paths, structure_descriptor_params) -> None:
+def extract_features_from_structure_file_using_docker(train: bool, paths, structure_descriptor_params,*args) -> bool:
     """Extract features from files
     Args:
         train: is it training.
@@ -22,6 +25,8 @@ def extract_features_from_structure_file_using_docker(train: bool, paths, struct
     Returns:
         None
     """
+    check_docker_run()
+    check_docker_image('describe_structure')
     if train:
         source_directory=os.path.join(paths['src'],'train')
         destination_directory=os.path.join(paths['dest'],'train')
@@ -46,8 +51,9 @@ def extract_features_from_structure_file_using_docker(train: bool, paths, struct
 
     for feature_file in list(set(glob.glob(source_directory+'/*.*')) - set(glob.glob(os.path.join(source_directory,'*.pdb')))):
         shutil.move(feature_file,destination_directory)
-
-def generate_features(paths, score_file_path:str)-> Tuple:
+    
+    return True
+def generate_features(paths, score_file_path:str,*args)-> Tuple:
     """Extract features from files
     Args:
         score_file_path: path to score.sc file 
@@ -73,7 +79,10 @@ def generate_features(paths, score_file_path:str)-> Tuple:
         pdb_parser = PDBParser(QUIET=True)
         sequences=[]
         pairings=[]
-
+        
+        print("Filtering files for "+ ('training' if train else 'testing'))
+        progress_bar = tqdm(total=df.size)
+        
         for index, row in df.iterrows():
             structure_pdb_path = os.path.join(str(Path().absolute()),source_directory,row['description']+'.pdb')
             structure_pdb = pdb_parser.get_structure("structure", structure_pdb_path)
@@ -94,7 +103,8 @@ def generate_features(paths, score_file_path:str)-> Tuple:
                         if index%3 == 2:
                             temp.append(row)
                     pairings.append(''.join(temp))
-
+            progress_bar.update(1)
+        progress_bar.close()
         df['base_pairing']=pairings
         df['sequence']=sequences
         df = df.reset_index()

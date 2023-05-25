@@ -11,13 +11,13 @@ def create_pipeline(**kwargs) -> Pipeline:
         node(
             func=download_structure_descriptor_docker_file,
             inputs=["params:structure_descriptor_docker_image", "params:docker_image_path"],
-            outputs=None,
+            outputs='prepare_docker_1',
             name="download_structure_descriptor_docker_file"
         ),
         node(
             func=add_docker_image,
-            inputs=["params:docker_image_path", "params:raise_on_error"],
-            outputs=None,
+            inputs=["params:docker_image_path", "params:raise_on_error",'prepare_docker_1'],
+            outputs='prepare_docker_end',
             name="add_docker_image"
         ),
         

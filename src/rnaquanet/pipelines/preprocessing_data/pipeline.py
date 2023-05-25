@@ -17,7 +17,7 @@ def create_pipeline(**kwargs) -> Pipeline:
         node(
             func=filter_files,
             inputs=['prepared_dir', 'params:filter_files_dest'],
-            outputs=None,
+            outputs='prepared_files',
             name='filter_files_node'
         )
     ])

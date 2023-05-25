@@ -23,7 +23,7 @@ def prepare_catalogs(src_dir: str, dest_dir: str, mappings: list[dict]) -> str:
     return dest_dir
 
 
-def filter_files(src: str, dest: str) -> None:
+def filter_files(src: str, dest: str) -> bool:
     """
     Reads and filters each PDB file in the 'train' and 'test' subfolders
     within src and writes them respectively into dest.
@@ -62,3 +62,4 @@ def filter_files(src: str, dest: str) -> None:
     shutil.move(f'{src}/scores.sc', f'{dest}/scores.sc')
     progress_bar.update()
     progress_bar.close()
+    return True

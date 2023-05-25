@@ -11,13 +11,13 @@ def create_pipeline(**kwargs) -> Pipeline:
         node(
             func=download_ares_archive,
             inputs=["params:ares_dataset_url", "params:ares_archive_path"],
-            outputs=None,
+            outputs='ares_archive',
             name="download_ares_archive_node"
         ),
         node(
             func=extract_ares_archive,
-            inputs=["params:ares_archive_path", "params:ares_dataset_path"],
-            outputs=None,
+            inputs=["params:ares_archive_path", "params:ares_dataset_path",'ares_archive'],
+            outputs='extracted_ares_archive',
             name="extract_ares_archive_node"
         )
     ])

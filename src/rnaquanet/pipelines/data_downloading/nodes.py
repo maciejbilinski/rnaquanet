@@ -3,7 +3,7 @@ import shutil
 import tarfile
 import requests
 from tqdm import tqdm
-def download_ares_archive(url: str, path: str) -> None:
+def download_ares_archive(url: str, path: str,*args) -> bool:
     """Download ares archive
 
     Args:
@@ -22,7 +22,9 @@ def download_ares_archive(url: str, path: str) -> None:
             file.write(data)
     progress_bar.close()
 
-def extract_ares_archive(file_path: str, output_path: str) -> None:
+    return True
+
+def extract_ares_archive(file_path: str, output_path: str,*args) -> bool:
     """Extract ares archive
 
     Args:
@@ -42,3 +44,5 @@ def extract_ares_archive(file_path: str, output_path: str) -> None:
 
     os.rmdir(source_dir)
     shutil.rmtree(os.path.join(target_dir, 'lmdbs'))
+    
+    return True
