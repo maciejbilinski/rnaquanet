@@ -24,9 +24,11 @@ def check_docker_run():
     if s.returncode != 0:
         raise DockerServiceDoesNotStartedError
 
-def check_docker_image(image_name=''):
-    s=subprocess.Popen(['docker','image','ls','|','grep','\''+image_name+'\''], stdout=subprocess.PIPE, text=True)
+def check_docker_image(image_name='',raise_on_error=False):
+    s=subprocess.Popen(['docker','image','ls'], stdout=subprocess.PIPE, text=True)
     s.wait()
     if image_name not in s.stdout.read():
-        raise DockerImageNotFoundError(image_name) 
-
+        if raise_on_error:
+            raise DockerImageNotFoundError(image_name) 
+        return False
+    return True

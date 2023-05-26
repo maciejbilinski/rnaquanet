@@ -11,6 +11,7 @@ from rnapolis import parser, annotator, tertiary
 from tqdm import tqdm
 from rnaquanet.utils.docker_handler import check_docker_image
 from rnaquanet.utils.docker_handler import check_docker_run
+from rnaquanet.utils.file_management import clear_catalog
 
 """
 This is a boilerplate pipeline 'feature_extraction'
@@ -33,6 +34,9 @@ def extract_features_from_structure_file_using_docker(train: bool, paths, struct
     else:
         source_directory=os.path.join(paths['src'],'test')
         destination_directory=os.path.join(paths['dest'],'test')
+
+    clear_catalog(destination_directory) 
+    progress_bar = tqdm(total=len(glob.glob(os.path.join(source_directory,'*.pdb'))))
     for structure_file in glob.glob(os.path.join(source_directory,'*.pdb')):
         s=subprocess.Popen(['docker',
                             'run',
@@ -45,6 +49,8 @@ def extract_features_from_structure_file_using_docker(train: bool, paths, struct
                             str(structure_descriptor_params['max_euclidean_distance'])],
                         stdout=subprocess.PIPE)
         s.wait()
+        progress_bar.update(1)
+    progress_bar.close()
     if not os.path.exists(destination_directory):
         os.removedirs(destination_directory)
         os.mkdir(destination_directory)

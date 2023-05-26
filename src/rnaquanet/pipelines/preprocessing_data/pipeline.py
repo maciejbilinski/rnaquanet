@@ -10,7 +10,7 @@ def create_pipeline(**kwargs) -> Pipeline:
     return pipeline([
         node(
             func=prepare_catalogs,
-            inputs=['params:prepare_catalogs_src', 'params:prepare_catalogs_dest', 'params:mappings'],
+            inputs=['params:prepare_catalogs_src', 'params:prepare_catalogs_dest', 'params:mappings','extracted_ares_archive'],
             outputs='prepared_dir',
             name='prepare_catalogs_node'
         ),

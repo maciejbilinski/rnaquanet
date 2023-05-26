@@ -37,10 +37,10 @@ def add_docker_image(path: str, raise_on_error: bool,*args) -> bool:
     Returns:
         None
     """
-    if raise_on_error:
-        check_docker_run()
-    s=subprocess.Popen(['docker','load','--input',os.path.join(path, 'docker_image.tar')], stdout=subprocess.PIPE, text=True)
-    s.wait()
-    if raise_on_error: 
-        check_docker_image('docker_image')
+    if not check_docker_image('describe_structure',False):
+        if raise_on_error:
+            check_docker_run()
+        s=subprocess.Popen(['docker','load','--input',os.path.join(path, 'docker_image.tar')], stdout=subprocess.PIPE, text=True)
+        s.wait()
+        return check_docker_image('describe_structure',raise_on_error)
     return True

@@ -3,7 +3,8 @@ import os
 import shutil
 from tqdm import tqdm
 
-def prepare_catalogs(src_dir: str, dest_dir: str, mappings: list[dict]) -> str:
+
+def prepare_catalogs(src_dir: str, dest_dir: str, mappings: list[dict],*args) -> str:
     """
     Prepares the catalogs.
 
@@ -15,6 +16,7 @@ def prepare_catalogs(src_dir: str, dest_dir: str, mappings: list[dict]) -> str:
     Returns:
         destination directory path
     """
+
     for mapping in mappings:
         src = f'{src_dir}/{mapping["src"]}'
         dest = f'{dest_dir}/{mapping["dest"]}'
