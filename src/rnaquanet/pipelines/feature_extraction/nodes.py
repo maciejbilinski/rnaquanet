@@ -1,8 +1,12 @@
+
+
 import glob
 import subprocess
 import shutil
 import os
 import re
+from multiprocessing import Pool
+import multiprocessing as mp
 from typing import Tuple
 import pandas as pd
 from pathlib import Path
@@ -17,8 +21,19 @@ from rnaquanet.utils.file_management import clear_catalog
 This is a boilerplate pipeline 'feature_extraction'
 generated using Kedro 0.18.8
 """
-
-def extract_features_from_structure_file_using_docker(train: bool, paths, structure_descriptor_params,*args) -> bool:
+def loop_function(structure_file_dict):
+    s=subprocess.Popen(['docker',
+            'run',
+            '--rm',
+            '-v',
+            str(Path().absolute())+'/'+structure_file_dict[1]+':/tmp',
+            'describe_structure:latest',
+            '/tmp/'+structure_file_dict[0].split('/')[-1],
+            str(structure_file_dict[2]['atom_for_distance_calculations']),
+            str(structure_file_dict[2]['max_euclidean_distance'])],
+        stdout=subprocess.PIPE)
+    s.wait()
+def extract_features_from_structure_file_using_docker(train: bool, paths, structure_descriptor_params,*args) -> None:
     """Extract features from files
     Args:
         train: is it training.
@@ -37,20 +52,16 @@ def extract_features_from_structure_file_using_docker(train: bool, paths, struct
 
     clear_catalog(destination_directory) 
     progress_bar = tqdm(total=len(glob.glob(os.path.join(source_directory,'*.pdb'))))
-    for structure_file in glob.glob(os.path.join(source_directory,'*.pdb')):
-        s=subprocess.Popen(['docker',
-                            'run',
-                            '--rm',
-                            '-v',
-                            str(Path().absolute())+'/'+source_directory+':/tmp',
-                            'describe_structure:latest',
-                            '/tmp/'+structure_file.split('/')[-1],
-                            str(structure_descriptor_params['atom_for_distance_calculations']),
-                            str(structure_descriptor_params['max_euclidean_distance'])],
-                        stdout=subprocess.PIPE)
-        s.wait()
-        progress_bar.update(1)
+    
+ 
+    with Pool(mp.cpu_count()) as pool:
+        for i, _ in enumerate(pool.imap_unordered(loop_function,
+                                               [[structure_file,source_directory,structure_descriptor_params] 
+                                               for structure_file in glob.glob(os.path.join(source_directory,'*.pdb'))]),1):
+            progress_bar.update(1)
+           
     progress_bar.close()
+
     if not os.path.exists(destination_directory):
         os.removedirs(destination_directory)
         os.mkdir(destination_directory)
@@ -59,6 +70,8 @@ def extract_features_from_structure_file_using_docker(train: bool, paths, struct
         shutil.move(feature_file,destination_directory)
     
     return True
+
+
 def generate_features(paths, score_file_path:str,*args)-> Tuple:
     """Extract features from files
     Args:
@@ -85,10 +98,7 @@ def generate_features(paths, score_file_path:str,*args)-> Tuple:
         pdb_parser = PDBParser(QUIET=True)
         sequences=[]
         pairings=[]
-        
-        print("Filtering files for "+ ('training' if train else 'testing'))
-        progress_bar = tqdm(total=df.size)
-        
+
         for index, row in df.iterrows():
             structure_pdb_path = os.path.join(str(Path().absolute()),source_directory,row['description']+'.pdb')
             structure_pdb = pdb_parser.get_structure("structure", structure_pdb_path)
@@ -109,8 +119,7 @@ def generate_features(paths, score_file_path:str,*args)-> Tuple:
                         if index%3 == 2:
                             temp.append(row)
                     pairings.append(''.join(temp))
-            progress_bar.update(1)
-        progress_bar.close()
+
         df['base_pairing']=pairings
         df['sequence']=sequences
         df = df.reset_index()
