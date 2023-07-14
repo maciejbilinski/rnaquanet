@@ -28,7 +28,7 @@ class feature_extraction:
         'atom_for_distance_calculations': "C1'",
         'max_euclidean_distance': 16.0
     }
-    score_file_path: str = 'data/01_raw/scores.sc' #FIXME:jeżeli się da pobrać ten parametr z preprocessing_data.yml to usuncie to
+    score_file_path: str = 'data/01_raw/scores.sc'
     path = {
         'src': 'data/03_filtered',
         'dest': 'data/04_primary'
@@ -62,3 +62,11 @@ class preprocessing_data:
         }
     ]
     filter_files_dest: str = 'data/03_filtered'
+
+@dataclass
+class to_csv:
+    path = {
+        'src': 'data/04_primary',
+        'dest': 'data/05_final'
+    }
+    max_euclidean_distance: 16.0

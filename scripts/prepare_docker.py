@@ -1,8 +1,5 @@
 import argparse
 import os
-import shutil
-import sys
-import tarfile
 import requests
 import subprocess
 from tqdm import tqdm

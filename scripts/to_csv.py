@@ -4,6 +4,9 @@ import pandas as pd
 from os import path
 import numpy as np
 from tqdm import tqdm
+from CONFIG import prepare_docker as params
+from CONFIG import change_dir
+import argparse
 
 
 class RNADatasetPreparation:
@@ -135,7 +138,9 @@ class RNADatasetPreparation:
         df_edge.to_csv(path.join(output_path, f'{output_file}_edges.csv'), index = False)
         progress_bar.close()
 
+
 if __name__ == '__main__':
-    dataset = RNADatasetPreparation('data', 'test.csv')
-    dataset.prepare_data('output', 'test')
+    # TODO: argparser
+    dataset = RNADatasetPreparation('04_primary', 'test.csv')
+    dataset.prepare_data('05_final', 'test')
                 
