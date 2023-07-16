@@ -50,25 +50,24 @@ def extract_features_from_structure_file_using_docker(train: bool, paths, struct
         source_directory=os.path.join(paths['src'],'test')
         destination_directory=os.path.join(paths['dest'],'test')
 
-    clear_catalog(destination_directory) 
+    clear_catalog(destination_directory)
     progress_bar = tqdm(total=len(glob.glob(os.path.join(source_directory,'*.pdb'))))
-    
- 
+
+
     with Pool(mp.cpu_count()) as pool:
         for i, _ in enumerate(pool.imap_unordered(loop_function,
-                                               [[structure_file,source_directory,structure_descriptor_params] 
+                                               [[structure_file,source_directory,structure_descriptor_params]
                                                for structure_file in glob.glob(os.path.join(source_directory,'*.pdb'))]),1):
             progress_bar.update(1)
-           
+
     progress_bar.close()
 
     if not os.path.exists(destination_directory):
-        os.removedirs(destination_directory)
         os.mkdir(destination_directory)
 
     for feature_file in list(set(glob.glob(source_directory+'/*.*')) - set(glob.glob(os.path.join(source_directory,'*.pdb')))):
         shutil.move(feature_file,destination_directory)
-    
+
     return True
 
 
@@ -81,16 +80,16 @@ def generate_features(paths, score_file_path:str,*args)-> Tuple:
     """
     train_df=pd.DataFrame()
     test_df =pd.DataFrame()
-    for train in [True,False]:
+    for train in [False,True]:
         if train:
             source_directory=os.path.join(paths['src'],'train')
         else:
             source_directory=os.path.join(paths['src'],'test')
 
-        extracted_structures = set([filename.split('/')[-1].split('.')[0] for filename in glob.glob(source_directory+'/*.pdb')])
+        extracted_structures = set([filename.split('/')[-1].split('.')[0].replace('_filtered','') for filename in glob.glob(source_directory+'/*.pdb')])
         column_to_save=['description','new_rms']
-
-        df = pd.read_csv(score_file_path,sep=' ')
+        print(extracted_structures)        
+        df = pd.read_csv('data/03_filtered/scores.sc',sep=' ')
         df.drop(list(set(df.columns.values.tolist())-set(column_to_save)), axis=1, inplace=True)
         df['description']=df['description'].str.replace('.pdb','',regex=False)
         df.drop(df[~df['description'].isin(extracted_structures)].index, inplace=True)
@@ -99,8 +98,9 @@ def generate_features(paths, score_file_path:str,*args)-> Tuple:
         sequences=[]
         pairings=[]
 
+        progress_bar = tqdm(total=len(df.index))
         for index, row in df.iterrows():
-            structure_pdb_path = os.path.join(str(Path().absolute()),source_directory,row['description']+'.pdb')
+            structure_pdb_path = os.path.join(str(Path().absolute()),source_directory,row['description']+'_filtered'+'.pdb')
             structure_pdb = pdb_parser.get_structure("structure", structure_pdb_path)
             
             for model in structure_pdb:
@@ -109,7 +109,7 @@ def generate_features(paths, score_file_path:str,*args)-> Tuple:
                     temp_seq.append(''.join([re.sub(r'[^ATGCU]','',residue.resname) for residue in chain]))
                 sequences.append(''.join(temp_seq))
             
-            with open(os.path.join(str(Path().absolute()),source_directory,row['description']+'.pdb'),'r') as f:
+            with open(os.path.join(str(Path().absolute()),source_directory,row['description']+'_filtered'+'.pdb'),'r') as f:
                     structure3d = parser.read_3d_structure(f)
                     structure2d = annotator.extract_secondary_structure(
                         structure3d)
@@ -120,6 +120,8 @@ def generate_features(paths, score_file_path:str,*args)-> Tuple:
                             temp.append(row)
                     pairings.append(''.join(temp))
 
+            progress_bar.update(1)
+        progress_bar.close()
         df['base_pairing']=pairings
         df['sequence']=sequences
         df = df.reset_index()
