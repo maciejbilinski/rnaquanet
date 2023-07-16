@@ -6,7 +6,8 @@ from tqdm import tqdm
 from CONFIG import preprocessing_data as params
 from CONFIG import change_dir
 
-def prepare_catalogs(src_dir: str, dest_dir: str, mappings: list[dict]) -> str:
+
+def prepare_catalogs(src_dir: str, dest_dir: str, mappings: list[dict],*args) -> str:
     """
     Prepares the catalogs.
 
@@ -18,6 +19,7 @@ def prepare_catalogs(src_dir: str, dest_dir: str, mappings: list[dict]) -> str:
     Returns:
         destination directory path
     """
+
     for mapping in mappings:
         src = f'{src_dir}/{mapping["src"]}'
         dest = f'{dest_dir}/{mapping["dest"]}'
@@ -26,7 +28,7 @@ def prepare_catalogs(src_dir: str, dest_dir: str, mappings: list[dict]) -> str:
     return dest_dir
 
 
-def filter_files(src: str, dest: str) -> None:
+def filter_files(src: str, dest: str) -> bool:
     """
     Reads and filters each PDB file in the 'train' and 'test' subfolders
     within src and writes them respectively into dest.
@@ -65,6 +67,7 @@ def filter_files(src: str, dest: str) -> None:
     shutil.move(f'{src}/scores.sc', f'{dest}/scores.sc')
     progress_bar.update()
     progress_bar.close()
+    return True
 
 
 if __name__ == '__main__':

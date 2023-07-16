@@ -2,18 +2,15 @@ import argparse
 import os
 import requests
 import subprocess
+
+from rnaquanet.utils.docker_handler import check_docker_image
+from rnaquanet.utils.docker_handler import check_docker_run
 from tqdm import tqdm
 from CONFIG import prepare_docker as params
 from CONFIG import change_dir
 
-class DockerServiceDoesNotStartedError(Exception):
-    """Exception raised when docker service does not started
-    """
 
-    def __init__(self):
-        super().__init__('Is your docker service started? Type "sudo systemctl start docker" to solve the problem')
-
-def download_structure_descriptor_docker_file(url: str, path: str) -> None:
+def download_structure_descriptor_docker_file(url: str, path: str,*args) -> bool:
     """Download docker image
 
     Args:
@@ -33,7 +30,9 @@ def download_structure_descriptor_docker_file(url: str, path: str) -> None:
                 file.write(data)
         progress_bar.close()
 
-def add_docker_image(path: str, raise_on_error: bool) -> None:
+    return True
+
+def add_docker_image(path: str, raise_on_error: bool,*args) -> bool:
     """Add docker image
 
     Args:
@@ -41,11 +40,13 @@ def add_docker_image(path: str, raise_on_error: bool) -> None:
     Returns:
         None
     """
-    s=subprocess.Popen(['docker','load','--input',os.path.join(path, 'docker_image.tar')], stdout=subprocess.PIPE, text=True)
-    s.wait()
-    output = s.stdout.read()
-    if 'Loaded image: describe_structure:latest' not in output and raise_on_error:
-        raise DockerServiceDoesNotStartedError
+    if not check_docker_image('describe_structure',False):
+        if raise_on_error:
+            check_docker_run()
+        s=subprocess.Popen(['docker','load','--input',os.path.join(path, 'docker_image.tar')], stdout=subprocess.PIPE, text=True)
+        s.wait()
+        return check_docker_image('describe_structure',raise_on_error)
+    return True
 
 
 if __name__ == '__main__':
