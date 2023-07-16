@@ -1,10 +1,13 @@
+import argparse
 import os
 import shutil
 import tarfile
 import requests
 from tqdm import tqdm
-
+from CONFIG import data_downloading as params
+from CONFIG import change_dir
 from rnaquanet.utils.file_management import clear_catalog
+
 def download_ares_archive(url: str, path: str,*args) -> bool:
     """Download ares archive
 
@@ -50,3 +53,24 @@ def extract_ares_archive(file_path: str, output_path: str,*args) -> bool:
     shutil.rmtree(os.path.join(target_dir, 'lmdbs'))
     
     return True
+
+
+if __name__ == '__main__':
+    change_dir('..')
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--ares-dataset-url',
+        default=params.ares_dataset_url
+    )
+    parser.add_argument(
+        '--ares-archive-path',
+        default=params.ares_archive_path
+    )
+    parser.add_argument(
+        '--ares-dataset-path',
+        default=params.ares_dataset_path
+    )
+    args = parser.parse_args()
+    
+    download_ares_archive(args.ares_dataset_url, args.ares_archive_path)
+    extract_ares_archive(args.ares_archive_path, args.ares_dataset_path)

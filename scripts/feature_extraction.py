@@ -16,6 +16,9 @@ from tqdm import tqdm
 from rnaquanet.utils.docker_handler import check_docker_image
 from rnaquanet.utils.docker_handler import check_docker_run
 from rnaquanet.utils.file_management import clear_catalog
+from CONFIG import feature_extraction as params
+from CONFIG import change_dir
+
 
 """
 This is a boilerplate pipeline 'feature_extraction'
@@ -133,3 +136,10 @@ def generate_features(paths, score_file_path:str,*args)-> Tuple:
 
     return train_df,test_df
 
+
+if __name__ == '__main__':
+    change_dir('..')
+    
+    extract_features_from_structure_file_using_docker(True, params.path, params.structure_descriptor_params)
+    extract_features_from_structure_file_using_docker(False, params.path, params.structure_descriptor_params)
+    train_df, test_df = generate_features(params.path, params.score_file_path)

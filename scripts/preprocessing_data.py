@@ -1,7 +1,10 @@
+import argparse
 import glob
 import os
 import shutil
 from tqdm import tqdm
+from CONFIG import preprocessing_data as params
+from CONFIG import change_dir
 
 
 def prepare_catalogs(src_dir: str, dest_dir: str, mappings: list[dict],*args) -> str:
@@ -65,3 +68,24 @@ def filter_files(src: str, dest: str) -> bool:
     progress_bar.update()
     progress_bar.close()
     return True
+
+
+if __name__ == '__main__':
+    change_dir('..')
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--prepare-catalogs-src',
+        default=params.prepare_catalogs_src
+    )
+    parser.add_argument(
+        '--prepare-catalogs-dest',
+        default=params.prepare_catalogs_dest
+    )
+    parser.add_argument(
+        '--filter-files-dest',
+        default=params.filter_files_dest
+    )
+    args = parser.parse_args()
+
+    prepared_dir = prepare_catalogs(args.prepare_catalogs_src, args.prepare_catalogs_dest, params.mappings)
+    filter_files(prepared_dir, args.filter_files_dest)
