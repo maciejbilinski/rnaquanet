@@ -4,9 +4,9 @@ import shutil
 import tarfile
 import requests
 from tqdm import tqdm
-from CONFIG import data_downloading as params
-from CONFIG import change_dir
-from rnaquanet.utils.file_management import clear_catalog
+from .CONFIG import data_downloading as params
+from .CONFIG import change_dir
+from .utils.file_management import clear_catalog
 
 def download_ares_archive(url: str, path: str,*args) -> bool:
     """Download ares archive

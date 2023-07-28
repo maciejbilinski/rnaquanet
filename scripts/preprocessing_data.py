@@ -3,8 +3,8 @@ import glob
 import os
 import shutil
 from tqdm import tqdm
-from CONFIG import preprocessing_data as params
-from CONFIG import change_dir
+from .CONFIG import preprocessing_data as params
+from .CONFIG import change_dir
 
 
 def prepare_catalogs(src_dir: str, dest_dir: str, mappings: list[dict],*args) -> str:

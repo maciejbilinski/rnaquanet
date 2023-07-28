@@ -13,11 +13,11 @@ from pathlib import Path
 from Bio.PDB import PDBParser
 from rnapolis import parser, annotator, tertiary
 from tqdm import tqdm
-from rnaquanet.utils.docker_handler import check_docker_image
-from rnaquanet.utils.docker_handler import check_docker_run
-from rnaquanet.utils.file_management import clear_catalog
-from CONFIG import feature_extraction as params
-from CONFIG import change_dir
+from .utils.docker_handler import check_docker_image
+from .utils.docker_handler import check_docker_run
+from .utils.file_management import clear_catalog
+from .CONFIG import feature_extraction as params
+from .CONFIG import change_dir
 
 
 """

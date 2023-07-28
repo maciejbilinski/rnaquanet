@@ -3,11 +3,11 @@ import os
 import requests
 import subprocess
 
-from rnaquanet.utils.docker_handler import check_docker_image
-from rnaquanet.utils.docker_handler import check_docker_run
+from .utils.docker_handler import check_docker_image
+from .utils.docker_handler import check_docker_run
 from tqdm import tqdm
-from CONFIG import prepare_docker as params
-from CONFIG import change_dir
+from .CONFIG import prepare_docker as params
+from .CONFIG import change_dir
 
 
 def download_structure_descriptor_docker_file(url: str, path: str,*args) -> bool:

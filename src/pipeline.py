@@ -4,14 +4,15 @@ from typing import List, Callable
 import time
 class Task:
 
-    def __init__(self, func:Callable, params:tuple, description:str):
-        self.func = func
+    def __init__(self, function:Callable, params:tuple, description:str):
+        self.function = function
         self.description = description
         self.params = params
-    def return_with_dependance(depends_on):
+
+    def return_with_dependance(self, depends_on):
         return Queue.prepare_data(self.function, self.params, job_id=self.description,depends_on=depends_on)
     
-    def return_without_dependance():
+    def return_without_dependance(self):
         return Queue.prepare_data(self.function, self.params, job_id=self.description)
 
 class TaskLevel:
@@ -20,10 +21,10 @@ class TaskLevel:
         self.tasks=tasks
         self.wait=wait
     
-    def get_wait(): # next level need to wait for finish of this level
+    def get_wait(self): # next level need to wait for finish of this level
         return self.wait
-    def get_tasks():
-        return self.get_tasks
+    def get_tasks(self):
+        return self.tasks
 
 
 

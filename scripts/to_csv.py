@@ -4,13 +4,13 @@ import pandas as pd
 from os import path
 import numpy as np
 from tqdm import tqdm
-from CONFIG import prepare_docker as params
-from CONFIG import change_dir
+from .CONFIG import to_csv as params
+from .CONFIG import change_dir
 import argparse
 
 
 class RNADatasetPreparation:
-    def __init__(self, features_dir_path: str, csv_file_path: str, spacial_threshold: str = '16.0'):
+    def __init__(self, features_dir_path: str, csv_file_path: str, spacial_threshold: str = str(params.max_euclidean_distance)):
         """
         args:
         - spacial_threshold: str - the value of the last parameter of the program used to generate information defining the edges and describing the vertices of the graph; the maximum permissible Euclidean distance between a pair of atoms in 3D space measured in Angstroms, which cannot be exceeded for us to consider those atoms to be located relatively close to each other in spatial proximity
@@ -140,7 +140,12 @@ class RNADatasetPreparation:
 
 
 if __name__ == '__main__':
+    change_dir('..')
     # TODO: argparser
-    dataset = RNADatasetPreparation('04_primary', 'test.csv')
-    dataset.prepare_data('05_final', 'test')
-                
+
+    # get output filename
+    output_filename = path.splitext(params.csv_filename)[0]
+
+    dataset = RNADatasetPreparation(params.features_dir_path, params.csv_filename)
+    dataset.prepare_data(params.output_path, output_filename)
+    

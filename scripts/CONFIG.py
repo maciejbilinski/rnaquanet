@@ -65,8 +65,7 @@ class preprocessing_data:
 
 @dataclass
 class to_csv:
-    path = {
-        'src': 'data/04_primary',
-        'dest': 'data/05_final'
-    }
-    max_euclidean_distance: 16.0
+    features_dir_path: str = 'data/04_feature'
+    output_path: str = 'data/05_final'
+    csv_filename: str = 'test.csv'
+    max_euclidean_distance = 16.0
