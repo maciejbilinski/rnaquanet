@@ -332,9 +332,9 @@ def save_data_to_hdf5(config: RnaquanetConfig, filename, data_list: list[Data]):
 
 def load_data_from_hdf5(config: RnaquanetConfig, filename) -> list[Data]:
     data_list = []
-    with h5py.File(os.path.join('data', config.download.name, filename + '.h5'), 'r') as f:
+    with h5py.File(os.path.join('data', config.data.download.name, filename + '.h5'), 'r') as f:
         for key in f.keys():
-            data_dict = {k: v[()] if isinstance(v, h5py.Dataset) else v for k, v in f[key].items()}
+            data_dict = {k: torch.tensor(v[()])if isinstance(v, h5py.Dataset) else v for k, v in f[key].items()}
             data = Data.from_dict(data_dict)
             data_list.append(data)
     return data_list

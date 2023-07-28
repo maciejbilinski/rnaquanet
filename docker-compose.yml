@@ -10,5 +10,12 @@ services:
       - python_cuda_volume:/app
     stdin_open: true 
     tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            count: all
+            capabilities: [gpu]
 volumes:
   python_cuda_volume:
