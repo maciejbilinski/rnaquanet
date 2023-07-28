@@ -1,0 +1,14 @@
+version: '3.9'
+name: rnaquanet
+services:
+  python_cuda:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: python_cuda:1.0
+    volumes:
+      - python_cuda_volume:/app
+    stdin_open: true 
+    tty: true
+volumes:
+  python_cuda_volume:
