@@ -152,7 +152,7 @@ def extract_features(config: RnaquanetConfig):
             progress_bar.update()
             progress_bar.close()
 
-            allowed_extensions = [".bon", ".ang", ".atr", ".sqn", ".3dn"]
+            allowed_extensions = [".bon", ".ang", ".atr", ".3dn"]
             files = os.listdir(child)
             total_files = len(files)+1
             progress_bar = tqdm(total=total_files, unit='f')
@@ -242,7 +242,7 @@ def get_data_list(config: RnaquanetConfig):
 
         df = pd.concat([
             df,
-            pd.get_dummies(df['nucleotide'], prefix='nucleotide').astype(int),
+            pd.get_dummies(pd.Categorical(df['nucleotide'], categories=['A', 'U', 'C', 'G']), prefix='nucleotide').astype(int),
             pd.get_dummies(series, prefix='dot_bracket').astype(int)
         ], axis=1)
         return df
@@ -279,7 +279,7 @@ def get_data_list(config: RnaquanetConfig):
         dist = df.to_numpy(dtype=np.float32)
         pairs = np.vstack(np.where(dist > 0))
         edge_index = np.array([pairs[0, :], pairs[1, :]])
-        edge_attr = np.array([[dist[start, end]] for start, end in pairs.T])
+        edge_attr = np.array([[dist[start, end], end - start + 1] for start, end in pairs.T]) # end - start + 1 is sequentional distance
         return torch.tensor(edge_index, dtype=torch.long), torch.tensor(edge_attr, dtype=torch.float32)
 
     path = os.path.join('data', config.download.name, 'preprocessing')

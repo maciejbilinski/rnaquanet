@@ -18,6 +18,9 @@ from torch.nn import (
     Identity,
 )
 
+NODE_FEATURES = 96
+EDGE_FEATURES = 2
+
 
 class GraphQA(Module):
     def __init__(self, conf):
@@ -98,13 +101,13 @@ class Encoder(Module):
     def __init__(self, out_edge_feats, out_node_feats):
         super().__init__()
         self.node_encoder = Sequential(
-            Linear(96, out_node_feats // 2),
+            Linear(NODE_FEATURES, out_node_feats // 2),
             ReLU(),
             Linear(out_node_feats // 2, out_node_feats),
             ReLU(),
         )
         self.edge_encoder = Sequential(
-            Linear(1, out_edge_feats // 2),
+            Linear(EDGE_FEATURES, out_edge_feats // 2),
             ReLU(),
             Linear(out_edge_feats // 2, out_edge_feats),
             ReLU(),
