@@ -1,6 +1,8 @@
 # RNAQuANet
 
 ## Build and run docker image
+**Info:** make sure that `docker-entrypoint.sh` file has correct line ending (must be **LF**, not **CRLF**) in order to work correctly under Linux.
+
 ```bash
 docker compose up --build
 ```
