@@ -14,27 +14,23 @@ from src.pipeline import Task, TaskLevel, run
 from scripts import data_downloading as t1, preprocessing_data as t2
 
 def get_pipeline_tasks():
-    data_downloading = TaskLevel([
+    data_downloading_preprocessing = TaskLevel([
         Task(t1.download_ares_archive,
              params=(t1.params.ares_dataset_url, t1.params.ares_archive_path),
              description='download_ares_archive'),
         Task(t1.extract_ares_archive,
              params=(t1.params.ares_archive_path, t1.params.ares_dataset_path),
-             description='extract_ares_archive')
-    ], wait=False)
-
-    preprocessing_data = TaskLevel([
+             description='extract_ares_archive'),
         Task(t2.prepare_catalogs,
              params=(t2.params.prepare_catalogs_src, t2.params.prepare_catalogs_dest, t2.params.mappings),
              description='prepare_catalogs'),
         Task(t2.filter_files,
              params=(t2.params.prepare_catalogs_dest, t2.params.filter_files_dest),
              description='filter_files')
-    ], wait=True)
+    ], async_tasks=False)
 
     pipeline = [
-        data_downloading,
-        preprocessing_data
+        data_downloading_preprocessing
     ]
 
     return pipeline
