@@ -11,57 +11,45 @@ import re
 from tqdm import tqdm
 from multiprocessing import Pool
 from Bio.PDB import PDBParser
-from rnapolis import parser, annotator, tertiary
+# from rnapolis import parser, annotator, tertiary
 from pathlib import Path
 from torch_geometric.data import Data
 from typing import Literal
 
 from config.config import ConfigData, RnaquanetConfig
-from config.types import PathType
+from config.custom_types import PathType
 
-def filter_files(config: RnaquanetConfig):
+
+def filter_file(pdb_filepath: PathType, config: RnaquanetConfig):
     """
-    Reads and filters each PDB file in the 'train' and 'test' subfolders.
+    Reads and filters specified PDB file.
 
     Args:
+    - pdb_file_path - PDB file path relative to 'data/ares/archive' subdirectory
     - config - rnaquanet YML config file
     """
-    # Find all PDB files within directory and subdirectories
-    config = config.data.download
-    path = os.path.join('data', config.name)
-    if os.path.exists(path):
-        src = os.path.join(path, 'archive')
-        if os.path.exists(src):
-            dest = os.path.join(path, 'preprocessing', 'filtered')
-            os.makedirs(dest)
-            pattern = f'{src}/**/*.pdb'
-            src_files = glob.glob(pattern, recursive=True)
+    path = os.path.join('data', config.data.download.name)
+    archive_path = os.path.join(path, 'archive')
+    dest_path = os.path.join(path, 'preprocessing', 'filtered')
+    in_filename = os.path.join(archive_path, pdb_filepath)
 
-            # Progress bar
-            total_files = len(src_files)+1
-            print('Filtering PDB files...')
-            progress_bar = tqdm(total=total_files, unit='f')
+    if os.path.exists(in_filename):
+        os.makedirs(dest_path, exist_ok=True)
 
-            for in_filename in src_files:
-                out_filename = in_filename.replace(src, dest)
-                out_dir = os.path.dirname(out_filename)
-                
-                if not os.path.exists(out_dir):
-                    os.makedirs(out_dir)
+        print(f'Filtering PDB file {os.path.basename(pdb_filepath)}...')
 
-                with open(in_filename, 'r') as input_file:
-                    with open(out_filename, 'w') as output_file:
-                        for line in input_file:
-                            if line.startswith('ATOM') or line.startswith('TER'):
-                                output_file.write(line)
-                
-                progress_bar.update()
-            
-            progress_bar.update()
-            progress_bar.close()
-            return
+        out_filename = os.path.join(dest_path, pdb_filepath)
+        os.makedirs(os.path.dirname(out_filename), exist_ok=True)
+
+        with open(in_filename, 'r') as input_file:
+            with open(out_filename, 'w') as output_file:
+                for line in input_file:
+                    if line.startswith('ATOM') or line.startswith('TER'):
+                        output_file.write(line)
+
+        return
         
-    raise Exception(f'Cannot preprocess dataset before downloading')
+    raise Exception(f'Cannot filter file {pdb_filepath}: file does not exist')
 
 
 def _loop_func(params: tuple[RnaquanetConfig, PathType, PathType]):

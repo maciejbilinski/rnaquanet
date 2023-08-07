@@ -38,6 +38,7 @@ def extract_archive(config: RnaquanetConfig):
     Args:
     - config - rnaquanet YML config file
     """
+    print('Extracting downloaded archive...')
     config = config.data.download
     path = os.path.join('data', config.name)
     if os.path.exists(path):
@@ -57,6 +58,7 @@ def extract_archive(config: RnaquanetConfig):
                         os.rename(os.path.join(tmp, config.train_folder), train_path)
                         os.rename(os.path.join(tmp, config.test_folder), test_path)
                         shutil.rmtree(tmp)
+                        print('Finished extracting!')
                         return
                     # else other extensions
                 else:

@@ -1,5 +1,5 @@
 import os
-from types import PathType
+from .custom_types import PathType
 
 def change_dir(directory: PathType) -> None:
     """
