@@ -12,16 +12,26 @@ services:
       RQ_DASHBOARD_REDIS_URL: redis://redis:6379 
     networks:
       - net
-  processor:
-    build: .
-    depends_on:
-      - redis
-    entrypoint: bash ./docker-entrypoint.sh 
+      
+  python_cuda:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: python_cuda:1.0
     volumes:
-      - ./data:/opt/rnaquanet/data
-      - ./logs:/opt/rnaquanet/logs
+      - python_cuda_volume:/app
+    stdin_open: true 
+    tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            count: all
+            capabilities: [gpu]
     networks:
       - net
+
   redis:
     image: redis:alpine
     restart: always
@@ -37,3 +47,4 @@ networks:
 
 volumes:
   redis:
+  python_cuda_volume:

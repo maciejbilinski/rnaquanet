@@ -1,33 +1,36 @@
 from nvidia/cuda:11.8.0-runtime-ubuntu22.04
 
-RUN apt-get update && \
+RUN ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONTAINER_TIMEZONE > /etc/timezone
+
+RUN apt update && \ 
     apt-get upgrade -y && \
-    apt-get install -y python3 python3-pip wget supervisor && \ 
-    apt-get install -y aptitude build-essential dos2unix zip # java dependencies \
-    apt-get install -y dos2unix # ensure LF
-
-# prepare java structure descriptor
-
-RUN wget -P /opt/ https://rnasolo.cs.put.poznan.pl/media/describe_structure.zip 
-
-RUN cd /opt/ && \
-    unzip describe_structure.zip
-	
-RUN rm /opt/describe_structure.zip
-
-WORKDIR /opt/describe_structure/
+    apt install -y tzdata wget build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev \
+        libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev software-properties-common openjdk-8-jdk && \
+    add-apt-repository -y ppa:deadsnakes/ppa && \
+    apt -y install python3.11 && \ 
+    ln -sf /usr/bin/python3.11 /usr/bin/python && \
+    ln -sf /usr/bin/python3.11 /usr/bin/python3
+    apt-get install -y supervisor
 
 
+RUN wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py && \
+python3.11 get-pip.py
 
-RUN chmod +x /opt/describe_structure/describe
 
-# ---------------------------------
+RUN python -m pip install torch==2.0.1 --index-url https://download.pytorch.org/whl/cu118
 
-WORKDIR /opt/rnaquanet
-COPY . /opt/rnaquanet
+RUN python -m pip install torch-geometric==2.3.1
 
-RUN pip3 install -r requirements.txt
+RUN python -m pip install --no-index torch-scatter==2.1.1 -f https://pytorch-geometric.com/whl/torch-2.0.1+cu118.html
+
+COPY . /app
+
+WORKDIR /app
+
+RUN python -m pip install -r requirements.txt
+
 COPY supervisor.conf /etc/supervisor/conf.d/supervisord.conf
 
-# force CRLF -> LF
-RUN dos2unix docker-entrypoint.sh
+RUN supervisord
+
+CMD ["bash"]
