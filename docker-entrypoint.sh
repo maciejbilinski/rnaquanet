@@ -1,6 +1,5 @@
-#!/bin/bash
-supervisord
-python3 /opt/rnaquanet/main.py
+
+/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf &
 
 while :; do
 	sleep 10
