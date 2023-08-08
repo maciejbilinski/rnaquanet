@@ -3,9 +3,7 @@ from rq import Queue
 from typing import Callable
 from rq.job import Job
 
-def test(lol):
-    print(lol)
-    
+
 class Task:
     """
         Args:
@@ -76,6 +74,9 @@ def run(tasks_stack: list[TaskLevel]):
 
 """
 EXAMPLE:
+    def test(lol):
+        print(lol)
+    
     t=Task(test,('sth, string',))
     tl=TaskLevel([t,t,t,t])
     run([tl,tl,tl])
