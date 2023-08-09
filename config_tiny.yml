@@ -6,10 +6,10 @@ data:
     test_folder: 'classics_train_val/example_val' # ścieżka do folderu wewnątrz archiwum ze zbiorem testowym
     train_folder: 'classics_train_val/example_train' # ścieżka do folderu wewnątrz archiwum ze zbiorem treningowym
     rmsd_csv_file_path: 'classics_train_val/scores.sc' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA
-    rmsd_csv_delimiter: ' ' # separator stosowany wewnątrz pliku CSV (zazwyczaj jest to przecinek)
+    rmsd_csv_delimiter: ' ' # separator stosowany wewnątrz pliku CSV (zazwyczaj jest to przecinek albo spacja)
     rmsd_column_name: 'new_rms' # nazwa kolumny w pliku CSV z wartością RMSD
     csv_structure_column_name: 'description' # nazwa kolumny w pliku CSV z nazwą plików której dotyczy RMSD
-    structure_colume_ext: '.pdb' # rozszerzenie pliku stosowane w csv_structure_column_name
+    structure_column_ext: '.pdb' # rozszerzenie pliku stosowane w csv_structure_column_name
   download_preprocessed:
     train_url: 'https://www.dropbox.com/scl/fi/8jqgmqvf0ex46gqlaxn1q/train_tiny.h5?rlkey=w22wtod6qnyy43h4imcjgillw&dl=1' # adres do pobrania pliku H5 ze zbiorem treningowym
     test_url: 'https://www.dropbox.com/scl/fi/338heabf8sqrrv33gl64d/test_tiny.h5?rlkey=56wfxdrvbltw287v9ymbsodld&dl=1' # adres do pobrania pliku H5 ze zbiorem testowym

@@ -12,7 +12,7 @@ class ConfigDataDownload:
     rmsd_csv_delimiter: str
     rmsd_column_name: str
     csv_structure_column_name: str
-    structure_colume_ext: str
+    structure_column_ext: str
 
 @dataclass
 class ConfigDataDownloadPreprocessed:

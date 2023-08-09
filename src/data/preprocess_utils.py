@@ -19,148 +19,182 @@ from typing import Literal
 from config.config import ConfigData, RnaquanetConfig
 from config.custom_types import PathType
 
-
-def filter_file(pdb_filepath: PathType, config: RnaquanetConfig):
+def filter_file(pdb_filepaths: list[PathType], config: RnaquanetConfig) -> None:
     """
     Reads and filters specified PDB file.
 
     Args:
-    - pdb_file_path - PDB file path relative to 'data/ares/archive' subdirectory
+    - pdb_filepaths - list of PDB file paths relative to 'data/ares/archive'
+    subdirectory
     - config - rnaquanet YML config file
+
+    Returns:
+    - None
+
+    Raises exception if any of the files in 'pdb_filepaths' does not exist.
     """
     path = os.path.join('data', config.data.download.name)
     archive_path = os.path.join(path, 'archive')
-    dest_path = os.path.join(path, 'preprocessing', 'filtered')
-    in_filename = os.path.join(archive_path, pdb_filepath)
+    filtered_path = os.path.join(path, 'preprocessing', 'filtered')
+    os.makedirs(filtered_path, exist_ok=True)
 
-    if os.path.exists(in_filename):
-        os.makedirs(dest_path, exist_ok=True)
+    print('Filtering PDB files...') 
+    # For each input file   
+    for filename in tqdm(pdb_filepaths, unit='f'):
+        in_file_path = os.path.join(archive_path, filename)
 
-        print(f'Filtering PDB file {os.path.basename(pdb_filepath)}...')
-
-        out_filename = os.path.join(dest_path, pdb_filepath)
-        os.makedirs(os.path.dirname(out_filename), exist_ok=True)
-
-        with open(in_filename, 'r') as input_file:
-            with open(out_filename, 'w') as output_file:
-                for line in input_file:
-                    if line.startswith('ATOM') or line.startswith('TER'):
-                        output_file.write(line)
-
-        return
+        if not os.path.exists(in_file_path):
+            raise Exception(f'Cannot filter file {in_file_path}: file does not exist. Perhaps you tried filtering before downloading?')
         
-    raise Exception(f'Cannot filter file {pdb_filepath}: file does not exist')
+        out_file_path = os.path.join(filtered_path, filename)
+        os.makedirs(os.path.dirname(out_file_path), exist_ok=True)
+
+        with open(in_file_path, 'r') as in_file:
+            with open(out_file_path, 'w') as out_file:
+                for line in in_file:
+                    if line.startswith('ATOM') or line.startswith('TER'):
+                        out_file.write(line)
+            
 
 
-def _loop_func(params: tuple[RnaquanetConfig, PathType, PathType]):
+def _rnagrowth_subprocess_func(params: tuple[RnaquanetConfig, PathType, PathType]):
+    """
+    Launches RNAgrowth tool and extracts features from PDB file.
+    """
     config, in_filename, child = params
     s = subprocess.Popen(['java', '-jar', 'RNAgrowth.jar', os.path.basename(in_filename), config.features.atom_for_distance_calculations, config.features.max_euclidean_distance], stdout=subprocess.PIPE, cwd=child)
     s.wait()
 
 
-def extract_features(config: RnaquanetConfig):
+def extract_features(pdb_filepaths: list[PathType], config: RnaquanetConfig) -> None:
     """
-    Extracts features from PDB files.
+    Extracts features from specified PDB files.
 
     Args:
+    - pdb_filepaths - list of PDB file paths relative to
+    'data/ares/preprocessing/filtered' subdirectory
     - config - rnaquanet YML config file
+
+    Returns:
+    - None
+
+    Exceptions:
+    - if 'preprocessing/filtered' directory does not exist
+    - if any of the files in 'pdb_filepaths' does not exist
+    - if tools/RNAgrowth does not exist
     """
-    import logging
-    logging.disable()
+    # idk what it is used for - why import when disabling it in the next line?
+    # import logging
+    # logging.disable()
     config: ConfigData = config.data
 
     tool_path = os.path.join('tools', 'RNAgrowth')
 
     if not os.path.exists(tool_path):
-        raise Exception('RNAgrowth tools does not exist')
+        raise Exception("RNAgrowth tools ('tools/RNAgrowth') does not exist.")
 
     path = os.path.join('data', config.download.name, 'preprocessing')
-    src = os.path.join(path, 'filtered')
-    dest = os.path.join(path, 'features')
+    filtered_path = os.path.join(path, 'filtered')
+    
+    if not os.path.exists(filtered_path):
+        raise Exception("Directory with filtered files ('preprocessing/filtered') not found. Perhaps you tried extracting features before filtering?")
+    
+    features_path = os.path.join(path, 'features')
+    os.makedirs(features_path, exist_ok=True)
 
-    if os.path.exists(src) and not os.path.exists(dest):
-        # RNAGrowth
-        shutil.copytree(src, dest)
+    # For each input file
+    for filename in pdb_filepaths:
+        in_file_path = os.path.join(filtered_path, filename)
+        
+        if not os.path.exists(in_file_path):
+            raise Exception(f'Cannot extract features from file {in_file_path}: file does not exist. Perhaps you tried extracting features before filtering said file?')
+        
+        out_file_path = os.path.join(features_path, filename)
+        # Copy file and its directories to the destination path
+        os.makedirs(os.path.dirname(out_file_path), exist_ok=True)
+        shutil.copy(in_file_path, out_file_path)
 
-        for child in os.listdir(dest):
-            child = os.path.join(dest, child)
-            pattern = f'{child}/*.pdb'
-            src_files = glob.glob(pattern, recursive=True)
-            total_files = len(src_files) + 1
-            print('Extracting features...')
-            progress_bar = tqdm(total=total_files, unit='f')
+    # RNAGrowth
+    # For each subdirectory (e.g. 'train', 'test', ...)
+    for subdir in os.listdir(features_path):
+        subdir_path = os.path.join(features_path, subdir)
+        if not os.path.isdir(subdir_path):
+            continue
+        
+        subdir_path = os.path.join(features_path, subdir)
+        rnagrowth_input_paths = glob.glob(f'{subdir_path}/*.pdb', recursive=True)
 
-            shutil.copytree(tool_path, child, dirs_exist_ok=True)
-            with Pool(mp.cpu_count()) as pool:
-                for _ in pool.imap_unordered(_loop_func, [[config, in_filename, child] for in_filename in src_files])[1:]:
-                    progress_bar.update()
+        # Copy RNAGrowth into subdirectory for efficient piping
+        shutil.copytree(tool_path, subdir_path, dirs_exist_ok=True)
+        
+        print('Extracting features from PDB files...')
+        
+        with Pool(mp.cpu_count()) as pool:
+            for _ in tqdm(enumerate(pool.imap_unordered(_rnagrowth_subprocess_func, [[config, in_filepath, subdir_path] for in_filepath in rnagrowth_input_paths])),
+                          total=len(rnagrowth_input_paths), unit='f'):
+                continue
 
-            progress_bar.update()
-            progress_bar.close()
+        allowed_extensions = ['.bon', '.ang', '.atr', '.3dn']
+        subdir_files = os.listdir(subdir_path)
+        
+        print(f'Cleaning subdirectory {subdir} from temporary files...')
+        
+        for filename in tqdm(subdir_files, unit='f'):
+            file_path = os.path.join(subdir_path, filename)
+            
+            # Remove all files except for ['.bon', '.ang', '.atr', '.3dn']
+            if not any(filename.endswith(ext) for ext in allowed_extensions):
+                os.remove(file_path)
+    
+    # Structure CSV
+    for subdir in os.listdir(filtered_path):
+        subdir_path = os.path.join(filtered_path, subdir)
 
-            allowed_extensions = [".bon", ".ang", ".atr", ".3dn"]
-            files = os.listdir(child)
-            total_files = len(files) + 1
-            progress_bar = tqdm(total=total_files, unit='f')
-            for filename in files:
-                file_path = os.path.join(child, filename)
-                if not any(filename.endswith(ext) for ext in allowed_extensions):
-                    os.remove(file_path)
-                progress_bar.update()
-            progress_bar.update()
-            progress_bar.close()
+        column_to_save = [config.download.rmsd_column_name, config.download.csv_structure_column_name]      
+        df = pd.read_csv(os.path.join('data', config.download.name, 'archive', 'target.csv'), sep=config.download.rmsd_csv_delimiter)
 
-        # structure CSV
-        for child in os.listdir(src):
-            folder_name = child
-            child = os.path.join(src, child)
+        # Set of all *.pdb filenames without extensions
+        file_names_without_ext = set([os.path.splitext(os.path.basename(file_path))[0] for file_path in glob.glob(f'{subdir_path}/*.pdb')])
+ 
+        df.drop(list(set(df.columns.values.tolist()) - set(column_to_save)), axis=1, inplace=True)
+        df['description'] = df['description'].str.replace('.pdb', '', regex=False)
+        df.drop(df[~df['description'].isin(file_names_without_ext)].index, inplace=True)
+        df.rename(columns={
+            config.download.rmsd_column_name: 'target', 
+            config.download.csv_structure_column_name: 'description'
+        }, inplace=True)
 
-            column_to_save = [config.download.rmsd_column_name, config.download.csv_structure_column_name]      
-            df = pd.read_csv(os.path.join('data', config.download.name, 'archive', 'target.csv'), sep=config.download.rmsd_csv_delimiter)
-            extracted_structures = set([filename.split('/')[-1].split('.')[0] for filename in glob.glob(f'{child}/*.pdb')])
-            df.drop(list(set(df.columns.values.tolist()) - set(column_to_save)), axis=1, inplace=True)
-            df['description'] = df['description'].str.replace('.pdb', '', regex=False)
-            df.drop(df[~df['description'].isin(extracted_structures)].index, inplace=True)
-            df.rename(columns={
-                config.download.rmsd_column_name: 'target', 
-                config.download.csv_structure_column_name: 'description'
-            }, inplace=True)
+        pdb_parser = PDBParser(QUIET=True)
+        sequences = []
+        pairings = ['.(((..((((((.)))).))...)))..'] # TODO temporary 4 testing
 
-            pdb_parser = PDBParser(QUIET=True)
-            sequences = []
-            pairings = []
+        print('Generating CSV...')
+        for _, row in tqdm(df.iterrows(), total=len(df.index)):
+            structure_pdb_path = os.path.join(os.path.abspath(Path()), filtered_path, subdir, f"{row['description']}.pdb")
+            structure_pdb = pdb_parser.get_structure('structure', structure_pdb_path)
 
-            progress_bar = tqdm(total=len(df.index))
-            for index, row in df.iterrows():
-                structure_pdb_path = os.path.join(str(Path().absolute()), src, folder_name, f"{row['description']}.pdb")
-                structure_pdb = pdb_parser.get_structure("structure", structure_pdb_path)
+            for model in structure_pdb:
+                temp_seq = []
+                for chain in model:
+                    temp_seq.append(''.join([re.sub(r'[^ATGCU]', '', residue.resname) for residue in chain]))
+                sequences.append(''.join(temp_seq))
+            
+            # RNAPolis
+            # with open(structure_pdb_path, 'r') as f:
+            #     structure3d = parser.read_3d_structure(f)
+            #     structure2d = annotator.extract_secondary_structure(structure3d)
+            #     mapping = tertiary.Mapping2D3D(structure3d, structure2d, False)
+            #     temp = []
+            #     for index, row in enumerate(mapping.dot_bracket.split('\n')):
+            #         if (index % 3) == 2:
+            #             temp.append(row)
+            #     pairings.append(''.join(temp))
 
-                for model in structure_pdb:
-                    temp_seq = []
-                    for chain in model:
-                        temp_seq.append(''.join([re.sub(r'[^ATGCU]', '', residue.resname) for residue in chain]))
-                    sequences.append(''.join(temp_seq))
-                
-                with open(structure_pdb_path, 'r') as f:
-                    structure3d = parser.read_3d_structure(f)
-                    structure2d = annotator.extract_secondary_structure(structure3d)
-                    mapping = tertiary.Mapping2D3D(structure3d, structure2d, False)
-                    temp = []
-                    for index, row in enumerate(mapping.dot_bracket.split('\n')):
-                        if (index % 3) == 2:
-                            temp.append(row)
-                    pairings.append(''.join(temp))
-
-                progress_bar.update(1)
-            progress_bar.close()
-            df['base_pairing'] = pairings
-            df['sequence'] = sequences
-            df = df.reset_index()
-            df.drop('index', axis=1, inplace=True)
-            df.to_csv(os.path.join(dest, f'{folder_name}.csv'))
-        return
-
-    raise Exception(f'Cannot preprocess dataset before downloading or filtering')
+        df['base_pairing'] = pairings
+        df['sequence'] = sequences
+        df = df.reset_index()
+        df.drop('index', axis=1, inplace=True)
+        df.to_csv(os.path.join(features_path, f'{subdir}.csv'))
 
 
 def get_data_list(config: RnaquanetConfig) -> dict[list[Data]]:
