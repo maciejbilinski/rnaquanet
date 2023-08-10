@@ -6,12 +6,15 @@ from tqdm import tqdm
 
 from config.config import ConfigData, RnaquanetConfig
 
-def download_archive(config: RnaquanetConfig):
+def download_archive(config: RnaquanetConfig) -> None:
     """
     Downloads raw ARES dataset.
 
     Args:
     - config - rnaquanet YML config file
+
+    Returns:
+    - None
     """
     config = config.data.download
     path = os.path.join('data', config.name)
@@ -31,12 +34,19 @@ def download_archive(config: RnaquanetConfig):
     progress_bar.close()
 
 
-def extract_archive(config: RnaquanetConfig):
+def extract_archive(config: RnaquanetConfig) -> None:
     """
     Extracts downloaded raw ARES dataset.
 
     Args:
     - config - rnaquanet YML config file
+
+    Returns:
+    - None
+
+    Exceptions:
+    - if archive extension format is not supported
+    - if there's no archive to extract
     """
     print('Extracting downloaded archive...')
     config = config.data.download
@@ -66,12 +76,15 @@ def extract_archive(config: RnaquanetConfig):
     raise Exception(f'Downloaded archive cannot be extracted. Call download_archive function first')
 
 
-def download_preprocessed(config: RnaquanetConfig):
+def download_preprocessed(config: RnaquanetConfig) -> None:
     """
     Downloads preprocessed h5 train and test files.
 
     Args:
     - config - rnaquanet YML config file
+
+    Returns:
+    - None
     """
     config: ConfigData = config.data
     path = os.path.join('data', config.download.name)

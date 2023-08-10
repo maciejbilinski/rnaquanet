@@ -14,7 +14,9 @@ if __name__ == '__main__':
         
     # TODO: argparser
     filter_file(['test/1a4d_S_000002_minimize_001.pdb', 'train/1csl_S_000023_minimize_005.pdb'], config)
-    extract_features(['test/1a4d_S_000002_minimize_001.pdb', 'train/1csl_S_000023_minimize_005.pdb'], config)
+    filter_file(['test/1a4d_S_000121_minimize_001.pdb'], config)
+    extract_features(['test/1a4d_S_000002_minimize_001.pdb', 'train/1csl_S_000023_minimize_005.pdb', 'test/1a4d_S_000036_minimize_006.pdb'], config)
+    extract_features(['test/1a4d_S_000121_minimize_001.pdb'], config)
     # data_lists = get_data_list(config)
 
     # for key in data_lists:

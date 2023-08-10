@@ -11,7 +11,7 @@ import re
 from tqdm import tqdm
 from multiprocessing import Pool
 from Bio.PDB import PDBParser
-# from rnapolis import parser, annotator, tertiary
+from rnapolis import parser, annotator, tertiary
 from pathlib import Path
 from torch_geometric.data import Data
 from typing import Literal
@@ -123,7 +123,10 @@ def extract_features(pdb_filepaths: list[PathType], config: RnaquanetConfig) -> 
         
         subdir_path = os.path.join(features_path, subdir)
         rnagrowth_input_paths = glob.glob(f'{subdir_path}/*.pdb', recursive=True)
-
+        if not rnagrowth_input_paths:
+            # If no pdb files within directory, skip
+            continue
+        
         # Copy RNAGrowth into subdirectory for efficient piping
         shutil.copytree(tool_path, subdir_path, dirs_exist_ok=True)
         
@@ -134,6 +137,71 @@ def extract_features(pdb_filepaths: list[PathType], config: RnaquanetConfig) -> 
                           total=len(rnagrowth_input_paths), unit='f'):
                 continue
 
+        # Structure CSV
+        columns_to_save = [config.download.rmsd_column_name, config.download.csv_structure_column_name]      
+        df = pd.read_csv(os.path.join('data', config.download.name, 'archive', 'target.csv'), sep=config.download.rmsd_csv_delimiter)
+
+        # Set of all *.pdb filenames without extensions
+        file_names_without_ext = set([os.path.splitext(os.path.basename(file_path))[0] for file_path in glob.glob(f'{subdir_path}/*.pdb')])
+
+        # Drop all columns which are not in columns_to_save
+        df.drop(list(set(df.columns.values.tolist()) - set(columns_to_save)), axis=1, inplace=True)
+        df['description'] = df['description'].str.replace('.pdb', '', regex=False)
+
+        # Drop all rows which do not match with processed filenames (file_names_without_ext)
+        df.drop(df[~df['description'].isin(file_names_without_ext)].index, inplace=True)
+
+        df.rename(columns={
+            config.download.rmsd_column_name: 'target', 
+            config.download.csv_structure_column_name: 'description'
+        }, inplace=True)
+
+        pdb_parser = PDBParser(QUIET=True)
+        sequences = []
+        pairings = []
+
+        print('Generating CSV...')
+        for _, row in tqdm(df.iterrows(), total=len(df.index)):
+            structure_pdb_path = os.path.join(os.path.abspath(Path()), features_path, subdir, f"{row['description']}.pdb")
+            structure_pdb = pdb_parser.get_structure('structure', structure_pdb_path)
+
+            for model in structure_pdb:
+                temp_seq = []
+                for chain in model:
+                    temp_seq.append(''.join([re.sub(r'[^ATGCU]', '', residue.resname) for residue in chain]))
+                sequences.append(''.join(temp_seq))
+            
+            # RNAPolis
+            with open(structure_pdb_path, 'r') as f:
+                structure3d = parser.read_3d_structure(f)
+                structure2d = annotator.extract_secondary_structure(structure3d)
+                mapping = tertiary.Mapping2D3D(structure3d, structure2d, False)
+                temp = []
+                for index, row in enumerate(mapping.dot_bracket.split('\n')):
+                    if (index % 3) == 2:
+                        temp.append(row)
+                pairings.append(''.join(temp))
+
+        df['base_pairing'] = pairings
+        df['sequence'] = sequences
+        df = df.reset_index()
+        df.drop('index', axis=1, inplace=True)
+        
+        csv_path = os.path.join(features_path, f'{subdir}.csv')
+        
+        if not os.path.exists(csv_path):
+            # If csv does not exist, create it
+            df.to_csv(csv_path)
+        else:
+            # If csv already exists, append only the new data to it
+            df_old = pd.read_csv(csv_path, index_col=0)
+            for _, row in df.iterrows():
+                if row['description'] not in df_old['description'].values:
+                    df_old = pd.concat([df_old, row.to_frame().T], ignore_index=True)
+            
+            df_old.to_csv(csv_path)
+        
+        # Cleanup
         allowed_extensions = ['.bon', '.ang', '.atr', '.3dn']
         subdir_files = os.listdir(subdir_path)
         
@@ -145,56 +213,6 @@ def extract_features(pdb_filepaths: list[PathType], config: RnaquanetConfig) -> 
             # Remove all files except for ['.bon', '.ang', '.atr', '.3dn']
             if not any(filename.endswith(ext) for ext in allowed_extensions):
                 os.remove(file_path)
-    
-    # Structure CSV
-    for subdir in os.listdir(filtered_path):
-        subdir_path = os.path.join(filtered_path, subdir)
-
-        column_to_save = [config.download.rmsd_column_name, config.download.csv_structure_column_name]      
-        df = pd.read_csv(os.path.join('data', config.download.name, 'archive', 'target.csv'), sep=config.download.rmsd_csv_delimiter)
-
-        # Set of all *.pdb filenames without extensions
-        file_names_without_ext = set([os.path.splitext(os.path.basename(file_path))[0] for file_path in glob.glob(f'{subdir_path}/*.pdb')])
- 
-        df.drop(list(set(df.columns.values.tolist()) - set(column_to_save)), axis=1, inplace=True)
-        df['description'] = df['description'].str.replace('.pdb', '', regex=False)
-        df.drop(df[~df['description'].isin(file_names_without_ext)].index, inplace=True)
-        df.rename(columns={
-            config.download.rmsd_column_name: 'target', 
-            config.download.csv_structure_column_name: 'description'
-        }, inplace=True)
-
-        pdb_parser = PDBParser(QUIET=True)
-        sequences = []
-        pairings = ['.(((..((((((.)))).))...)))..'] # TODO temporary 4 testing
-
-        print('Generating CSV...')
-        for _, row in tqdm(df.iterrows(), total=len(df.index)):
-            structure_pdb_path = os.path.join(os.path.abspath(Path()), filtered_path, subdir, f"{row['description']}.pdb")
-            structure_pdb = pdb_parser.get_structure('structure', structure_pdb_path)
-
-            for model in structure_pdb:
-                temp_seq = []
-                for chain in model:
-                    temp_seq.append(''.join([re.sub(r'[^ATGCU]', '', residue.resname) for residue in chain]))
-                sequences.append(''.join(temp_seq))
-            
-            # RNAPolis
-            # with open(structure_pdb_path, 'r') as f:
-            #     structure3d = parser.read_3d_structure(f)
-            #     structure2d = annotator.extract_secondary_structure(structure3d)
-            #     mapping = tertiary.Mapping2D3D(structure3d, structure2d, False)
-            #     temp = []
-            #     for index, row in enumerate(mapping.dot_bracket.split('\n')):
-            #         if (index % 3) == 2:
-            #             temp.append(row)
-            #     pairings.append(''.join(temp))
-
-        df['base_pairing'] = pairings
-        df['sequence'] = sequences
-        df = df.reset_index()
-        df.drop('index', axis=1, inplace=True)
-        df.to_csv(os.path.join(features_path, f'{subdir}.csv'))
 
 
 def get_data_list(config: RnaquanetConfig) -> dict[list[Data]]:
@@ -204,6 +222,9 @@ def get_data_list(config: RnaquanetConfig) -> dict[list[Data]]:
 
     Returns:
     - a dictionary containing lists of Data
+
+    Exceptions:
+    - FileNotFoundError - if file was not found
     """
     config: ConfigData = config.data
 
@@ -326,7 +347,7 @@ def get_data_list(config: RnaquanetConfig) -> dict[list[Data]]:
     return data_lists
 
 
-def save_data_to_hdf5(config: RnaquanetConfig, filename: str, data_list: list[Data]):
+def save_data_to_hdf5(config: RnaquanetConfig, filename: str, data_list: list[Data]) -> None:
     """
     Save a list of Data objects to an HDF5 file.
 
@@ -334,6 +355,9 @@ def save_data_to_hdf5(config: RnaquanetConfig, filename: str, data_list: list[Da
     - config - rnaquanet YML config file
     - filename - name of the HDF5 file to be saved
     - data_list - list of Data objects to be saved
+
+    Returns:
+    - None
     """
     config: ConfigData = config.data
 
