@@ -56,7 +56,6 @@ def filter_file(pdb_filepaths: list[PathType], config: RnaquanetConfig) -> None:
                         out_file.write(line)
             
 
-
 def _rnagrowth_subprocess_func(params: tuple[RnaquanetConfig, PathType, PathType]):
     """
     Launches RNAgrowth tool and extracts features from PDB file.
@@ -193,10 +192,14 @@ def extract_features(pdb_filepaths: list[PathType], config: RnaquanetConfig) -> 
             # If csv does not exist, create it
             df.to_csv(csv_path)
         else:
-            # If csv already exists, append only the new data to it
+            # If csv already exists, replace/append only new data
             df_old = pd.read_csv(csv_path, index_col=0)
             for _, row in df.iterrows():
-                if row['description'] not in df_old['description'].values:
+                # If row already exists, remove it and append the new row
+                if row['description'] in df_old['description'].values:
+                    df_old.loc[df_old['description'] == row['description'], :] = row.to_frame().T
+
+                else: 
                     df_old = pd.concat([df_old, row.to_frame().T], ignore_index=True)
             
             df_old.to_csv(csv_path)
@@ -215,16 +218,24 @@ def extract_features(pdb_filepaths: list[PathType], config: RnaquanetConfig) -> 
                 os.remove(file_path)
 
 
-def get_data_list(config: RnaquanetConfig) -> dict[list[Data]]:
+def get_data_lists(config: RnaquanetConfig) -> dict[list[Data]]:
     """
+    Gets data lists in the form of tensor Data objects. The function reads
+    associated .csv and .bon, .ang, .atr files containing features linked to a
+    given samples.
+
     Args:
     - config - rnaquanet YML config file
 
     Returns:
-    - a dictionary containing lists of Data
+    - a dictionary containing lists of Data:
+      - keys are relevant subdirectories, i.e. 'test' and 'train'
+      - values are lists of Data where each Data instance is associated with a
+      single sample
 
     Exceptions:
-    - FileNotFoundError - if file was not found
+    - FileNotFoundError - if any of the files was not found (e.g. associated
+    feature file: .bon, .ang, .atr ...)
     """
     config: ConfigData = config.data
 
@@ -240,28 +251,32 @@ def get_data_list(config: RnaquanetConfig) -> dict[list[Data]]:
         Returns:
         - Pandas dataframe with node features from csv
         """
-        sequence = row['sequence']
-        base_pairing = row['base_pairing']
-
         df = pd.DataFrame({
-            'nucleotide': list(sequence),
-            'dot_bracket': list(base_pairing)
+            'nucleotide': list(row['sequence']),
+            'dot_bracket': list(row['base_pairing'])
         })
+
         series = pd.Categorical(
             df['dot_bracket'] if distinguish
             else df['dot_bracket'].replace({
-                '\(': '()', '\)': '()', '\{': '{}', '\}': '{}', '\<': '<>', '\>': '<>', '\[': '[]', '\]': '[]'
+                '\(': '()',    '\)': '()',
+                '\{': '{}',    '\}': '{}',
+                '\<': '<>',    '\>': '<>',
+                '\[': '[]',    '\]': '[]',
             }, regex=True),
-            categories=['.', '{', '}', '[', ']', '(', ')', '<', '>'] if distinguish else ['.', '{}', '()', '[]', '<>'])
+            categories=['.', '{', '}', '[', ']', '(', ')', '<', '>'] if distinguish
+            else ['.', '{}', '()', '[]', '<>']
+        )
 
         df = pd.concat([
             df,
             pd.get_dummies(pd.Categorical(df['nucleotide'], categories=['A', 'U', 'C', 'G']), prefix='nucleotide').astype(int),
             pd.get_dummies(series, prefix='dot_bracket').astype(int)
         ], axis=1)
+        
         return df
 
-    def get_node_features_from_file(path: str, row: pd.Series, file_type: Literal['bon', 'ang', 'atr'],
+    def get_node_features_from_file(path: PathType, row: pd.Series, file_type: Literal['bon', 'ang', 'atr'],
                                     nan_replacement: float = 0.0,
                                     exclude_columns: list[str] = ['Chain', 'ResNum', 'iCode', 'Name']
                                     ) -> pd.DataFrame:
@@ -271,21 +286,21 @@ def get_data_list(config: RnaquanetConfig) -> dict[list[Data]]:
         Args:
         - path - directory containing the files
         - row - Pandas row of data
-        - file_type - type of file with sample's features (supported: bon, ang, atr)
-        - nan_replacement - value representing a replacement for NaN values found
+        - file_type - type of file with sample's features
+        (supported: bon, ang, atr)
+        - nan_replacement - value representing a replacement for NaN values
+        found
         - exclude_columns - list of columns which should be excluded
 
         Returns:
         - Pandas dataframe with features from chosen sample and file type
         """
-        df: pd.DataFrame = pd.read_csv(
-            os.path.join(path, f"{row['description']}.{file_type}"), sep='\t'
-        )
+        df = pd.read_csv(os.path.join(path, f"{row['description']}.{file_type}"), sep='\t')
         return (df.reset_index(drop=True)
-                  .drop(columns=exclude_columns)
-                  .replace('-', nan_replacement)
-                  .fillna(nan_replacement)
-                  .add_prefix(f'{file_type}_'))
+                .drop(columns=exclude_columns)
+                .replace('-', nan_replacement)
+                .fillna(nan_replacement)
+                .add_prefix(f'{file_type}_'))
 
     def get_edges(path: PathType, row: pd.Series) -> tuple[torch.Tensor, torch.Tensor]:
         """
@@ -298,8 +313,10 @@ def get_data_list(config: RnaquanetConfig) -> dict[list[Data]]:
         Returns:
         - a tuple of two torch Tensors
         """
-        df = pd.read_csv(os.path.join(path,
-                         f"{row['description']}_{config.features.max_euclidean_distance}.3dn"), sep='\t').reset_index(drop=True)
+        file_name_3dn = f"{row['description']}_{config.features.max_euclidean_distance}.3dn"
+        df = pd.read_csv(os.path.join(path, file_name_3dn), sep='\t').reset_index(drop=True)
+
+        # Drop unnamed columns
         df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
         dist = df.to_numpy(dtype=np.float32)
         pairs = np.vstack(np.where(dist > 0))
@@ -307,42 +324,40 @@ def get_data_list(config: RnaquanetConfig) -> dict[list[Data]]:
         edge_attr = np.array([[dist[start, end], (end - start + 1)] for start, end in pairs.T]) # end - start + 1 is sequentional distance
         return (torch.tensor(edge_index, dtype=torch.long), torch.tensor(edge_attr, dtype=torch.float32))
 
-    path = os.path.join('data', config.download.name, 'preprocessing')
-    features = os.path.join(path, 'features')
+    path = os.path.join('data', config.download.name)
+    features_path = os.path.join(path, 'preprocessing', 'features')
     data_lists = {}
-    for child in os.listdir(features): # train / test
-        name = child
-        child = os.path.join(features, child)
-        if os.path.isdir(child):
-            df = pd.read_csv(os.path.join(features, f'{name}.csv'))
-            print('Getting node features from csv...')
-            progress_bar = tqdm(total=df.shape[0]+1, unit='f')
-            data_lists[name] = []
-            for i in range(df.shape[0]):
-                try:
-                    csv_features = get_node_features_from_csv(df.iloc[i]).add_prefix('csv_')
-                    bon_features = get_node_features_from_file(child, df.iloc[i], 'bon')
-                    ang_features = get_node_features_from_file(child, df.iloc[i], 'ang')
-                    atr_features = get_node_features_from_file(child, df.iloc[i], 'atr')
-                    x_df = pd.concat([
-                        csv_features,
-                        bon_features,
-                        ang_features,
-                        atr_features,
-                    ], axis=1)
-                    x = torch.from_numpy(
-                        x_df.drop(columns=[
-                            'csv_nucleotide', 'csv_dot_bracket',
-                        ]).to_numpy(dtype=np.float32)
-                    )
-                    edge_index, edge_attr = get_edges(child, df.iloc[i])
-                    y = torch.tensor(df.loc[i, 'target'], dtype=torch.float32)
-                    data_lists[name].append(Data(x, edge_index, edge_attr, y))
-                except FileNotFoundError as e:
-                    print(f'{e.filename} was not found')
-                progress_bar.update()
-            progress_bar.update()
-            progress_bar.close()
+    
+    for subdir in os.listdir(features_path): 
+        subdir_path = os.path.join(features_path, subdir)
+        if not os.path.isdir(subdir_path):
+            continue
+
+        print('Getting node features from csv...')
+        df = pd.read_csv(os.path.join(features_path, f'{subdir}.csv'))
+        data_lists[subdir] = []
+        for i in tqdm(range(df.shape[0]), total=df.shape[0], unit='f'):
+            try:
+                csv_features = get_node_features_from_csv(df.iloc[i]).add_prefix('csv_')
+                bon_features = get_node_features_from_file(subdir_path, df.iloc[i], 'bon')
+                ang_features = get_node_features_from_file(subdir_path, df.iloc[i], 'ang')
+                atr_features = get_node_features_from_file(subdir_path, df.iloc[i], 'atr')
+                x_df = pd.concat([
+                    csv_features,
+                    bon_features,
+                    ang_features,
+                    atr_features,
+                ], axis=1)
+                x = torch.from_numpy(
+                    x_df.drop(columns=[
+                        'csv_nucleotide', 'csv_dot_bracket',
+                    ]).to_numpy(dtype=np.float32)
+                )
+                edge_index, edge_attr = get_edges(subdir_path, df.iloc[i])
+                y = torch.tensor(df.loc[i, 'target'], dtype=torch.float32)
+                data_lists[subdir].append(Data(x, edge_index, edge_attr, y))
+            except FileNotFoundError as e:
+                print(f'File {e.filename} was not found. Perhaps you tried returning data list without prior feature extraction?')
 
     return data_lists
 
