@@ -1,14 +1,16 @@
-FROM nvidia/cuda:11.8.0-devel-ubuntu22.04
+FROM nvidia/cuda:11.8.0-runtime-ubuntu22.04
 
 RUN ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONTAINER_TIMEZONE > /etc/timezone
 
-RUN apt update && \ 
-apt install -y tzdata wget build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev \
-libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev software-properties-common openjdk-8-jdk && \
-add-apt-repository -y ppa:deadsnakes/ppa && \
-apt -y install python3.11 && \ 
-ln -sf /usr/bin/python3.11 /usr/bin/python && \
-ln -sf /usr/bin/python3.11 /usr/bin/python3
+RUN apt-get update  
+RUN apt-get upgrade -y 
+RUN apt install -y tzdata wget build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev \
+        libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev software-properties-common openjdk-8-jdk supervisor
+RUN add-apt-repository -y ppa:deadsnakes/ppa 
+RUN apt-get -y install python3.11 
+RUN ln -sf /usr/bin/python3.11 /usr/bin/python 
+RUN ln -sf /usr/bin/python3.11 /usr/bin/python3 
+
 
 RUN wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py && \
 python3.11 get-pip.py
@@ -26,5 +28,7 @@ WORKDIR /app
 
 RUN python -m pip install -r requirements.txt
 
+COPY supervisor.conf /etc/supervisor/conf.d/supervisord.conf
+RUN mkdir -p /opt/rnaquanet/logs/
 
-CMD ["bash"]
+ENTRYPOINT ["sh","/app/docker-entrypoint.sh"]
