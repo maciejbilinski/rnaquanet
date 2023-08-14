@@ -24,6 +24,7 @@ services:
       - ./logs:/opt/rnaquanet/logs/
     stdin_open: true 
     tty: true
+    ipc: host
     deploy:
       resources:
         reservations:
