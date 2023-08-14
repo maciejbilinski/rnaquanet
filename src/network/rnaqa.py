@@ -22,7 +22,7 @@ NODE_FEATURES = 96
 EDGE_FEATURES = 2
 
 
-class GraphQA(Module):
+class RnaQA(Module):
     def __init__(self, conf):
         super().__init__()
 
@@ -69,7 +69,11 @@ class GraphQA(Module):
             in_e, in_n, in_g = out_e, out_n, out_g
 
         # Readout
-        self.readout = Linear(in_g, 1)
+        self.readout = Sequential(
+            ReLU(),
+            Linear(in_g, 1),
+            ReLU()
+        )
 
     @staticmethod
     def prepare(graphs: Batch) -> Tuple[torch.Tensor, ...]:

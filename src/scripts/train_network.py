@@ -1,56 +1,44 @@
 import sys
 import os
+import time
 from omegaconf import OmegaConf
 import torch
 from torch_geometric.data import Data, Batch
-from torch_geometric.loader import DataLoader
+import pytorch_lightning as pl
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from config.config import RnaquanetConfig
 from config.os import change_dir
-from data.preprocess_utils import load_data_from_hdf5
-from network.network import GraphQA
-
+from network.rnaqa_lightning import RnaQALightning
+from data.ares_data_module import AresDataModule
 
 if __name__ == '__main__':
     change_dir('../..')
     config = RnaquanetConfig('config.yml')
+
+    torch.set_float32_matmul_precision('high')
     
-    test = load_data_from_hdf5(config, 'test')
-    model = GraphQA(conf=OmegaConf.create({
-        'encoder': {
-            'out_edge_feats': 64,
-            'out_node_feats': 128,
-        },
-        'mp': {
-            'out_edge_feats': 16,
-            'out_node_feats': 64,
-            'layers': 6,
-            'in_global_feats': 512,
-            'out_global_feats': 1,
-            'dropout': 0.2,
-            'batch_norm': False,
-            'scatter': 'mean',
-        }
-    }))
+    model = RnaQALightning()
+    data = AresDataModule(config, batch_size=2000, num_workers=1)
 
-    criterion = torch.nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+    checkpoint_callback = pl.callbacks.ModelCheckpoint(
+        dirpath=f'checkpoints_{time.time()}',
+        filename='{epoch}-{val_loss:.2f}',
+        monitor='val_loss',
+        mode='min'
+    )
 
-    for epoch in range(100):
-        model.train()
-        total_loss = 0
-        loader = DataLoader(test, batch_size=16)
-        for data in loader:
-            optimizer.zero_grad()
-            x, edge_index, edge_attr, batch, y = model.prepare(data)
-            out = model(x, edge_index, edge_attr, batch)
-            loss = criterion(out, y) 
-            loss.backward()
-            optimizer.step()
+    early_stopping_callback = pl.callbacks.EarlyStopping(
+        monitor='val_loss',
+        patience=10,
+        mode='min'
+    )
 
-            total_loss += loss.item()
+    trainer = pl.Trainer(
+        max_epochs=100000,
+        log_every_n_steps = 1,
+        callbacks=[checkpoint_callback, early_stopping_callback]
+    )
 
-        average_loss = total_loss / len(loader)
-        print(f"Epoch {epoch + 1}, Loss: {average_loss:.4f}")
+    trainer.fit(model, data)
