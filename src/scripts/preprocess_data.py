@@ -65,7 +65,7 @@ def process_directory(config:RnaquanetConfig, source_directory:str,output_direct
 
 if __name__ == "__main__":
     change_dir("../..")
-    config = RnaquanetConfig("config_tiny.yml")
+    config = RnaquanetConfig("config.yml")
     args = parser.parse_args()
 
 

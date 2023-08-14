@@ -10,6 +10,6 @@ from data.download_utils import download_archive, extract_archive
 
 if __name__ == '__main__':
     change_dir('../..')
-    config = RnaquanetConfig('config_tiny.yml')
+    config = RnaquanetConfig('config.yml')
     download_archive(config)
     extract_archive(config)
