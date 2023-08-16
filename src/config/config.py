@@ -35,14 +35,44 @@ class ConfigData:
         self.features = ConfigDataFeatures(**data['features'])
         self.download_preprocessed = ConfigDataDownloadPreprocessed(**data['download_preprocessed'])
 
+@dataclass
+class ConfigNetworkEncoder:
+    in_edge_feats: int
+    out_edge_feats: int
+    in_node_feats: int
+    out_node_feats: int
+
+@dataclass
+class ConfigNetworkMessagePassing:
+    layers: int
+    dropout: float
+    batch_norm: bool
+    scatter: str
+    out_edge_feats: int
+    out_node_feats: int
+    in_global_feats: int
+    out_global_feats: int
+
+@dataclass
+class ConfigNetwork:
+    encoder: ConfigNetworkEncoder
+    message_passing: ConfigNetworkMessagePassing
+
+    def __init__(self, data: dict):
+        self.encoder = ConfigNetworkEncoder(**data['encoder'])
+        self.message_passing = ConfigNetworkMessagePassing(**data['message_passing'])
+
+
 class RnaquanetConfig:
     data: ConfigData
+    network: ConfigNetwork
 
     def __init__(self, path: str):
         with open(path, "r") as stream:
             try:
                 result = yaml.safe_load(stream)
                 self.data = ConfigData(result['data'])
+                self.network = ConfigNetwork(result['network'])
             except yaml.YAMLError as exc:
                 e = Exception(exc)
                 e.add_note('Cannot load config file')

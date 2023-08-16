@@ -19,105 +19,54 @@ from torch_geometric.nn import global_mean_pool
 from torch.nn import Linear
 from torch.optim import Adam
 import torch.nn as nn
-
-class GCN(pl.LightningModule):
-    def __init__(self, hidden_channels):
-        super(GCN, self).__init__()
-        self.conv1 = GCNConv(96, hidden_channels)
-        self.conv2 = GCNConv(hidden_channels, 2*hidden_channels)
-        self.conv3 = GCNConv(2*hidden_channels, 3*hidden_channels)
-        self.conv4 = GCNConv(3*hidden_channels, 2*hidden_channels)
-        self.conv5 = GCNConv(2*hidden_channels, hidden_channels)
-        self.lin = Linear(hidden_channels, 1)
-        self.criterion = nn.MSELoss()
-
-    def forward(self, x, edge_index, batch):
-        # 1. Obtain node embeddings 
-        x = self.conv1(x, edge_index)
-        x = x.relu()
-        x = self.conv2(x, edge_index)
-        x = x.relu()
-        x = self.conv3(x, edge_index)
-        x = x.relu()
-        x = self.conv4(x, edge_index)
-        x = x.relu()
-        x = self.conv5(x, edge_index)
-
-        # 2. Readout layer
-        x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
-
-        # 3. Apply a final classifier
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = self.lin(x)
-        
-        return x
-    
-    def training_step(self, batch, batch_idx):
-        x, edge_index, edge_attr, batch, y = self.prepare(batch)
-        out = self(x, edge_index, batch).view(-1)
-        loss = self.criterion(out, y)
-        self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True, batch_size=len(batch))
-        return loss
-
-    def validation_step(self, batch, batch_idx):
-        x, edge_index, edge_attr, batch, y = self.prepare(batch)
-        out = self(x, edge_index, batch).view(-1)
-        loss = self.criterion(out, y)
-        self.log("val_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True, batch_size=len(batch))
-        return loss
-
-    def configure_optimizers(self):
-        optimizer = Adam(self.parameters(), lr=1e-3)
-        return optimizer
-
-    @staticmethod
-    def prepare(graphs: Batch):
-        x = graphs.x
-        edge_index = graphs.edge_index
-        edge_attr = graphs.edge_attr
-        batch = graphs.batch
-        y = graphs.y
-
-        return x, edge_index, edge_attr, batch, y
-
+from network.utils import extract_batch
+import numpy as np
 
 if __name__ == '__main__':
     change_dir('../..')
-    config = RnaquanetConfig('config.yml')
 
     torch.set_float32_matmul_precision('high')
-    
-    model = GCN(hidden_channels=512)
-    data = AresDataModule(config, batch_size=500, num_workers=1)
-    checkpoint_callback = pl.callbacks.ModelCheckpoint(
-        dirpath=f'checkpoints_{time.time()}',
-        filename='{epoch}-{val_loss:.2f}',
-        monitor='val_loss',
-        mode='min'
-    )
 
-    early_stopping_callback = pl.callbacks.EarlyStopping(
-        monitor='val_loss',
-        patience=3,
-        mode='min'
-    )
-
-    trainer = pl.Trainer(
-        max_epochs=1000000,
-        log_every_n_steps = 1,
-        callbacks=[checkpoint_callback, early_stopping_callback]
-    )
-
-    trainer.fit(model, data)
-    model = model.to(torch.device('cpu'))
-    data = AresDataModule(RnaquanetConfig('config_tiny.yml'), batch_size=1, num_workers=1)
+    device = torch.device('cuda:0')
+        
+    config = RnaquanetConfig('config.yml')
+    data = AresDataModule(config, batch_size=1024, num_workers=1)
     data.prepare_data()
-    with torch.no_grad():
-        model.eval()
-        print('real \tnet')
-        for batch in data.val_dataloader():
-            x, edge_index, edge_attr, batch, y = model.prepare(batch)
-            out = model(x, edge_index, batch)
-            print("{:05.2f}".format(y.item()), '\t', "{:05.2f}".format(out.item()))
+    model = RnaQA(config=config).to(device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
+    criterion = torch.nn.MSELoss().to(device)
+    
+
+    for epoch in range(10):
+        print(f'epoch {epoch+1}')
+        model.train()
+        losses = []
+        for batch in data.train_dataloader():
+            optimizer.zero_grad()
+
+            x, edge_index, edge_attr, batch, y = extract_batch(batch)
+            out = model(x.to(device), edge_index.to(device), edge_attr.to(device), batch.to(device))
+            
+            loss = criterion(out, y.to(device))
+            loss.backward()
+            losses.append(loss.to(torch.device('cpu')).item())
+
+            optimizer.step()
+        print('train_loss', np.mean(losses))
+
+        losses = []
+        outputs = []
+        with torch.no_grad():
+            model.eval()
+            for batch in data.val_dataloader():
+                x, edge_index, edge_attr, batch, y = extract_batch(batch.to(device))
+                out = model(x.to(device), edge_index.to(device), edge_attr.to(device), batch.to(device))
+                loss = criterion(out, y.to(device))
+                losses.append(loss.to(torch.device('cpu')).item())
+                outputs.extend(out.to(torch.device('cpu')).tolist())
+        print('val_loss', np.mean(losses))
+        print('val_sd', np.std(outputs))
+        
+
 
     

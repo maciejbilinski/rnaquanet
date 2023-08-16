@@ -16,5 +16,20 @@ data:
   features:
     atom_for_distance_calculations: "C1'"
     max_euclidean_distance: '16.0'
+network:
+  encoder:
+    in_edge_feats: 2
+    out_edge_feats: 64
+    in_node_feats: 96
+    out_node_feats: 128
+  message_passing: 
+    layers: 6
+    dropout: 0.2
+    batch_norm: False
+    scatter: mean
+    out_edge_feats: 16
+    out_node_feats: 64
+    in_global_feats: 512
+    out_global_feats: 32
 
-  
+
