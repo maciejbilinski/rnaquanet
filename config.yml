@@ -18,17 +18,23 @@ data:
     max_euclidean_distance: 16.0
 network:
   encoder:
+    dropout: 0.5
+    batch_norm: True
     in_edge_feats: 2
-    out_edge_feats: 64
+    out_edge_feats: 16
     in_node_feats: 96
-    out_node_feats: 128
+    out_node_feats: 64
   message_passing: 
-    layers: 10
+    layers: 6
     dropout: 0.2
     batch_norm: True
     scatter: mean
     out_edge_feats: 64
-    out_node_feats: 256
-    in_global_feats: 512
+    out_node_feats: 64
+    in_global_feats: 16
     out_global_feats: 64
-  
+    layer_sizes_func: layer_sizes_exp2 # layer_sizes_linear
+  readout:
+    layers: 3
+    out_feats: 64
+    layer_sizes_func: layer_sizes_exp2 # layer_sizes_linear

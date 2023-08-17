@@ -10,7 +10,7 @@ from torch.nn import (
 
 from .message_passing import MessagePassing
 from .encoder import Encoder
-from .utils import layer_sizes_exp2
+from .utils import layer_sizes_exp2, layer_sizes_linear
 from config.config import RnaquanetConfig
 
 
@@ -23,6 +23,8 @@ class RnaQA(Module):
 
         # Encoder
         self.encoder = Encoder(
+            dropout=config.encoder.dropout,
+            batch_norm=config.encoder.batch_norm,
             in_node_feats=config.encoder.in_node_feats,
             out_node_feats=config.encoder.out_node_feats,
             in_edge_feats=config.encoder.in_edge_feats,
@@ -31,19 +33,20 @@ class RnaQA(Module):
 
         # Message passing configuration
         # Configuration
-        mp_edge_feats = layer_sizes_exp2(
+        layer_sizes_func = layer_sizes_exp2 if config.message_passing.layer_sizes_func == 'layer_sizes_exp2' else layer_sizes_linear
+        mp_edge_feats = layer_sizes_func(
             config.encoder.out_edge_feats, 
             config.message_passing.out_edge_feats, 
             config.message_passing.layers, 
             round_pow2=True
         )
-        mp_node_feats = layer_sizes_exp2(
+        mp_node_feats = layer_sizes_func(
             config.encoder.out_node_feats, 
             config.message_passing.out_node_feats,
             config.message_passing.layers, 
             round_pow2=True
         )
-        mp_global_feats = layer_sizes_exp2(
+        mp_global_feats = layer_sizes_func(
             config.message_passing.in_global_feats,
             config.message_passing.out_global_feats,
             config.message_passing.layers,
@@ -70,19 +73,32 @@ class RnaQA(Module):
             in_e, in_n, in_g = out_e, out_n, out_g
 
         # Readout
-        self.readout = Sequential(
-            ReLU(),
-            Linear(in_g, 128),
-            ReLU(),
-            Linear(128, 1)
+        layer_sizes_func = layer_sizes_exp2 if config.readout.layer_sizes_func == 'layer_sizes_exp2' else layer_sizes_linear
+        feats = layer_sizes_func(
+            in_g,
+            config.readout.out_feats, 
+            config.readout.layers, 
+            round_pow2=True
         )
+        self.readout = Sequential()
+        in_feat = feats[0]
+        for out_feat in feats[1:]:
+            self.readout.append(Sequential(
+                ReLU(),
+                Linear(in_feat, out_feat)
+            ))
+            in_feat = out_feat
+
+        self.readout.append(Sequential(
+            ReLU(),
+            Linear(out_feat, 1)
+        ))
 
     def forward(
         self, x, edge_index, edge_attr, batch
     ):
         # Encoder
         x, edge_attr = self.encoder(x, edge_attr)
-
 
         # Message passing
         num_graphs = batch[-1].item() + 1

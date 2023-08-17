@@ -37,6 +37,8 @@ class ConfigData:
 
 @dataclass
 class ConfigNetworkEncoder:
+    dropout: float
+    batch_norm: bool
     in_edge_feats: int
     out_edge_feats: int
     in_node_feats: int
@@ -52,16 +54,24 @@ class ConfigNetworkMessagePassing:
     out_node_feats: int
     in_global_feats: int
     out_global_feats: int
+    layer_sizes_func: str
+
+@dataclass
+class ConfigNetworkReadout:
+    layers: int
+    out_feats: int
+    layer_sizes_func: str
 
 @dataclass
 class ConfigNetwork:
     encoder: ConfigNetworkEncoder
     message_passing: ConfigNetworkMessagePassing
+    readout: ConfigNetworkReadout
 
     def __init__(self, data: dict):
         self.encoder = ConfigNetworkEncoder(**data['encoder'])
         self.message_passing = ConfigNetworkMessagePassing(**data['message_passing'])
-
+        self.readout = ConfigNetworkReadout(**data['readout'])
 
 class RnaquanetConfig:
     data: ConfigData
