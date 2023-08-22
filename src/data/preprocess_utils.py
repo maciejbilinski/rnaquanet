@@ -218,7 +218,7 @@ def extract_features(pdb_filepaths: list[PathType], config: RnaquanetConfig) -> 
                 os.remove(file_path)
 
 
-def get_data_lists(config: RnaquanetConfig) -> dict[list[Data]]:
+def get_data_lists(pdb_filepaths: list[PathType], config: RnaquanetConfig) -> dict[list[Data]]:
     """
     Gets data lists in the form of tensor Data objects. The function reads
     associated .csv and .bon, .ang, .atr files containing features linked to a
@@ -328,15 +328,21 @@ def get_data_lists(config: RnaquanetConfig) -> dict[list[Data]]:
     features_path = os.path.join(path, 'preprocessing', 'features')
     data_lists = {}
     
-    for subdir in os.listdir(features_path): 
+    for subdir in set([os.path.dirname(path) for path in pdb_filepaths]): 
         subdir_path = os.path.join(features_path, subdir)
         if not os.path.isdir(subdir_path):
+            # Skip non-directory items
             continue
+        
+        processed_file_names = set([os.path.basename(os.path.splitext(path)[0]) for path in pdb_filepaths])
 
         print('Getting node features from csv...')
         df = pd.read_csv(os.path.join(features_path, f'{subdir}.csv'))
         data_lists[subdir] = []
         for i in tqdm(range(df.shape[0]), total=df.shape[0], unit='f'):
+            if df.iloc[i].description not in processed_file_names:
+                # Skip files that are not being currently processed
+                continue 
             try:
                 csv_features = get_node_features_from_csv(df.iloc[i]).add_prefix('csv_')
                 bon_features = get_node_features_from_file(subdir_path, df.iloc[i], 'bon')
@@ -392,14 +398,15 @@ def load_data_from_hdf5(config: RnaquanetConfig, filename: str) -> list[Data]:
 
     Args:
     - config - rnaquanet YML config file
-    - filename - name of the HDF5 file to be loaded
+    - filename - name of the HDF5 file to be loaded relative to 'data/ares'
+    directory
 
     Returns:
-    - data_list - list of Data objects loaded from the HDF5 file
+    - list of Data objects loaded from the HDF5 file
     """
     data_list = []
 
-    with h5py.File(os.path.join('data', config.data.download.name, f'{filename}.h5'), 'r') as file:
+    with h5py.File(os.path.join('data', config.data.download.name, filename), 'r') as file:
         for key in file.keys():
             data_dict = {f_key: torch.tensor(f_value[()])
                          if isinstance(f_value, h5py.Dataset)
