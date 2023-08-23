@@ -1,28 +1,39 @@
 import glob
 import os
 
+from config.config import RnaquanetConfig
 from config.custom_types import PathType
 
-def get_name_from_path(path: PathType) -> str:
+class InputsConfig:
     """
-    Returns the filename and the last directory path
+    Resolves input files based on configuration file.
+
+    Parameters:
+    - config - rnaquanet YML config file
+
+    Members:
+    - ALL_FILES - contains all files within 'train' and 'test' subdirs
+    - TRAIN_FILES - contains files within 'train' subdir
+    - TEST_FILES - contains files within 'test' subdir
     """
-    return os.path.join(os.path.basename(os.path.dirname(path)), os.path.basename(path))
+    def __init__(self, config: RnaquanetConfig) -> None:
+        __download_subdir = config.data.download.name
 
+        self.ALL_FILES = [InputsConfig.__get_name_from_path(filepath)
+                          for filepath in glob.glob(f'data/{__download_subdir}/archive/**/*.pdb', recursive=True)]
+        """Contains all files (data/[...]/archive/**/*.pdb)"""
+        
+        self.TRAIN_FILES = [InputsConfig.__get_name_from_path(filepath)
+                            for filepath in glob.glob(f'data/{__download_subdir}/archive/train/*.pdb', recursive=True)]
+        """Contains 'train' files (data/[...]/archive/train/*.pdb)"""
+        
+        self.TEST_FILES = [InputsConfig.__get_name_from_path(filepath)
+                           for filepath in glob.glob(f'data/{__download_subdir}/archive/test/*.pdb', recursive=True)]
+        """Contains 'test' files (data/[...]/archive/test/*.pdb)"""
+    
 
-# Contains all files within 'data/ares/archive' subdirectory
-ALL_FILES = [get_name_from_path(filepath)
-             for filepath in glob.glob('../../data/ares/archive/**/*.pdb', recursive=True)]
-
-# 'data/ares/archive/train'
-TRAIN_FILES = [get_name_from_path(filepath)
-               for filepath in glob.glob('../../data/ares/archive/train/*.pdb', recursive=True)]
-
-# 'data/ares/archive/test'
-TEST_FILES = [get_name_from_path(filepath)
-              for filepath in glob.glob('../../data/ares/archive/test/*.pdb', recursive=True)]
-
-CUSTOM_FILE_LIST = [
-    # Input PDB filenames located relative to 'data/ares/archive' 
-    ...
-]
+    def __get_name_from_path(path: PathType) -> str:
+        """
+        Returns the filename and the last directory path
+        """
+        return os.path.join(os.path.basename(os.path.dirname(path)), os.path.basename(path))
