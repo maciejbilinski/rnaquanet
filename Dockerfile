@@ -31,4 +31,5 @@ RUN python -m pip install -r requirements.txt
 COPY supervisor.conf /etc/supervisor/conf.d/supervisord.conf
 RUN mkdir -p /opt/rnaquanet/logs/
 
-ENTRYPOINT ["sh","/app/docker-entrypoint.sh"]
+RUN bash
+# ENTRYPOINT ["sh","/app/docker-entrypoint.sh"]
