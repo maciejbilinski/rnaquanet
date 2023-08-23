@@ -14,25 +14,25 @@ data:
     train_url: https://www.dropbox.com/scl/fi/lbeqq01gh4v76i4570zbf/train.h5?rlkey=s54z7tfqx4tmkkztiy3y8oe69&dl=1 # adres do pobrania pliku H5 ze zbiorem treningowym
     test_url: https://www.dropbox.com/scl/fi/yciptkwgt9yhzqjawfj84/test.h5?rlkey=4x3v3dkcyj530bfw16wyilg2a&dl=1 # adres do pobrania pliku H5 ze zbiorem testowym
   features:
-    atom_for_distance_calculations: "C1"
+    atom_for_distance_calculations: "C1'"
     max_euclidean_distance: 16.0
 network:
   encoder:
     dropout: 0.5
     batch_norm: True
     in_edge_feats: 2
-    out_edge_feats: 16
+    out_edge_feats: 512
     in_node_feats: 96
-    out_node_feats: 64
+    out_node_feats: 128
   message_passing: 
     layers: 6
     dropout: 0.2
     batch_norm: True
     scatter: mean
-    out_edge_feats: 64
+    out_edge_feats: 16
     out_node_feats: 64
-    in_global_feats: 16
-    out_global_feats: 64
+    in_global_feats: 512
+    out_global_feats: 32
     layer_sizes_func: layer_sizes_exp2 # layer_sizes_linear
   readout:
     layers: 3
