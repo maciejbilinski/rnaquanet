@@ -3,8 +3,8 @@ import torch
 import numpy as np
 import pandas as pd
 
-from torch_geometric.data import Data
 from rnaquanet import get_base_dir
+from torch_geometric.data import Data
 
 from src.config.config import ConfigData, RnaquanetConfig
 from src.data.preprocessing.extract.edge.edge_features import get_edges
@@ -48,8 +48,10 @@ def process_structure(file_path:str, config: RnaquanetConfig,output_h5_dir:str, 
         edge_index, edge_attr = get_edges(features_file_path, config_c)
 
         output=Data(x, edge_index, edge_attr, y=target)
-        save_data_to_hdf5(config,os.path.join(get_base_dir(), 'data','h5',output_h5_dir, structure_file_name+'_target.h5' \
-                                              if target is not None else structure_file_name+'.h5'), output)
+        os.makedirs(os.path.join(get_base_dir(), 'data','h5',output_h5_dir), exist_ok=True)
+        
+        save_data_to_hdf5(os.path.join(get_base_dir(), 'data','h5',output_h5_dir, structure_file_name+'_target.h5' \
+                                                if target is not None else structure_file_name+'.h5'), [output])
         return output
 
     except FileNotFoundError as e:

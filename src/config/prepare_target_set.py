@@ -3,7 +3,7 @@ import os
 import glob
 import pandas as pd
 
-from config.config import ConfigData
+from src.config.config import ConfigData
 
 
 def read_target_csv(config:ConfigData):

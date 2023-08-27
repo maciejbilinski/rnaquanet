@@ -35,6 +35,7 @@ class ConfigData:
     features: ConfigDataFeatures
     download_preprocessed: ConfigDataDownloadPreprocessed
     processing_output: ConfigDataPreprocessingOutput
+    production:bool
     def __init__(self, data: dict):
         self.download = ConfigDataDownload(**data['download'])
         self.features = ConfigDataFeatures(**data['features'])

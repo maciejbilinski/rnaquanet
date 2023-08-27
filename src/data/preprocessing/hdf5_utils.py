@@ -1,4 +1,3 @@
-import os
 import torch
 import h5py
 

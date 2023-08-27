@@ -1,8 +1,9 @@
 import glob
 import os
+from rnaquanet import get_base_dir
 
-from config.config import RnaquanetConfig
-from config.custom_types import PathType
+from src.config.config import RnaquanetConfig
+from src.config.custom_types import PathType
 
 class InputsConfig:
     """
@@ -19,16 +20,13 @@ class InputsConfig:
     def __init__(self, config: RnaquanetConfig) -> None:
         __download_subdir = config.data.download.name
 
-        self.ALL_FILES = [InputsConfig.__get_name_from_path(filepath)
-                          for filepath in glob.glob(f'data/{__download_subdir}/archive/**/*.pdb', recursive=True)]
+        self.ALL_FILES = glob.glob(f'{get_base_dir()}/data/{__download_subdir}/archive/**/*.pdb', recursive=True)
         """Contains all files (data/[...]/archive/**/*.pdb)"""
         
-        self.TRAIN_FILES = [InputsConfig.__get_name_from_path(filepath)
-                            for filepath in glob.glob(f'data/{__download_subdir}/archive/train/*.pdb', recursive=True)]
+        self.TRAIN_FILES = glob.glob(f'{get_base_dir()}/data/{__download_subdir}/archive/train/*.pdb', recursive=True)
         """Contains 'train' files (data/[...]/archive/train/*.pdb)"""
         
-        self.TEST_FILES = [InputsConfig.__get_name_from_path(filepath)
-                           for filepath in glob.glob(f'data/{__download_subdir}/archive/test/*.pdb', recursive=True)]
+        self.TEST_FILES = glob.glob(f'{get_base_dir()}/data/{__download_subdir}/archive/test/*.pdb', recursive=True)
         """Contains 'test' files (data/[...]/archive/test/*.pdb)"""
     
 
