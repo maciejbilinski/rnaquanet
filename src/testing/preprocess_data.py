@@ -3,7 +3,7 @@ import os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from data.preprocess_utils import filter_file, extract_features, get_data_lists, save_data_to_hdf5, load_data_from_hdf5
+from src.data.preprocessing.preprocess_utils import filter_file, extract_features, get_data_lists, save_data_to_hdf5, load_data_from_hdf5
 from config.os import change_dir
 from config.config import RnaquanetConfig
 

@@ -16,5 +16,9 @@ data:
   features:
     atom_for_distance_calculations: "C1'"
     max_euclidean_distance: '16.0'
-
+    regenerate_features_when_exists: True
+  preprocessing_output:
+    csv_path: /home/adamczykb/
+  production: False
+    
   

@@ -2,7 +2,8 @@
 data/**
 logs/**
 
-
+checkpoints*/
+lightning_logs*/
 # also keep all .gitkeep files
 !.gitkeep
 

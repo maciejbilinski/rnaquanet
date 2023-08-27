@@ -10,5 +10,5 @@ from data.download_utils import download_preprocessed
 
 if __name__ == '__main__':
     change_dir('../..')
-    config = RnaquanetConfig('config.yml')
+    config = RnaquanetConfig('config_tiny.yml')
     download_preprocessed(config)
