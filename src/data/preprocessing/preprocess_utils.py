@@ -17,7 +17,7 @@ from src.data.preprocessing.pdb_filter import filter_file
 
 
 
-def process_structure(file_path:str, config: RnaquanetConfig,output_h5_dir:str, target:float=None):
+def process_structure(file_path:str, config: RnaquanetConfig, output_h5_dir:str, target:float=None):
     config_c: ConfigData = config.data
 
     filtered_file_path = filter_file(file_path)

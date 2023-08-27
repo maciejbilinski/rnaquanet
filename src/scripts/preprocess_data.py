@@ -20,7 +20,7 @@ parser = argparse.ArgumentParser(
                 )
 parser.add_argument('-d', '--directory', help="Structure store directory, absolute path")
 parser.add_argument('-f', '--pdb-file')
-parser.add_argument('-r', '--redis-support')
+parser.add_argument('-r', '--redis-support',action="store_true")
 
 
 if __name__ == '__main__':
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
      
     if args.redis_support:
-        df = read_target_csv(config)
+        df = read_target_csv(config.data)
         os.makedirs(os.path.join(get_base_dir(), 'data','h5_output'), exist_ok=True)
         tasks=[]
         for structure in InputsConfig(config).TEST_FILES:
@@ -39,7 +39,7 @@ if __name__ == '__main__':
                 (structure,
                  config,
                  'test',
-                 float(df[df['description']==os.path.splitext(os.path.basename(structure))[0]]['target']),
+                 df[df['description']==os.path.splitext(os.path.basename(structure))[0]]['target'],
                  )))
         for structure in InputsConfig(config).TRAIN_FILES:
             tasks.append(Task(
@@ -47,7 +47,7 @@ if __name__ == '__main__':
                 (structure,
                  config,
                 'train',
-                float(df[df['description']==os.path.splitext(os.path.basename(structure))[0]]['target'],)
+                df[df['description']==os.path.splitext(os.path.basename(structure))[0]]['target'],
                 )))
 
         processing_structure_and_store_h5=TaskLevel(tasks)
