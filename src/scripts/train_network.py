@@ -15,7 +15,7 @@ from network.network import GraphQA
 
 if __name__ == '__main__':
     change_dir('../..')
-    config = RnaquanetConfig('config.yml')
+    config = RnaquanetConfig('config_tiny.yml')
     
     test = load_data_from_hdf5(config, 'test')
     model = GraphQA(conf=OmegaConf.create({

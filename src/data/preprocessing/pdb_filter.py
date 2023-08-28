@@ -21,7 +21,6 @@ def filter_file(file_path: PathType) -> str:
     filtered_path = os.path.join(data_path, 'preprocessing', 'filtered')
     os.makedirs(filtered_path, exist_ok=True)
 
-    print('Filtering PDB files...') 
 
     if not os.path.exists(file_path):
         raise Exception(f'Cannot filter file from {file_path}: file does not exist. Perhaps you tried filtering before downloading?')
@@ -52,7 +51,6 @@ def filter_files(pdb_filepaths: list[PathType]) -> None:
     """
 
 
-    print('Filtering PDB files...') 
     # For each input file   
     for filename in tqdm(pdb_filepaths, unit='f'):
         filter_file(filename)

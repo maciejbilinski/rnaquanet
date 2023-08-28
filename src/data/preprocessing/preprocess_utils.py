@@ -15,9 +15,28 @@ from src.data.preprocessing.extract_features import extract_features_files
 from src.data.preprocessing.hdf5_utils import save_data_to_hdf5
 from src.data.preprocessing.pdb_filter import filter_file
 
-
+def process_structure_f(params: tuple[str, ConfigData, str, float]):
+    """
+    Launches process_structure.
+    """
+    file_path, config, output_h5_dir, target = params
+    process_structure(file_path, config, output_h5_dir, target)
 
 def process_structure(file_path:str, config: RnaquanetConfig, output_h5_dir:str, target:float=None):
+    """
+    Full structure processing pipeline
+
+    Args:
+    - file_path - PDB file path absolute
+    - config - rnaquanet YML config file
+    - output_h5_dir - directory name to store .h5 results
+    - target - optional parameter for y value
+
+    Returns:
+    - None
+
+    Raises exception if any of the files in 'pdb_filepaths' does not exist.
+    """
     config_c: ConfigData = config.data
 
     filtered_file_path = filter_file(file_path)
@@ -48,9 +67,9 @@ def process_structure(file_path:str, config: RnaquanetConfig, output_h5_dir:str,
         edge_index, edge_attr = get_edges(features_file_path, config_c)
 
         output=Data(x, edge_index, edge_attr, y=target)
-        os.makedirs(os.path.join(get_base_dir(), 'data','h5',output_h5_dir), exist_ok=True)
+        os.makedirs(os.path.join(get_base_dir(), 'data','h5',config.data.download.name,output_h5_dir), exist_ok=True)
         
-        save_data_to_hdf5(os.path.join(get_base_dir(), 'data','h5',output_h5_dir, structure_file_name+'_target.h5' \
+        save_data_to_hdf5(os.path.join(get_base_dir(), 'data','h5',config.data.download.name, output_h5_dir, structure_file_name+'_target.h5' \
                                                 if target is not None else structure_file_name+'.h5'), [output])
         return output
 
