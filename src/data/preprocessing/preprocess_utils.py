@@ -33,9 +33,9 @@ def process_structure(file_path:str, config: RnaquanetConfig, output_h5_dir:str,
     - target - optional parameter for y value
 
     Returns:
-    - None
+    - torch_geometric.data.Data result
 
-    Raises exception if any of the files in 'pdb_filepaths' does not exist.
+    Raises exception if any of the files in 'features_file_path' does not exist.
     """
     config_c: ConfigData = config.data
 

@@ -32,9 +32,8 @@ def concat_hdf5_files(file_path: str, files_to_concat_path: list[str]) -> None:
     Save a list of Data objects to an HDF5 file.
 
     Args:
-    - config - rnaquanet YML config file
-    - filename - name of the HDF5 file to be saved
-    - data_list - list of Data objects to be saved
+    - file_path - .h5 output file
+    - files_to_concat_path - [regex] files path to concat
 
     Returns:
     - None
