@@ -67,9 +67,9 @@ def process_structure(file_path:str, config: RnaquanetConfig, output_h5_dir:str,
         edge_index, edge_attr = get_edges(features_file_path, config_c)
 
         output=Data(x, edge_index, edge_attr, y=target)
-        os.makedirs(os.path.join(get_base_dir(), 'data','h5',config.data.download.name,output_h5_dir), exist_ok=True)
+        os.makedirs(output_h5_dir, exist_ok=True)
         
-        save_data_to_hdf5(os.path.join(get_base_dir(), 'data','h5',config.data.download.name, output_h5_dir, structure_file_name+'_target.h5' \
+        save_data_to_hdf5(os.path.join(output_h5_dir, structure_file_name+'_target.h5' \
                                                 if target is not None else structure_file_name+'.h5'), [output])
         return output
 

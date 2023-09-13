@@ -28,6 +28,7 @@ class ConfigDataFeatures:
 @dataclass
 class ConfigDataPreprocessingOutput:
     csv_path: str
+    h5_output: str
 
 @dataclass
 class ConfigData:
