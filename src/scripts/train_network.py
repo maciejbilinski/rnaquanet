@@ -9,13 +9,13 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from config.config import RnaquanetConfig
 from config.os import change_dir
-from data.preprocess_utils import load_data_from_hdf5
+from src.data.preprocessing.preprocess_utils import load_data_from_hdf5
 from network.network import GraphQA
 
 
 if __name__ == '__main__':
     change_dir('../..')
-    config = RnaquanetConfig('config.yml')
+    config = RnaquanetConfig('config_tiny.yml')
     
     test = load_data_from_hdf5(config, 'test')
     model = GraphQA(conf=OmegaConf.create({
