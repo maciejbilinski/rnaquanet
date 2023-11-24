@@ -6,7 +6,16 @@ from tqdm import tqdm
 
 from config.config import ConfigData, RnaquanetConfig
 
-def download_archive(config: RnaquanetConfig):
+def download_archive(config: RnaquanetConfig) -> None:
+    """
+    Downloads raw ARES dataset.
+
+    Args:
+    - config - rnaquanet YML config file
+
+    Returns:
+    - None
+    """
     config = config.data.download
     path = os.path.join('data', config.name)
     if os.path.exists(path):
@@ -16,6 +25,7 @@ def download_archive(config: RnaquanetConfig):
     response = requests.get(config.url, stream=True)
     total_size = int(response.headers.get('content-length', 0))
     block_size = 1024  # 1 Kibibyte
+    print('Downloading raw ARES dataset...')
     progress_bar = tqdm(total=total_size, unit='iB', unit_scale=True)
     with open(os.path.join(path, f'archive.{config.archive_ext}'), 'wb') as file:
         for data in response.iter_content(block_size):
@@ -23,7 +33,22 @@ def download_archive(config: RnaquanetConfig):
             file.write(data)
     progress_bar.close()
 
-def extract_archive(config: RnaquanetConfig):
+
+def extract_archive(config: RnaquanetConfig) -> None:
+    """
+    Extracts downloaded raw ARES dataset.
+
+    Args:
+    - config - rnaquanet YML config file
+
+    Returns:
+    - None
+
+    Exceptions:
+    - if archive extension format is not supported
+    - if there's no archive to extract
+    """
+    print('Extracting downloaded archive...')
     config = config.data.download
     path = os.path.join('data', config.name)
     if os.path.exists(path):
@@ -43,13 +68,24 @@ def extract_archive(config: RnaquanetConfig):
                         os.rename(os.path.join(tmp, config.train_folder), train_path)
                         os.rename(os.path.join(tmp, config.test_folder), test_path)
                         shutil.rmtree(tmp)
+                        print('Finished extracting!')
                         return
                     # else other extensions
                 else:
                     raise Exception(f'{config.archive_ext} format is not supported')
     raise Exception(f'Downloaded archive cannot be extracted. Call download_archive function first')
 
-def download_preprocessed(config: RnaquanetConfig):
+
+def download_preprocessed(config: RnaquanetConfig) -> None:
+    """
+    Downloads preprocessed h5 train and test files.
+
+    Args:
+    - config - rnaquanet YML config file
+
+    Returns:
+    - None
+    """
     config: ConfigData = config.data
     path = os.path.join('data', config.download.name)
     if os.path.exists(path):
@@ -60,11 +96,10 @@ def download_preprocessed(config: RnaquanetConfig):
         response = requests.get(url, stream=True)
         total_size = int(response.headers.get('content-length', 0))
         block_size = 1024  # 1 Kibibyte
+        print('Downloading preprocessed h5 train and test files...')
         progress_bar = tqdm(total=total_size, unit='iB', unit_scale=True)
         with open(os.path.join(path, name), 'wb') as file:
             for data in response.iter_content(block_size):
                 progress_bar.update(len(data))
                 file.write(data)
         progress_bar.close()
-
-

@@ -1,6 +1,6 @@
 data:
   download:
-    name: 'ares' # nazwa zbioru danych
+    name: 'testing' # nazwa zbioru danych
     url: 'https://dl.dropboxusercontent.com/s/r4hgjs4xgmkmaxj/classics_train_val.tar?dl=0' # adres do pobrania zbioru danych
     archive_ext: 'tar' # rodzaj archiwum: tar/zip/rar itd.
     test_folder: 'classics_train_val/example_val' # ścieżka do folderu wewnątrz archiwum ze zbiorem testowym
@@ -11,35 +11,14 @@ data:
     csv_structure_column_name: 'description' # nazwa kolumny w pliku CSV z nazwą plików której dotyczy RMSD
     structure_column_ext: '.pdb' # rozszerzenie pliku stosowane w csv_structure_column_name
   download_preprocessed:
-    train_url: https://www.dropbox.com/scl/fi/lbeqq01gh4v76i4570zbf/train.h5?rlkey=s54z7tfqx4tmkkztiy3y8oe69&dl=1 # adres do pobrania pliku H5 ze zbiorem treningowym
-    test_url: https://www.dropbox.com/scl/fi/yciptkwgt9yhzqjawfj84/test.h5?rlkey=4x3v3dkcyj530bfw16wyilg2a&dl=1 # adres do pobrania pliku H5 ze zbiorem testowym
+    train_url: 'https://www.dropbox.com/scl/fi/lbeqq01gh4v76i4570zbf/train.h5?rlkey=s54z7tfqx4tmkkztiy3y8oe69&dl=1' # adres do pobrania pliku H5 ze zbiorem treningowym
+    test_url: 'https://www.dropbox.com/scl/fi/yciptkwgt9yhzqjawfj84/test.h5?rlkey=4x3v3dkcyj530bfw16wyilg2a&dl=1' # adres do pobrania pliku H5 ze zbiorem testowym
   features:
     atom_for_distance_calculations: "C1'"
-    max_euclidean_distance: 16.0
-network:    regenerate_features_when_exists: True
+    max_euclidean_distance: '16.0'
+    regenerate_features_when_exists: True
   preprocessing_output:
     csv_path: data/output/
     h5_output: data/h5
   production: False
-    
-  encoder:
-    dropout: 0.5
-    batch_norm: True
-    in_edge_feats: 2
-    out_edge_feats: 32
-    in_node_feats: 96
-    out_node_feats: 128
-  message_passing: 
-    layers: 6
-    dropout: 0.2
-    batch_norm: True
-    scatter: mean
-    out_edge_feats: 16
-    out_node_feats: 64
-    in_global_feats: 128
-    out_global_feats: 32
-    layer_sizes_func: layer_sizes_exp2 # layer_sizes_linear
-  readout:
-    layers: 3
-    out_feats: 32
-    layer_sizes_func: layer_sizes_exp2 # layer_sizes_linear
+  

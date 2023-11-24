@@ -7,7 +7,20 @@ Projekt składania się (póki co) z czterech pipeline'ów: `download_raw_data`,
 Aby pobrać dane należy odpowiednio skonfigurować plik `config.yaml`, a następnie wywołać skrypt `python src/scripts/download_data.py`. Następnie dane należy poddać czasochłonnemu preprocessingowi. Alternatywnie można skorzystać z `python src/scripts/download_preprocessed_data.py` i **pominąć** preprocessing.
 
 ### Preprocessing
-Aby wykonać preprocessing należy najpierw pobrć dane skryptem `python src/scripts/download_data.py`, a następnie odaplić bardzo czasochłonny skrypt `python src/scripts/preprocess_data.py`. Plikami wynikowymi są pliki H5, które są proste do odczytania i teoretycznie optymalne nawet do losowego odczytywania.
+Aby wykonać preprocessing dla określonego zbioru danych pobranego/przygotowanego znajdującego się w katalogu określonym przez config należy odpalić skrypt `python src/scripts/preprocess_data.py`. Jeżeli chcemy przetworzyć jedna lub więcej struktur nie dzieląc zbiorów na treningowy i testowy należy config.data.production ustawic na 'True' i następnie wywolać skrypt z podanymi parametrami:
+
+```bash
+options:
+  -h, --help            show this help message and exit
+  -d DIRECTORY, --directory DIRECTORY
+                        Structure source directory 
+  -f PDB_FILE, --pdb-file PDB_FILE
+                        PDB file to preprocess
+  -o OUTPUT_DIRECTORY, --output-directory OUTPUT_DIRECTORY
+                        Output preprocessing directory 
+
+```
+Plikami wynikowymi są pliki H5, które są proste do odczytania i teoretycznie optymalne nawet do losowego odczytywania.
 
 ### Trenowanie sieci neuronowej
 Trening sieci neuronowej jest w fazie rozwoju. Przygotowana jest architektura GraphQA pod RNA poprzez uproszczenie architektury (usunięcie embeddingów) i zmianę wyjścia tak, żeby zwracała tylko jedną liczbę rzeczywistą.
