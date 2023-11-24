@@ -31,4 +31,3 @@ RUN python -m pip install -r requirements.txt
 RUN mkdir -p /opt/rnaquanet/logs/
 
 RUN bash
-# ENTRYPOINT ["sh","/app/docker-entrypoint.sh"]
