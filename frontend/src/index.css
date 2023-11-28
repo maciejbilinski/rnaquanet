@@ -15,7 +15,11 @@ body {
 
 label {
   width: 100%;
-  max-width: 480px;
+  height: 100%;
   display: flex;
   justify-content: center;
+}
+
+* {
+  box-sizing: border-box;
 }

@@ -14,8 +14,20 @@ function App() {
     createTheme({
       palette: {
         mode: colorMode,
+        background: {
+          paper: colorMode === "light" ? "#ebebeb" : undefined
+        },
         primary: {
           main: "#d26415",
+        },
+      },
+      breakpoints: {
+        values: {
+          xs: 0,
+          sm: 600,
+          md: 900,
+          lg: 1200,
+          xl: 1536,
         },
       },
     })
@@ -35,8 +47,9 @@ function App() {
           display: "flex",
           flexDirection: "column",
           width: "100%",
-          maxWidth: 960,
+          maxWidth: 900,
           gap: 1,
+          my: 1,
         }}>
           <Navbar colorMode={colorMode} setColorMode={setColorMode} />
           <Main />

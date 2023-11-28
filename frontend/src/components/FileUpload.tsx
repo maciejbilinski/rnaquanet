@@ -1,20 +1,28 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { FileUploader } from "react-drag-drop-files";
 import UploadFileIcon from '@mui/icons-material/UploadFile';
-import { MAX_UPLOAD_FILE_SIZE, MIN_UPLOAD_FILE_SIZE, UPLOAD_FILE_TYPES } from "../constants/config";
 
-const FileUpload = () => {
+import { MAX_UPLOAD_FILE_SIZE, MIN_UPLOAD_FILE_SIZE, UPLOAD_FILE_TYPES } from "../../config";
+
+interface FileUploadProps {
+  setFiles: Dispatch<SetStateAction<File[]>>;
+}
+
+const FileUpload = ({ setFiles }: FileUploadProps) => {
   const [error, setError] = useState<"type" | "size" | null>(null);
 
   return (
     <FileUploader
-      handleChange={(file: FileList) => console.log(file)} types={UPLOAD_FILE_TYPES}
+      handleChange={(newFiles: FileList) => (
+        setFiles((old) => [
+          ...old,
+          ...Array.from(newFiles)
+        ])
+      )}
+      types={UPLOAD_FILE_TYPES}
       dropMessageStyle={{
-        width: "100%",
-        maxWidth: 480,
         opacity: 0.85,
-        right: 0,
       }}
       minSize={MIN_UPLOAD_FILE_SIZE}
       maxSize={MAX_UPLOAD_FILE_SIZE}
@@ -28,13 +36,13 @@ const FileUpload = () => {
           alignItems: "center",
           width: "100%",
           bgcolor: error ? "#ff000033" : undefined,
-          borderWidth: 2,
+          border: "2px dashed",
           borderColor: theme.palette.primary.main,
-          borderStyle: "dashed",
           borderRadius: 2,
           cursor: "pointer",
-          p: 1.5,
+          px: 2,
           gap: 1,
+          overflow: "hidden",
         })}>
           <UploadFileIcon sx={(theme) => ({
             color: theme.palette.primary.main,
@@ -50,7 +58,7 @@ const FileUpload = () => {
               {error === "type" ? (
                 <span>Invalid file type!</span>
               ) : (error === "size") ? (
-                <span>Files are too large!</span>
+                <span>File too large!</span>
               ) : (
                 <span>
                   <u>Drop</u> your files here<br />
