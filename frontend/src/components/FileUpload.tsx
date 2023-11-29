@@ -40,7 +40,7 @@ const FileUpload = ({ setFiles }: FileUploadProps) => {
           borderColor: theme.palette.primary.main,
           borderRadius: 2,
           cursor: "pointer",
-          px: 2,
+          px: 5,
           gap: 1,
           overflow: "hidden",
         })}>

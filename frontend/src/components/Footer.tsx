@@ -1,10 +1,9 @@
 import { Card, Link } from "@mui/material";
 
-import { repositoryLink } from "../constants/creators";
+import { repositoryLink } from "../../config";
 import { styles } from "../utils/styles";
 
 const Footer = () => {
-
   return (
     <Card sx={{
       ...styles.mainCard,

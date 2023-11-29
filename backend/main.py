@@ -1,47 +1,48 @@
 from flask import Flask, abort, request, jsonify
 from flask_cors import CORS
-import random
-import string
-import os
+
+from scripts.generate_url import generate_task_id
+from scripts.process_files import process_files
+
 
 app = Flask(__name__)
 CORS(app)
 
 # dictionary storing 
-urls: dict[str, dict[str, any]] = {}
+tasks: dict[str, dict[str, any]] = {}
 
-def generate_task_id():
-    return "".join(random.choices(string.ascii_letters + string.digits, k=24))
 
 @app.route("/get_rmsd", methods=["GET", "POST"])
 def execute_command():
-    data = request.json
-    url_path = generate_task_id()
+    files = request.files
+    print(request.files)
+    print(files.getlist("file_0"))
+    task_id = generate_task_id()
 
-    # Store the task in the dictionary
-    urls[url_path] = {
-        "files": data["files"],
+    # store the generated url
+    tasks[task_id] = {
+        "files": files,
         "status": "PENDING"
     }
 
-    # Construct the server command (modify this based on your needs)
-    # command = f"your_server_command {' '.join(data['files'])}"
+    # process files
+    process_files(files)
 
-    # Execute the server command asynchronously (modify as needed)
-    # os.system(command + " &")
-
+    # return url
     return jsonify({
-        "url_path": url_path
-    }), 200
+        "task_id": task_id
+    })
+
 
 @app.route("/check_rmsd/<url_path>", methods=["GET"])
 def check_status(url_path: str):
-    if url_path in urls:
+    if url_path in tasks:
         return jsonify({
-            "status": urls[url_path]["status"]
+            "status": tasks[url_path]["status"]
         })
     else:
         return abort(404)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run(debug=True)

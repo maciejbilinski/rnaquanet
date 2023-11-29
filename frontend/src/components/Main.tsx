@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Button, Card } from "@mui/material";
+import { Box, Button, Card, Link, Typography } from "@mui/material";
 
 import { styles } from "../utils/styles";
 import FileUpload from "./FileUpload";
@@ -8,7 +8,9 @@ import { API_ADDRESS } from "../../config";
 
 const Main = () => {
   const [files, setFiles] = useState<File[]>([]);
-  const [awaitingResponse, setAwaitingResponse] = useState<boolean>(false);
+  const [response, setResponse] = useState<StateResponse>({
+    waiting: false,
+  });
 
   return (
     <Card sx={{
@@ -28,31 +30,53 @@ const Main = () => {
 
       <Button
         onClick={async () => {
-          setAwaitingResponse(true);
+          setFiles([]);
+          setResponse({ waiting: true });
 
+          // convert file array to FormData
           const formData = new FormData();
           files.forEach((file, i) => formData.append(`file_${i}`, file));
 
-          console.log(formData.entries.length)
-
-          const response = await fetch(`${API_ADDRESS}/get_rmsd`, {
+          const res = await fetch(`${API_ADDRESS}get_rmsd`, {
             method: "POST",
-            body: JSON.stringify({ files: formData }),
-            headers: {
-              "Content-Type": "application/json",
-            },
+            body: formData,
           });
 
-          const data = await response.json();
-          console.log(data)
+          // if the API responded correctly, parse received data
+          let json: ResponseGetRmsd = {};
+          if (res.status === 200) {
+            json = await res.json();
+          }
 
-          setAwaitingResponse(false);
+          setResponse({
+            waiting: true,
+            task_id: json.task_id,
+            task_url: json.task_id && `${window.location.origin}/${json.task_id}`,
+            status: res.status,
+          });
         }}
         variant="contained"
         disabled={!files.length}
       >
         Upload files
       </Button>
+
+      {(response.task_url) && (
+        <Box sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}>
+          <Typography sx={{
+            textAlign: "center",
+          }}>
+            Your files are being processed. Visit this link later to check the results.
+          </Typography>
+          <Link href={response.task_url}>
+            {response.task_url}
+          </Link>
+        </Box>
+      )}
     </Card>
   );
 };
