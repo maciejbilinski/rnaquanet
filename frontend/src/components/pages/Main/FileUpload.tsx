@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { FileUploader } from "react-drag-drop-files";
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 
-import { MAX_UPLOAD_FILE_SIZE, MIN_UPLOAD_FILE_SIZE, UPLOAD_FILE_TYPES } from "../../config";
+import { MAX_UPLOAD_FILE_SIZE, MIN_UPLOAD_FILE_SIZE, UPLOAD_FILE_TYPES } from "../../../../config";
 
 interface FileUploadProps {
   setFiles: Dispatch<SetStateAction<File[]>>;

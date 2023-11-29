@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { Box, Button, Card, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
@@ -33,9 +34,20 @@ const Navbar = ({
         display: "flex",
         justifyContent: "center",
       }}>
-        <Typography variant="h4" sx={{ fontFamily: "initial" }}>
-          {projectName}
-        </Typography>
+        <Link to={location.origin} 
+          style={{
+            color: "inherit",
+            textDecoration: "none"
+          }}
+        >
+          <Typography variant="h4"
+            sx={{
+              fontFamily: "initial",
+            }}
+          >
+            {projectName}
+          </Typography>
+        </Link>
       </Box>
 
       {/* theme toggle button */}

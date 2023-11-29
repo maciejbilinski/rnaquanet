@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import { Box, IconButton, Typography } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { styles } from "../utils/styles";
+import { styles } from "../../../utils/styles";
 
 interface FileListProps {
   files: File[];

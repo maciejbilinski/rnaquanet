@@ -4,12 +4,13 @@ import { useLocalStorage } from "usehooks-ts";
 import { Box } from "@mui/material";
 
 import Navbar from "./components/Navbar";
-import Main from "./components/Main";
+import Main from "./components/pages/Main/Main";
 import Footer from "./components/Footer";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { projectName } from "../config";
+import CheckRmsd from "./components/pages/CheckStatus/CheckRmsd";
 
-function App() {
+const App = () => {
   const [colorMode, setColorMode] = useLocalStorage<"light" | "dark">("ColorMode", "dark");
 
   useEffect(() => {
@@ -59,13 +60,18 @@ function App() {
             my: 1,
           }}>
             <Navbar colorMode={colorMode} setColorMode={setColorMode} />
-            <Main />
+
+            <Routes>
+              <Route path="*" element={<CheckRmsd />} />
+              <Route path="/" element={<Main />} />
+            </Routes>
+
             <Footer />
           </Box>
         </Box>
       </ThemeProvider>
     </BrowserRouter>
-  )
+  );
 }
 
 export default App
