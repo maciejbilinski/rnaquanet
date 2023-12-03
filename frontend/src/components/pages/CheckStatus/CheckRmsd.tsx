@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { Box, Card, CircularProgress, Typography } from "@mui/material";
 
 import { API_ADDRESS, REQUEST_RETRY_DELAY } from "../../../../config";
+import { styles } from "../../../utils/styles";
 
 const CheckRmsd = () => {
   const [response, setResponse] = useState<ICheckRmsd>({});
@@ -37,7 +38,6 @@ const CheckRmsd = () => {
   };
 
   const getMessage = () => {
-    // if (response.) return <CircularProgress size="1.5rem" />;
     switch (response.reqStatus) {
       case 500:
         return "Server is not responding, please try again later.";
@@ -46,11 +46,17 @@ const CheckRmsd = () => {
       case 200:
         switch (response.status) {
           case "PENDING":
-            return "Your resources are still being processed. The page will automatically refresh when the results are ready.";
+            return (<>
+              <Box>
+                <Typography>Your files are being processed.</Typography>
+                <Typography>The page will automatically refresh when the results are ready.</Typography>
+              </Box>
+              <CircularProgress size="1.5rem" />
+            </>);
           case "DONE":
-            return "Your resouces have been succesfully processed.";
+            return "Your files have been succesfully processed.";
           case "ERROR":
-            return "There was an error when processing your files. This is most likely due to them not being valid.";
+            return "There was an error when processing your files. This is most likely due to them being invalid.";
           default:
             return "Unknown error.";
         }
@@ -64,8 +70,18 @@ const CheckRmsd = () => {
   }, []);
 
   return (
-    <Box>
-      <Typography>{getMessage()}</Typography>
+    <Card sx={{
+      ...styles.mainCard,
+      p: 8,
+      gap: 4,
+    }}>
+      <Box sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        textAlign: "center",
+        gap: 2,
+      }}>{getMessage()}</Box>
 
       {response.results && Object.entries(response.results).map(([fileName, result], i) => (
         <Typography key={i}>
@@ -73,7 +89,7 @@ const CheckRmsd = () => {
         </Typography>
       ))}
 
-    </Box>
+    </Card>
   );
 };
 

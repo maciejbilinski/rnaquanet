@@ -22,6 +22,7 @@ const Navbar = ({
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
+      py: 2,
     }}>
       {/* filler box */}
       <Box sx={{

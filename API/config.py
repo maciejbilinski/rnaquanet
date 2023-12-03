@@ -10,3 +10,5 @@ STATUS_FILE = "status.json"
 # name of the directory user's files will be saved in
 FILES_DIR = "files"
 
+# how long should the randomly generated `task id` be
+TASK_ID_LENGTH = 12

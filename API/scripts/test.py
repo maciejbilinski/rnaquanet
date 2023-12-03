@@ -7,7 +7,7 @@ from config import FILES_DIR, STORAGE_DIR, STATUS_FILE
 
 
 def test(task_id):
-    sleep(10)
+    sleep(15)
     
     dir_path = os.path.join(STORAGE_DIR, task_id)
     file_names = os.listdir(os.path.join(dir_path, FILES_DIR))

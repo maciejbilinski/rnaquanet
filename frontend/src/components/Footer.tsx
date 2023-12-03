@@ -8,6 +8,7 @@ const Footer = () => {
     <Card sx={{
       ...styles.mainCard,
       alignItems: "center",
+      py: 2
     }}>
       <Link href={repositoryLink} target="_blank">
         Source code

@@ -12,13 +12,13 @@ const Main = () => {
   return (
     <Card sx={{
       ...styles.mainCard,
-      py: 4,
-      gap: 2,
+      py: 8,
+      gap: 4,
     }}>
       <Box sx={{
         display: "flex",
         flexDirection: { xs: "column", md: "row" },
-        height: { xs: 280, md: 140 },
+        height: { xs: 300, md: 200 },
         gap: 2,
       }}>
         <FileListDisplay files={files} setFiles={setFiles} />

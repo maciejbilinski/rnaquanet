@@ -2,7 +2,7 @@ import os
 from flask import Flask, abort, request, jsonify, json
 from flask_cors import CORS
 
-from scripts.generate_url import generate_task_id
+from scripts.generate_task_id import generate_task_id
 from scripts.process_files import process_files
 from config import DEBUG_MODE, STORAGE_DIR, STATUS_FILE
 
