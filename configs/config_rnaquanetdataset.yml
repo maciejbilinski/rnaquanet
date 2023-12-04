@@ -22,7 +22,7 @@ data:
   features:
     atom_for_distance_calculations: "C1'"
     max_euclidean_distance: '16.0'
-    regenerate_features_when_exists: True # jeżeli True to w przypadku gdy istnieją już pliki z feature extraction to je usuwa i tworzy od nowa
+    regenerate_features_when_exists: True
 network:
   model_output_path: '/app/models'
   hidden_dim: 128
@@ -40,4 +40,4 @@ network:
   shuffle_train: True
   shuffle_val: False
   shuffle_test: False
-  max_epochs: 5
+  max_epochs: 50

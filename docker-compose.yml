@@ -8,11 +8,10 @@ services:
       dockerfile: Dockerfile
     image: python_cuda:1.0
     volumes:
-      - python_cuda_volume:/app
       - .:/app
-      - ./logs:/opt/rnaquanet/logs/
     stdin_open: true 
     tty: true
+    ipc: host
     deploy:
       resources:
         reservations:
@@ -25,7 +24,3 @@ services:
 networks:
   net:
     driver: bridge
-
-volumes:
-  redis:
-  python_cuda_volume:
