@@ -2,7 +2,7 @@ rq==1.15.1
 tqdm~=4.65.0
 pyyaml==6.0.1
 requests==2.31.0
-RNApolis==0.0.16
+RNApolis==0.1.4
 biopython==1.81
 pandas==2.0.3
 h5py==3.9.0

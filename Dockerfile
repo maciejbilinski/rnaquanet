@@ -5,7 +5,7 @@ RUN ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONT
 RUN apt-get update  
 RUN apt-get upgrade -y 
 RUN apt install -y tzdata wget build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev \
-        libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev software-properties-common openjdk-8-jdk supervisor
+        libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev software-properties-common openjdk-8-jdk
 RUN add-apt-repository -y ppa:deadsnakes/ppa 
 RUN apt-get -y install python3.11 
 RUN ln -sf /usr/bin/python3.11 /usr/bin/python 
@@ -28,7 +28,6 @@ WORKDIR /app
 
 RUN python -m pip install -r requirements.txt
 
-COPY supervisor.conf /etc/supervisor/conf.d/supervisord.conf
 RUN mkdir -p /opt/rnaquanet/logs/
 
-ENTRYPOINT ["sh","/app/docker-entrypoint.sh"]
+RUN bash

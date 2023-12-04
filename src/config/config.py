@@ -12,7 +12,7 @@ class ConfigDataDownload:
     rmsd_csv_delimiter: str
     rmsd_column_name: str
     csv_structure_column_name: str
-    structure_colume_ext: str
+    structure_column_ext: str
 
 @dataclass
 class ConfigDataDownloadPreprocessed:
@@ -23,17 +23,26 @@ class ConfigDataDownloadPreprocessed:
 class ConfigDataFeatures:
     atom_for_distance_calculations: str
     max_euclidean_distance: str
+    regenerate_features_when_exists: bool
+
+@dataclass
+class ConfigDataPreprocessingOutput:
+    csv_path: str
+    h5_output: str
 
 @dataclass
 class ConfigData:
     download: ConfigDataDownload
     features: ConfigDataFeatures
     download_preprocessed: ConfigDataDownloadPreprocessed
-
+    processing_output: ConfigDataPreprocessingOutput
+    production:bool
     def __init__(self, data: dict):
         self.download = ConfigDataDownload(**data['download'])
         self.features = ConfigDataFeatures(**data['features'])
         self.download_preprocessed = ConfigDataDownloadPreprocessed(**data['download_preprocessed'])
+        self.processing_output = ConfigDataPreprocessingOutput(**data['preprocessing_output'])
+        self.production = data['production']
 
 @dataclass
 class ConfigNetworkEncoder:
@@ -76,12 +85,13 @@ class ConfigNetwork:
 class RnaquanetConfig:
     data: ConfigData
     network: ConfigNetwork
-
-    def __init__(self, path: str):
+    redis_accelerate: bool
+    def __init__(self, path: str,redis_accelerate:bool=False):
         with open(path, "r") as stream:
             try:
                 result = yaml.safe_load(stream)
                 self.data = ConfigData(result['data'])
+                self.redis_accelerate = redis_accelerate 
                 self.network = ConfigNetwork(result['network'])
             except yaml.YAMLError as exc:
                 e = Exception(exc)

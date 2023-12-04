@@ -20,8 +20,9 @@ if __name__ == '__main__':
 
     torch.set_float32_matmul_precision('high')
     
-    model = RnaQALightning()
-    data = AresDataModule(config, batch_size=2000, num_workers=1)
+
+    model = RnaQALightning(config=config, lr=1e-3)
+    data = AresDataModule(config, batch_size=32, num_workers=0)
     logger = TensorBoardLogger("tb_logs", name="RnaQALightning")
 
     checkpoint_callback = pl.callbacks.ModelCheckpoint(
