@@ -12,6 +12,7 @@ from config.config import RnaquanetConfig
 from config.os import change_dir
 from network.rnaqa_lightning import RnaQALightning
 from data.ares_data_module import AresDataModule
+from lightning.pytorch.loggers import TensorBoardLogger
 
 if __name__ == '__main__':
     change_dir('../..')
@@ -21,6 +22,7 @@ if __name__ == '__main__':
     
     model = RnaQALightning()
     data = AresDataModule(config, batch_size=2000, num_workers=1)
+    logger = TensorBoardLogger("tb_logs", name="RnaQALightning")
 
     checkpoint_callback = pl.callbacks.ModelCheckpoint(
         dirpath=f'checkpoints_{time.time()}',
@@ -38,7 +40,8 @@ if __name__ == '__main__':
     trainer = pl.Trainer(
         max_epochs=100000,
         log_every_n_steps = 1,
-        callbacks=[checkpoint_callback, early_stopping_callback]
+        callbacks=[checkpoint_callback, early_stopping_callback],
+        logger=logger
     )
 
     trainer.fit(model, data)
