@@ -9,7 +9,6 @@ services:
     image: python_cuda:1.0
     volumes:
       - .:/app
-      - ./logs:/opt/rnaquanet/logs/
     stdin_open: true 
     tty: true
     ipc: host
