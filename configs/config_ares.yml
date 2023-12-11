@@ -4,7 +4,7 @@ verbose: True
 data:
   path: '/app/data' # ścieżka do folderu gdzie mają być zapisywane dane
   download:
-    url: '' # adres do pobrania zbioru danych
+    url: 'https://www.dropbox.com/scl/fi/oze5qkzya4kgjnn1rugqt/ares1.tar.gz?rlkey=8si0eai4rbbzujbwsmhhz7raj&dl=1' # adres do pobrania zbioru danych
     archive_ext: 'tar.gz' # rodzaj archiwum: tar/tar.gz
     train_folder: 'train' # ścieżka do folderu wewnątrz archiwum ze zbiorem treningowym
     val_folder: 'val' # ścieżka do folderu wewnątrz archiwum ze zbiorem walidacyjnym
@@ -16,9 +16,9 @@ data:
     csv_rmsd_column_name: 'new_rms' # nazwa kolumny w pliku CSV z wartością RMSD
     csv_structure_column_name: 'description' # nazwa kolumny w pliku CSV z nazwą plików której dotyczy RMSD
   download_preprocessed:
-    train_url: '' # adres do pobrania pliku H5 ze zbiorem treningowym
-    val_url: '' # adres do pobrania pliku H5 ze zbiorem walidacyjnym
-    test_url: '' # adres do pobrania pliku H5 ze zbiorem testowym
+    train_url: 'https://www.dropbox.com/scl/fi/lbeqq01gh4v76i4570zbf/train.h5?rlkey=s54z7tfqx4tmkkztiy3y8oe69&dl=1' # adres do pobrania pliku H5 ze zbiorem treningowym
+    val_url: 'https://www.dropbox.com/scl/fi/ag3vdihn9h61r3ukxhbj9/val.h5?rlkey=seno9zolunfpd8jko6e5dqidg&dl=1' # adres do pobrania pliku H5 ze zbiorem walidacyjnym
+    test_url: 'https://www.dropbox.com/scl/fi/yciptkwgt9yhzqjawfj84/test.h5?rlkey=4x3v3dkcyj530bfw16wyilg2a&dl=1' # adres do pobrania pliku H5 ze zbiorem testowym
   features:
     atom_for_distance_calculations: "C1'"
     max_euclidean_distance: '16.0'
