@@ -115,7 +115,9 @@ def process_structures(config: RnaquanetConfig):
                                     df["description"] == os.path.splitext(os.path.basename(structure))[0]
                                 ]["target"].item(),
                             ]
-                            for structure in files
+                            for structure in files if len(df[
+                                df["description"] == os.path.splitext(os.path.basename(structure))[0]
+                            ]["target"]) == 1
                         ],
                     )
                 ),
