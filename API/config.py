@@ -1,4 +1,4 @@
-DEBUG_MODE: bool = True
+DEBUG_MODE = True
 
 # path to where the data received from frontend will be saved
 # relative to `{project}/API`
@@ -12,3 +12,10 @@ FILES_DIR = "files"
 
 # how long should the randomly generated `task id` be
 TASK_ID_LENGTH = 12
+
+SWAGGER_TEMPLATE = {
+    "info": {
+        "title": "RNAQuANet API",
+        "version": 0.1,
+    }
+}

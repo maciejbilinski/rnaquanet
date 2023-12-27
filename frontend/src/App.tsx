@@ -25,7 +25,7 @@ const App = () => {
           paper: colorMode === "light" ? "#ebebeb" : undefined
         },
         primary: {
-          main: "#d26415",
+          main: "#3ca93c",
         },
       },
       breakpoints: {
