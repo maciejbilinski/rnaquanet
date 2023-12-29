@@ -9,6 +9,7 @@ from torch.nn import (
 import torch.nn.functional as F
 from torch_geometric.nn import (
     GATConv,
+    TransformerConv,
     GCNConv,
     global_mean_pool
 )
@@ -20,7 +21,8 @@ from rnaquanet.utils.rnaquanet_config import RnaquanetConfig
 class GRNLayerType(Enum):
     GCN = 1,
     GAT = 2,
-    GCN_GAT = 3
+    GCN_GAT = 3,
+    GAT_TRANSFORMER = 4
 
 class GraphRegressionNetwork(pl.LightningModule):
     def _get_layers_sizes(self, N, A, B):
@@ -46,6 +48,7 @@ class GraphRegressionNetwork(pl.LightningModule):
         num_of_node_features = config.network.num_of_node_features
         batch_norm = config.network.batch_norm
         gat_dropout = config.network.gat_dropout
+        num_of_heads = config.network.num_of_heads
         lr = config.network.lr
         weight_decay = config.network.weight_decay
         scheduler_step_size = config.network.scheduler_step_size
@@ -66,10 +69,20 @@ class GraphRegressionNetwork(pl.LightningModule):
             batch_norm_list.append(
                 BatchNorm1d(sizes[i]) if batch_norm else Identity()
             )
+
+            match layer_type:
+                case GRNLayerType.GAT:
+                    layer = GATConv(sizes[i], sizes[i+1], dropout=gat_dropout)
+                case GRNLayerType.GCN_GAT:
+                    if i % 2 == 0:
+                        layer = GATConv(sizes[i], sizes[i+1], dropout=gat_dropout)
+                    else:
+                        layer = GCNConv(sizes[i], sizes[i+1]) 
+                case GRNLayerType.GAT_TRANSFORMER:
+                    layer = TransformerConv(sizes[i], sizes[i+1], heads=num_of_heads, dropout=gat_dropout) 
+                
             conv_list.append(
-                GATConv(sizes[i], sizes[i+1], dropout=gat_dropout) 
-                    if layer_type == GRNLayerType.GAT or (layer_type == GRNLayerType.GCN_GAT and i % 2 == 0) 
-                    else GCNConv(sizes[i], sizes[i+1]) 
+                layer
             )
 
         self.batch_norm = ModuleList(batch_norm_list)

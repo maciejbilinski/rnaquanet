@@ -14,7 +14,7 @@ tb_logs*/
 *.iml
 out/
 .idea_modules/
-
+notebooks/tb_logs/
 analysis/**
 
 ### macOS

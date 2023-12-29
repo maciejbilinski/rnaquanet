@@ -47,6 +47,7 @@ class ConfigNetwork:
     model_output_path: str
     hidden_dim: int
     layer_type: int
+    num_of_heads: int
     num_of_layers: int
     num_of_node_features: int
     batch_norm: bool
@@ -66,6 +67,7 @@ class ConfigNetwork:
         self.model_output_path = os.path.join(os.getcwd(), data['model_output_path'])
         self.hidden_dim = data['hidden_dim']
         self.layer_type = data['layer_type']
+        self.num_of_heads = data['num_of_heads']
         self.num_of_layers = data['num_of_layers']
         self.num_of_node_features = data['num_of_node_features']
         self.batch_norm = data['batch_norm']
