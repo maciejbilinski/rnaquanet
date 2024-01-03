@@ -71,9 +71,6 @@ def process_single_structure(params: tuple[str, RnaquanetConfig, float|None]) ->
         e.add_note(f'File {e.filename} was not found. Perhaps you tried returning data list without prior feature extraction?')
         raise
 
-
-    
-
 def process_structures(config: RnaquanetConfig):
     """
     Full structure processing pipeline
@@ -88,15 +85,9 @@ def process_structures(config: RnaquanetConfig):
     - torch_geometric.data.Data result
 
     """
-    ic = InputsConfig(config)
-    for dataset in ['train', 'val', 'test']:
+
+    for dataset in [ 'test', 'val','train']:
         df = read_target_csv(config, dataset)
-        if dataset == 'train':
-            files = ic.TRAIN_FILES
-        elif dataset == 'val':
-            files = ic.VAL_FILES
-        else:
-            files = ic.TEST_FILES
 
         with Pool(mp.cpu_count()) as pool:
             path = os.path.join(config.data.path, config.name, 'h5', dataset)
@@ -109,19 +100,16 @@ def process_structures(config: RnaquanetConfig):
                         process_single_structure,
                         [
                             [
-                                structure,
+                                row["description"],
                                 config,
-                                df[
-                                    df["description"] == os.path.splitext(os.path.basename(structure))[0]
-                                ]["target"].item(),
+                                row["target"],
+                                index
                             ]
-                            for structure in files if len(df[
-                                df["description"] == os.path.splitext(os.path.basename(structure))[0]
-                            ]["target"]) == 1
+                            for index, row in df.iterrows() if os.path.exists(row["description"])
                         ],
                     )
                 ),
-                total=len(files),
+                total=df.shape[0],
                 unit="f",
             ):
                 structure_name, data = output
@@ -130,6 +118,7 @@ def process_structures(config: RnaquanetConfig):
                     os.path.join(path, f'{structure_name}.h5'),
                     data
                 )
+
         concat_hdf5_files(
             os.path.join(config.data.path, config.name, f'{dataset}.h5'),
             glob.glob(
@@ -139,9 +128,3 @@ def process_structures(config: RnaquanetConfig):
                 )
             ),
         )
-
-
-    
-
-    
-    
