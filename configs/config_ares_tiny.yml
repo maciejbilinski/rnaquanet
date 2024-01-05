@@ -24,9 +24,9 @@ data:
     max_euclidean_distance: '16.0'
     regenerate_features_when_exists: True
     nan_behavior: # 'col' - usuwa kolumny z NaN; 'row' - usuwa wiersze z NaN; '' - nic nie robi; dla pozostałych podmienia NaN na tą wartość
-      ang: 'col'
+      ang: 'row'
       atr: 'col'
-      bon: 'row'
+      bon: 'col'
       tor: 'row'
 network:
   model_output_path: '/app/models'
