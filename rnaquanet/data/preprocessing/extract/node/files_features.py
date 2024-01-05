@@ -43,5 +43,4 @@ def get_features_from_file(config: RnaquanetConfig, feature_directory_path: Path
             # do nothing
             df.replace({'-': 'NaN'}, inplace=True)
     
-    print(df)
     return df
