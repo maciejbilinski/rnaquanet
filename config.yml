@@ -23,6 +23,11 @@ data:
     atom_for_distance_calculations: "C1'"
     max_euclidean_distance: '16.0'
     regenerate_features_when_exists: True # jeżeli True to w przypadku gdy istnieją już pliki z feature extraction to je usuwa i tworzy od nowa
+    nan_behavior: # 'col' - usuwa kolumny z NaN; 'row' - usuwa wiersze z NaN; '' - nic nie robi; dla pozostałych podmienia NaN na tą wartość
+      ang: 'col'
+      atr: 'col'
+      bon: 'row'
+      tor: 'row'
 network:
   model_output_path: '/app/models'
   hidden_dim: 128

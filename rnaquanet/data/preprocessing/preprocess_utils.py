@@ -48,9 +48,9 @@ def process_single_structure(params: tuple[str, RnaquanetConfig, float|None]) ->
 
     # parse features
     try:
-        bon_features = get_features_from_file(features_file_path, 'bon')
-        ang_features = get_features_from_file(features_file_path, 'ang')
-        atr_features = get_features_from_file(features_file_path, 'atr')
+        bon_features = get_features_from_file(config, features_file_path, 'bon')
+        ang_features = get_features_from_file(config, features_file_path, 'ang')
+        atr_features = get_features_from_file(config, features_file_path, 'atr')
         x_df = pd.concat([
             sequence_feature,
             basepairs_feature,

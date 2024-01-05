@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from custom_types import NanBehaviorType
 import os
 
 @dataclass
@@ -25,10 +26,18 @@ class ConfigDataDownloadPreprocessed:
     test_url: str
 
 @dataclass
+class ConfigDataFeaturesNanBehavior:
+    ang: NanBehaviorType
+    atr: NanBehaviorType
+    bon: NanBehaviorType
+    tor: NanBehaviorType
+
+@dataclass
 class ConfigDataFeatures:
     atom_for_distance_calculations: str
     max_euclidean_distance: str
     regenerate_features_when_exists: bool
+    nan_behavior: ConfigDataFeaturesNanBehavior
 
 @dataclass
 class ConfigData:
