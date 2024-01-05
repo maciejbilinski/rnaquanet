@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from custom_types import NanBehaviorType
+from .custom_types import NanBehaviorType
 import os
 
 @dataclass

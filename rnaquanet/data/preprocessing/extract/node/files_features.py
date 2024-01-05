@@ -22,7 +22,7 @@ def get_features_from_file(config: RnaquanetConfig, feature_directory_path: Path
     Returns:
     - Pandas dataframe with features from chosen sample and file type
     """
-    nan_behavior = config.data.features.nan_behavior.file_type
+    nan_behavior = config.data.features.nan_behavior[file_type]
     
     df = pd.read_csv(os.path.join(feature_directory_path, f"{os.path.splitext(os.path.basename(feature_directory_path))[0]}.{file_type}"), sep='\t', index_col=False)
     df.reset_index(drop=True, inplace=True)
@@ -42,5 +42,6 @@ def get_features_from_file(config: RnaquanetConfig, feature_directory_path: Path
         else:
             # do nothing
             df.replace({'-': 'NaN'}, inplace=True)
-        
+    
+    print(df)
     return df
