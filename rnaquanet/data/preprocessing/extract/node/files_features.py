@@ -24,7 +24,7 @@ def get_features_from_file(feature_directory_path: PathType, file_type: Literal[
     """
     
     
-    df = pd.read_csv(os.path.join(feature_directory_path, f"{os.path.splitext(os.path.basename(feature_directory_path))[0]}.{file_type}"), sep='\t')
+    df = pd.read_csv(os.path.join(feature_directory_path, f"{os.path.splitext(os.path.basename(feature_directory_path))[0]}.{file_type}"), sep='\t', index_col=False)
     return (df.reset_index(drop=True)
             .drop(columns=exclude_columns)
             .replace('-', nan_replacement)
