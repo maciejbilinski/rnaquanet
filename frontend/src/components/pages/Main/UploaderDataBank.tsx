@@ -68,13 +68,15 @@ const UploaderDataBank = ({ files, setFiles }: Props) => {
   };
 
   return (
-    <Box sx={{
-      display: "flex",
-      flexDirection: "column",
-      gap: 1,
-    }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 1,
+      }}
+    >
       <Typography>From Protein Data Bank:</Typography>
-      
+
       <Box
         sx={{
           display: "flex",
@@ -86,14 +88,10 @@ const UploaderDataBank = ({ files, setFiles }: Props) => {
           <Button
             key={i}
             variant="outlined"
+            onClick={() => onInputChange(example.name)}
             disabled={
               inputState.loading || uploadedFileNames.includes(example.name)
             }
-            onClick={async () => {
-              // const res = await fetch("http://files.rcsb.org/download/6rs3.pdb");
-              // console.log(await res.blob());
-              onInputChange(example.name);
-            }}
           >
             {example.name}
           </Button>

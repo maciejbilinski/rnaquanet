@@ -26,6 +26,7 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
         px: 2,
         py: 1,
         gap: 1,
+        color: "text.primary"
       }}
     >
       {files.length ? (
@@ -82,7 +83,7 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
             height: "100%",
           }}
         >
-          <Typography>No files selected.</Typography>
+          No files selected
         </Box>
       )}
     </Box>

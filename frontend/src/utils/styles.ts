@@ -5,7 +5,8 @@ export const styles: { [name: string]: SxProps } = {
     display: "flex",
     flexDirection: "column",
     px: 6,
-    py: 1,
+    py: 4,
+    gap: 4,
   },
 
   slimScrollbar: {

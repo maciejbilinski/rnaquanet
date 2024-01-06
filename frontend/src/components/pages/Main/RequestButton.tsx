@@ -57,7 +57,7 @@ const RequestButton = ({ files, setFiles }: Props) => {
   };
 
   const getMessage = () => {
-    if (response.waiting) return <CircularProgress size="1.5rem" />;
+    if (response.waiting) return <CircularProgress size="1.75rem" />;
     switch (response.reqStatus) {
       case 500:
         return "Server is not responding, please try again later";
@@ -71,8 +71,10 @@ const RequestButton = ({ files, setFiles }: Props) => {
   return (
     <>
       <Button
-        onClick={fetchData}
+        sx={{ height: 50 }}
         variant="contained"
+        size="large"
+        onClick={fetchData}
         disabled={!files.length || response.waiting}
       >
         {getMessage()}

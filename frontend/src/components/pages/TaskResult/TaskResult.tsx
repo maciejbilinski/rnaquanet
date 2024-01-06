@@ -77,13 +77,7 @@ const TaskResult = () => {
   }, []);
 
   return (
-    <Card
-      sx={{
-        ...styles.mainCard,
-        p: 8,
-        gap: 4,
-      }}
-    >
+    <Card sx={styles.mainCard}>
       <Box
         sx={{
           display: "flex",

@@ -11,18 +11,11 @@ const Main = () => {
   const [files, setFiles] = useState<FileData[]>([]);
 
   return (
-    <Card
-      sx={{
-        ...styles.mainCard,
-        py: 4,
-        gap: 4,
-      }}
-    >
+    <Card sx={styles.mainCard}>
       <Typography
         variant="h5"
         sx={{
           textAlign: "center",
-          mb: 2,
         }}
       >
         Upload RNA structures

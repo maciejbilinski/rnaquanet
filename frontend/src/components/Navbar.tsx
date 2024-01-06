@@ -38,22 +38,24 @@ const Navbar = ({ colorMode, setColorMode }: Props) => {
           justifyContent: "center",
         }}
       >
-        <Link
-          to={location.origin}
-          style={{
-            color: "inherit",
-            textDecoration: "none",
-          }}
-        >
-          <Typography
-            variant="h4"
-            sx={{
-              fontFamily: "initial",
+        <Button variant="text">
+          <Link
+            to={location.origin}
+            style={{
+              color: "inherit",
+              textDecoration: "none",
             }}
           >
-            {projectName}
-          </Typography>
-        </Link>
+            <Typography
+              variant="h4"
+              sx={{
+                fontFamily: "initial",
+              }}
+            >
+              {projectName}
+            </Typography>
+          </Link>
+        </Button>
       </Box>
 
       {/* theme toggle button */}
@@ -65,9 +67,14 @@ const Navbar = ({ colorMode, setColorMode }: Props) => {
         }}
       >
         <Button
+          size="large"
           onClick={() => setColorMode(colorMode === "dark" ? "light" : "dark")}
         >
-          {colorMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
+          {colorMode === "dark" ? (
+            <Brightness7Icon color="action" />
+          ) : (
+            <Brightness4Icon color="action" />
+          )}
         </Button>
       </Box>
     </Card>

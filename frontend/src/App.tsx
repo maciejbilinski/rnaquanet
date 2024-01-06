@@ -8,10 +8,14 @@ import Main from "./components/pages/Main/Main";
 import Footer from "./components/Footer";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { projectName } from "../config";
+import TaskSearch from "./components/pages/TaskSearch/TaskSearch";
 import TaskResult from "./components/pages/TaskResult/TaskResult";
 
 const App = () => {
-  const [colorMode, setColorMode] = useLocalStorage<"light" | "dark">("ColorMode", "dark");
+  const [colorMode, setColorMode] = useLocalStorage<"light" | "dark">(
+    "ColorMode",
+    "dark"
+  );
 
   useEffect(() => {
     document.title = projectName;
@@ -46,27 +50,40 @@ const App = () => {
   return (
     <BrowserRouter>
       <ThemeProvider theme={theme}>
-        <Box sx={{
-          display: "flex",
-          justifyContent: "center",
-          bgcolor: "background.default",
-          color: "text.primary",
-          minHeight: "100dvh",
-          px: 1,
-        }}>
-          <Box sx={{
+        <Box
+          sx={{
             display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            maxWidth: 1200,
-            gap: 1.5,
-            my: .5,
-          }}>
+            justifyContent: "center",
+            bgcolor: "background.default",
+            color: "text.primary",
+            minHeight: "100dvh",
+            px: 1,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              width: "100%",
+              maxWidth: 1200,
+              gap: 1.5,
+              my: 0.5,
+            }}
+          >
             <Navbar colorMode={colorMode} setColorMode={setColorMode} />
 
             <Routes>
+              <Route
+                path="/"
+                element={
+                  <>
+                    <Main />
+                    <TaskSearch />
+                  </>
+                }
+              />
+              <Route path="/result" element={<TaskSearch />} />
               <Route path="/result/*" element={<TaskResult />} />
-              <Route path="/" element={<Main />} />
             </Routes>
 
             <Footer />
@@ -75,6 +92,6 @@ const App = () => {
       </ThemeProvider>
     </BrowserRouter>
   );
-}
+};
 
-export default App
+export default App;

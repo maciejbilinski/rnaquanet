@@ -11,7 +11,7 @@ const Footer = () => {
       py: 2
     }}>
       <Link href={repositoryLink} target="_blank">
-        Source code
+        Learn more about the project
       </Link>
     </Card>
   );
