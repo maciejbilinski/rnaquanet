@@ -7,6 +7,7 @@ from config import FILES_DIR, STORAGE_DIR, STATUS_FILE
 
 
 def test(task_id):
+    print(f"???Started: {task_id}")
     sleep(15)
     
     dir_path = os.path.join(STORAGE_DIR, task_id)
@@ -20,9 +21,11 @@ def test(task_id):
             },
             os.path.join(dir_path, STATUS_FILE)
         )
+        print(f"!!!Finished: {task_id}")
         return
         
     save_as_json(
         { "status": "ERROR" },
         os.path.join(dir_path, STATUS_FILE)
     )
+    

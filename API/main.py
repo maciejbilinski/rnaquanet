@@ -2,15 +2,21 @@ import os
 from flask import Flask, abort, request, jsonify, json
 from flask_cors import CORS
 from flasgger import Swagger
+from redis import Redis
+from rq import Queue
+from flask_rq2 import RQ
 
 from scripts.generate_task_id import generate_task_id
 from scripts.process_files import process_files
+# from a import eo
 from config import DEBUG_MODE, STORAGE_DIR, STATUS_FILE, SWAGGER_TEMPLATE
 
 
 app = Flask(__name__)
 CORS(app)
 Swagger(app, template=SWAGGER_TEMPLATE) # Swagger UI is located at `api.url/apidocs/`
+rq = RQ(app)
+queue = rq.get_queue()
 
 
 @app.route("/request_rmsd", methods=["POST"])
@@ -41,7 +47,7 @@ def request_rmsd():
     
     if len(request.files):
         # process files
-        error = process_files(request.files, task_id)
+        error = process_files(queue, request.files, task_id)
 
         if not error:
             # return the task id

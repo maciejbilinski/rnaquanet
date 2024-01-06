@@ -24,6 +24,6 @@ label {
   box-sizing: border-box;
 }
 
-body * {
-  transition: all 0.5s linear !important;
+body div {
+  transition: all 0.2s linear !important;
 }

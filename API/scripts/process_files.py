@@ -1,14 +1,13 @@
 import os
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict, FileStorage
-from threading import Thread
+from rq import Queue
 
 from scripts.save_as_json import save_as_json
 from config import FILES_DIR, STORAGE_DIR, STATUS_FILE
 from scripts.test import test
 
-
-def process_files(files: ImmutableMultiDict[str, FileStorage], task_id: str):
+def process_files(queue: Queue, files: ImmutableMultiDict[str, FileStorage], task_id: str):
     try:
         # create directories:
         # - `{STORAGE_DIR}` if it does not exist yet
@@ -22,7 +21,6 @@ def process_files(files: ImmutableMultiDict[str, FileStorage], task_id: str):
             { "status": "PENDING" },
             os.path.join(dir_path, STATUS_FILE)
         )
-        print(files)
         
         # save each file
         for file in files.values():
@@ -46,8 +44,11 @@ def process_files(files: ImmutableMultiDict[str, FileStorage], task_id: str):
         # }
         # (if we use Python to write to `status.json`, we can just use `save_as_json.py` function from `API/scripts`)
         # remember to delete `files/` directory after files are processed to save space
-        Thread(target=test, args=[task_id]).start()
+        job = queue.enqueue(test, task_id)
+        print(queue.get_job_ids())
+        print(job.get_status())
         
-    except Exception:
+    except Exception as e:
+        print(e)
         return 1
     return 0
