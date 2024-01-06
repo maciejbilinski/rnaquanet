@@ -10,6 +10,7 @@ declare interface ResponseRequestRmsd {
 }
 
 declare interface FileData {
+  name: string;
   isFromDataBank: boolean;
-  file: File;
+  file?: File;
 }

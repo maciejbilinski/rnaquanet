@@ -1,15 +1,16 @@
 import { Dispatch, SetStateAction } from "react";
-import { Box, Button, Divider, Typography } from "@mui/material";
+import { Box, Divider, Typography } from "@mui/material";
 
-import FileUploaderList from "../../fileUploader/FileUploaderList";
-import FileUploader from "../../fileUploader/FileUploader";
+import FileUploaderList from "../../fileUploaders/FileUploaderList";
+import FileUploader from "../../fileUploaders/FileUploader";
+import DataBankUploader from "../../fileUploaders/DataBankUploader";
 
-interface StructureSelectionProps {
+interface Props {
   files: FileData[];
   setFiles: Dispatch<SetStateAction<FileData[]>>;
 }
 
-const StructureSelection = ({ files, setFiles }: StructureSelectionProps) => {
+const StructureSelection = ({ files, setFiles }: Props) => {
   return (
     <Box
       sx={{
@@ -23,36 +24,10 @@ const StructureSelection = ({ files, setFiles }: StructureSelectionProps) => {
       </Typography>
 
       <Typography>From Protein Data Bank:</Typography>
-      <Box
-        sx={{
-          display: "flex",
-          flexWrap: "wrap",
-        }}
-      >
-        <Button
-          variant="outlined"
-          onClick={async () => {
-            const res = await fetch("http://files.rcsb.org/download/6rs3.pdb");
-            console.log(res);
-            console.log(await res.blob());
-          }}
-        >
-          2HY9
-        </Button>
-        <Button>6RS3</Button>
-      </Box>
+      <DataBankUploader files={files} setFiles={setFiles} />
 
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 3,
-          p: 1,
-        }}
-      >
-        <Divider sx={{ flex: 1 }} />
-        <Typography sx={{ fontSize: 14 }}>or / and</Typography>
-        <Divider sx={{ flex: 1 }} />
+      <Box sx={{ p: 3 }}>
+        <Divider />
       </Box>
 
       <Typography>From local drive:</Typography>

@@ -17,28 +17,31 @@ const App = () => {
     document.title = projectName;
   }, []);
 
-  const theme = useMemo(() => (
-    createTheme({
-      palette: {
-        mode: colorMode,
-        background: {
-          paper: colorMode === "light" ? "#ebebeb" : undefined
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: colorMode,
+          background: {
+            default: colorMode === "light" ? "#dbdbdb" : "#000",
+            paper: colorMode === "light" ? "#f9f9f9" : undefined,
+          },
+          primary: {
+            main: "#3ca93c",
+          },
         },
-        primary: {
-          main: "#3ca93c",
+        breakpoints: {
+          values: {
+            xs: 0,
+            sm: 600,
+            md: 900,
+            lg: 1200,
+            xl: 1536,
+          },
         },
-      },
-      breakpoints: {
-        values: {
-          xs: 0,
-          sm: 600,
-          md: 900,
-          lg: 1200,
-          xl: 1536,
-        },
-      },
-    })
-  ), [colorMode]);
+      }),
+    [colorMode]
+  );
 
   return (
     <BrowserRouter>
@@ -49,15 +52,15 @@ const App = () => {
           bgcolor: "background.default",
           color: "text.primary",
           height: "100vh",
-          px: 2,
+          px: 1,
         }}>
           <Box sx={{
             display: "flex",
             flexDirection: "column",
             width: "100%",
-            maxWidth: 900,
+            maxWidth: 1200,
             gap: 1.5,
-            my: 1,
+            my: .5,
           }}>
             <Navbar colorMode={colorMode} setColorMode={setColorMode} />
 

@@ -4,12 +4,12 @@ import { useNavigate } from "react-router-dom";
 
 import { API_ADDRESS } from "../../../../config";
 
-interface RequestButtonProps {
+interface Props {
   files: FileData[];
   setFiles: Dispatch<SetStateAction<FileData[]>>;
 }
 
-const RequestButton = ({ files, setFiles }: RequestButtonProps) => {
+const RequestButton = ({ files, setFiles }: Props) => {
   const navigate = useNavigate();
   const [response, setResponse] = useState<IRequestRmsd>({
     waiting: false,
@@ -21,7 +21,7 @@ const RequestButton = ({ files, setFiles }: RequestButtonProps) => {
       // convert file array to FormData
       const formData = new FormData();
       files.forEach((fileData, i) =>
-        formData.append(`file_${i}`, fileData.file, fileData.file.name)
+        formData.append(`file_${i}`, fileData.file ?? new Blob(), fileData.name)
       );
 
       const res = await fetch(`${API_ADDRESS}/request_rmsd`, {

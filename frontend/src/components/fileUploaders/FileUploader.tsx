@@ -9,16 +9,16 @@ import {
   UPLOAD_FILE_TYPES,
 } from "../../../config";
 
-interface FileUploaderProps {
+interface Props {
   files: FileData[];
   setFiles: Dispatch<SetStateAction<FileData[]>>;
 }
 
-const FileUploader = ({ files, setFiles }: FileUploaderProps) => {
+const FileUploader = ({ files, setFiles }: Props) => {
   const [error, setError] = useState<"type" | "size" | null>(null);
 
   const handleChange = (newFiles: FileList) => {
-    const oldFileNames = files.map((d) => d.file.name);
+    const oldFileNames = files.map((d) => d.name);
     const newFilesArr = Array.from(newFiles);
 
     for (const file of newFilesArr) {
@@ -40,6 +40,7 @@ const FileUploader = ({ files, setFiles }: FileUploaderProps) => {
     setFiles((old) =>
       old.concat(
         newFilesArr.map((file) => ({
+          name: file.name,
           isFromDataBank: false,
           file,
         }))
@@ -117,7 +118,7 @@ const FileUploader = ({ files, setFiles }: FileUploaderProps) => {
               maxWidth: 64,
             }}
           >
-            {UPLOAD_FILE_TYPES.join(", ")}
+            {UPLOAD_FILE_TYPES.map((type) => `.${type}`).join(", ")}
           </Typography>
         </Box>
       }

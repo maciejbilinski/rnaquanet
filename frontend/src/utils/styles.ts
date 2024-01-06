@@ -4,7 +4,7 @@ export const styles: { [name: string]: SxProps } = {
   mainCard: {
     display: "flex",
     flexDirection: "column",
-    px: 2,
+    px: 6,
     py: 1,
   },
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card } from "@mui/material";
+import { Box, Card, Divider } from "@mui/material";
 
 import { styles } from "../../../utils/styles";
 import StructureSelection from "./StructureSelection";
@@ -17,6 +17,11 @@ const Main = () => {
       }}
     >
       <StructureSelection files={files} setFiles={setFiles} />
+
+      <Box sx={{ p: 3 }}>
+        <Divider />
+      </Box>
+      
       <RequestButton files={files} setFiles={setFiles} />
     </Card>
   );

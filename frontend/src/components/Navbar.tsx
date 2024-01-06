@@ -7,41 +7,46 @@ import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { styles } from "../utils/styles";
 import { projectName } from "../../config";
 
-interface NavbarProps {
+interface Props {
   colorMode: string;
   setColorMode: Dispatch<SetStateAction<"light" | "dark">>;
 }
 
-const Navbar = ({
-  colorMode,
-  setColorMode,
-}: NavbarProps) => {
+const Navbar = ({ colorMode, setColorMode }: Props) => {
   return (
-    <Card sx={{
-      ...styles.mainCard,
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      py: 2,
-    }}>
+    <Card
+      sx={{
+        ...styles.mainCard,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        py: 2,
+      }}
+    >
       {/* filler box */}
-      <Box sx={{
-        flex: 1
-      }} />
+      <Box
+        sx={{
+          flex: 1,
+        }}
+      />
 
       {/* project name */}
-      <Box sx={{
-        flex: 1,
-        display: "flex",
-        justifyContent: "center",
-      }}>
-        <Link to={location.origin} 
+      <Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <Link
+          to={location.origin}
           style={{
             color: "inherit",
-            textDecoration: "none"
+            textDecoration: "none",
           }}
         >
-          <Typography variant="h4"
+          <Typography
+            variant="h4"
             sx={{
               fontFamily: "initial",
             }}
@@ -52,15 +57,17 @@ const Navbar = ({
       </Box>
 
       {/* theme toggle button */}
-      <Box sx={{
-        flex: 1,
-        display: "flex",
-        justifyContent: "flex-end",
-      }}>
+      <Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          justifyContent: "flex-end",
+        }}
+      >
         <Button
           onClick={() => setColorMode(colorMode === "dark" ? "light" : "dark")}
         >
-          {colorMode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+          {colorMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
         </Button>
       </Box>
     </Card>

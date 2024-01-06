@@ -17,6 +17,23 @@ export const API_ADDRESS = "http://localhost:5000";
 // more constants
 
 
+/** Example structures that will be displayed in the structure selector. */
+export const dataBankExamples = [
+  {
+    name: "2HY9",
+  },
+  {
+    name: "6RS3",
+  },
+  {
+    name: "1JJP",
+  },
+  {
+    name: "6FC9",
+  },
+];
+
+
 /** Name of the project. */
 export const projectName = "RNAQuANet";
 
