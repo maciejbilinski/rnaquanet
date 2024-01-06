@@ -5,7 +5,7 @@ import { API_ADDRESS, REQUEST_RETRY_DELAY } from "../../../../config";
 import { styles } from "../../../utils/styles";
 
 const TaskResult = () => {
-  const [response, setResponse] = useState<ICheckRmsd>({});
+  const [response, setResponse] = useState<ITaskResultRes>({});
 
   const fetchData = async () => {
     try {
@@ -17,7 +17,7 @@ const TaskResult = () => {
       );
 
       // if the API responded correctly, parse received data
-      let json: ResponseCheckRmsd = {};
+      let json: TaskResultRes = {};
       if (res.status === 200) {
         json = await res.json();
       }

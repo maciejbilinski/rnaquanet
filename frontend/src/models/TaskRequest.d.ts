@@ -1,10 +1,10 @@
-declare interface IRequestRmsd {
+declare interface ITaskRequestRes {
   /** Is request currently being processed. */
   waiting: boolean;
   reqStatus?: ReqStatus;
 }
 
-declare interface ResponseRequestRmsd {
+declare interface TaskRequestRes {
   /** ID of the task (ex. "3gfg4TH"). */
   task_id?: string;
 }

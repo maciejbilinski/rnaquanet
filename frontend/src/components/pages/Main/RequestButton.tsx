@@ -11,7 +11,7 @@ interface Props {
 
 const RequestButton = ({ files, setFiles }: Props) => {
   const navigate = useNavigate();
-  const [response, setResponse] = useState<IRequestRmsd>({
+  const [response, setResponse] = useState<ITaskRequestRes>({
     waiting: false,
   });
 
@@ -30,7 +30,7 @@ const RequestButton = ({ files, setFiles }: Props) => {
       });
 
       // if the API responded correctly, parse received data
-      let json: ResponseRequestRmsd = {};
+      let json: TaskRequestRes = {};
       if (res.status === 200) {
         json = await res.json();
         setFiles([]);
