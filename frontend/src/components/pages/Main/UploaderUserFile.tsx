@@ -1,16 +1,15 @@
 import { Dispatch, SetStateAction } from "react";
-import { Box, Divider, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
-import FileUploaderList from "../../fileUploaders/FileUploaderList";
-import FileUploader from "../../fileUploaders/FileUploader";
-import DataBankUploader from "../../fileUploaders/DataBankUploader";
+import FileUploaderList from "../../fileUploader/FileUploaderList";
+import FileUploader from "../../fileUploader/FileUploader";
 
 interface Props {
   files: FileData[];
   setFiles: Dispatch<SetStateAction<FileData[]>>;
 }
 
-const StructureSelection = ({ files, setFiles }: Props) => {
+const UploaderUserFile = ({ files, setFiles }: Props) => {
   return (
     <Box
       sx={{
@@ -19,18 +18,8 @@ const StructureSelection = ({ files, setFiles }: Props) => {
         gap: 1,
       }}
     >
-      <Typography variant="h5" sx={{ textAlign: "center" }}>
-        Upload RNA structures
-      </Typography>
-
-      <Typography>From Protein Data Bank:</Typography>
-      <DataBankUploader files={files} setFiles={setFiles} />
-
-      <Box sx={{ p: 3 }}>
-        <Divider />
-      </Box>
-
       <Typography>From local drive:</Typography>
+      
       <Box
         sx={{
           display: "flex",
@@ -46,4 +35,4 @@ const StructureSelection = ({ files, setFiles }: Props) => {
   );
 };
 
-export default StructureSelection;
+export default UploaderUserFile;

@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Box, Card, Divider } from "@mui/material";
+import { Card, Divider, Typography } from "@mui/material";
 
 import { styles } from "../../../utils/styles";
-import StructureSelection from "./StructureSelection";
+
+import UploaderDataBank from "./UploaderDataBank";
+import UploaderUserFile from "./UploaderUserFile";
 import RequestButton from "./RequestButton";
 
 const Main = () => {
@@ -16,12 +18,19 @@ const Main = () => {
         gap: 4,
       }}
     >
-      <StructureSelection files={files} setFiles={setFiles} />
-
-      <Box sx={{ p: 3 }}>
-        <Divider />
-      </Box>
-      
+      <Typography
+        variant="h5"
+        sx={{
+          textAlign: "center",
+          mb: 2,
+        }}
+      >
+        Upload RNA structures
+      </Typography>
+      <UploaderDataBank files={files} setFiles={setFiles} />
+      <Divider variant="middle" />
+      <UploaderUserFile files={files} setFiles={setFiles} />
+      <Divider variant="middle" />
       <RequestButton files={files} setFiles={setFiles} />
     </Card>
   );

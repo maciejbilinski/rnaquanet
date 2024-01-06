@@ -22,13 +22,13 @@ const FileUploader = ({ files, setFiles }: Props) => {
     const newFilesArr = Array.from(newFiles);
 
     for (const file of newFilesArr) {
-      let id = 1;
+      let id = 2;
       // add a numeric suffix to the file name if it already exists
       if (oldFileNames.includes(file.name)) {
         const [fileName, fileExt] = file.name.split(".");
         let newFileName = "";
         do {
-          newFileName = `${fileName}_${id++}${fileExt ? "." : ""}${fileExt}`;
+          newFileName = `${fileName} (${id++})${fileExt ? "." : ""}${fileExt}`;
         } while (oldFileNames.includes(newFileName));
 
         Object.defineProperty(file, "name", {

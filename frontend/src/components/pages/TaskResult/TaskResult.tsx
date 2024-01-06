@@ -4,9 +4,8 @@ import { Box, Card, CircularProgress, Typography } from "@mui/material";
 import { API_ADDRESS, REQUEST_RETRY_DELAY } from "../../../../config";
 import { styles } from "../../../utils/styles";
 
-const CheckRmsd = () => {
+const TaskResult = () => {
   const [response, setResponse] = useState<ICheckRmsd>({});
-  // `${location.origin}/result/${json.task_id}`
 
   const fetchData = async () => {
     try {
@@ -105,4 +104,4 @@ const CheckRmsd = () => {
   );
 };
 
-export default CheckRmsd;
+export default TaskResult;

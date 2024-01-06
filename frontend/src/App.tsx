@@ -8,7 +8,7 @@ import Main from "./components/pages/Main/Main";
 import Footer from "./components/Footer";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { projectName } from "../config";
-import CheckRmsd from "./components/pages/CheckStatus/CheckRmsd";
+import TaskResult from "./components/pages/TaskResult/TaskResult";
 
 const App = () => {
   const [colorMode, setColorMode] = useLocalStorage<"light" | "dark">("ColorMode", "dark");
@@ -51,7 +51,7 @@ const App = () => {
           justifyContent: "center",
           bgcolor: "background.default",
           color: "text.primary",
-          height: "100vh",
+          minHeight: "100dvh",
           px: 1,
         }}>
           <Box sx={{
@@ -65,7 +65,7 @@ const App = () => {
             <Navbar colorMode={colorMode} setColorMode={setColorMode} />
 
             <Routes>
-              <Route path="/result/*" element={<CheckRmsd />} />
+              <Route path="/result/*" element={<TaskResult />} />
               <Route path="/" element={<Main />} />
             </Routes>
 

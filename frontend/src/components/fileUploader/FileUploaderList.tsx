@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, Divider, IconButton, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import { styles } from "../../utils/styles";
@@ -23,9 +23,9 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
         border: "1px solid",
         borderColor: "gray",
         borderRadius: 1,
-        pl: 2,
-        pr: 1,
+        px: 2,
         py: 1,
+        gap: 1,
       }}
     >
       {files.length ? (
@@ -33,30 +33,43 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
           <Box
             key={i}
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "50%",
-              px: 1,
+              width: {
+                xs: "100%",
+                sm: "calc(50% - 4px)",
+                md: "100%",
+                lg: "calc(50% - 4px)",
+              },
             }}
           >
-            <Typography
+            <Box
               sx={{
-                fontSize: 14,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                px: 1,
               }}
-              noWrap
             >
-              {fileData.name}
-            </Typography>
+              <Typography
+                sx={{
+                  width: "100%",
+                  fontSize: 14,
+                }}
+                noWrap
+              >
+                {fileData.name}
+              </Typography>
 
-            <IconButton
-              sx={{
-                p: 0.25,
-              }}
-              onClick={() => setFiles(files.filter((_, fi) => fi !== i))}
-            >
-              <DeleteIcon />
-            </IconButton>
+              <IconButton
+                sx={{
+                  p: 0.25,
+                }}
+                onClick={() => setFiles(files.filter((_, fi) => fi !== i))}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Box>
+
+            <Divider />
           </Box>
         ))
       ) : (
