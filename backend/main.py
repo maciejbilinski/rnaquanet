@@ -2,8 +2,6 @@ import os
 from flask import Flask, abort, request, jsonify, json
 from flask_cors import CORS
 from flasgger import Swagger
-from redis import Redis
-from rq import Queue
 from flask_rq2 import RQ
 
 from scripts.generate_task_id import generate_task_id
