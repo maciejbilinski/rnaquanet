@@ -56,13 +56,13 @@ const App = () => {
             flexDirection: "column",
             width: "100%",
             maxWidth: 900,
-            gap: 1,
+            gap: 1.5,
             my: 1,
           }}>
             <Navbar colorMode={colorMode} setColorMode={setColorMode} />
 
             <Routes>
-              <Route path="*" element={<CheckRmsd />} />
+              <Route path="/result/*" element={<CheckRmsd />} />
               <Route path="/" element={<Main />} />
             </Routes>
 

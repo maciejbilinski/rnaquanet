@@ -2,14 +2,14 @@ import { Dispatch, SetStateAction } from "react";
 import { Box, IconButton, Typography } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { styles } from "../../../utils/styles";
+import { styles } from "../../utils/styles";
 
-interface FileListProps {
-  files: File[];
-  setFiles: Dispatch<SetStateAction<File[]>>;
+interface FileUploaderListProps {
+  files: FileData[];
+  setFiles: Dispatch<SetStateAction<FileData[]>>;
 }
 
-const FileListDisplay = ({ files, setFiles }: FileListProps) => {
+const FileUploaderList = ({ files, setFiles }: FileUploaderListProps) => {
   return (
     <Box sx={{
       ...styles.slimScrollbar,
@@ -27,7 +27,7 @@ const FileListDisplay = ({ files, setFiles }: FileListProps) => {
       py: 1,
     }}>
       {files.length ? (
-        files.map((file, i) => (
+        files.map((fileData, i) => (
           <Box key={i} sx={{
             display: "flex",
             justifyContent: "space-between",
@@ -38,7 +38,7 @@ const FileListDisplay = ({ files, setFiles }: FileListProps) => {
             <Typography sx={{
               fontSize: 14,
             }} noWrap>
-              {file.name}
+              {fileData.file.name}
             </Typography>
 
             <IconButton
@@ -68,4 +68,4 @@ const FileListDisplay = ({ files, setFiles }: FileListProps) => {
   );
 };
 
-export default FileListDisplay;
+export default FileUploaderList;

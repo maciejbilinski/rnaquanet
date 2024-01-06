@@ -22,6 +22,7 @@ def process_files(files: ImmutableMultiDict[str, FileStorage], task_id: str):
             { "status": "PENDING" },
             os.path.join(dir_path, STATUS_FILE)
         )
+        print(files)
         
         # save each file
         for file in files.values():

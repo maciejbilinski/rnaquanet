@@ -6,12 +6,16 @@ import { styles } from "../../../utils/styles";
 
 const CheckRmsd = () => {
   const [response, setResponse] = useState<ICheckRmsd>({});
+  // `${location.origin}/result/${json.task_id}`
 
   const fetchData = async () => {
     try {
-      const res = await fetch(`${API_ADDRESS}/check_rmsd${location.pathname}`, {
-        method: "GET",
-      });
+      const res = await fetch(
+        `${API_ADDRESS}/check_rmsd/${location.pathname.split("/").pop()}`,
+        {
+          method: "GET",
+        }
+      );
 
       // if the API responded correctly, parse received data
       let json: ResponseCheckRmsd = {};
@@ -27,8 +31,7 @@ const CheckRmsd = () => {
       if (res.status === 200 && json.status !== "DONE") {
         setTimeout(fetchData, REQUEST_RETRY_DELAY);
       }
-    }
-    catch (error) {
+    } catch (error) {
       setResponse({
         reqStatus: 500,
       });
@@ -46,13 +49,18 @@ const CheckRmsd = () => {
       case 200:
         switch (response.status) {
           case "PENDING":
-            return (<>
-              <Box>
-                <Typography>Your files are being processed.</Typography>
-                <Typography>The page will automatically refresh when the results are ready.</Typography>
-              </Box>
-              <CircularProgress size="1.5rem" />
-            </>);
+            return (
+              <>
+                <Box>
+                  <Typography>Your files are being processed.</Typography>
+                  <Typography>
+                    The page will automatically refresh when the results are
+                    ready.
+                  </Typography>
+                </Box>
+                <CircularProgress size="1.5rem" />
+              </>
+            );
           case "DONE":
             return "Your files have been succesfully processed.";
           case "ERROR":
@@ -70,25 +78,29 @@ const CheckRmsd = () => {
   }, []);
 
   return (
-    <Card sx={{
-      ...styles.mainCard,
-      p: 8,
-      gap: 4,
-    }}>
-      <Box sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        textAlign: "center",
-        gap: 2,
-      }}>{getMessage()}</Box>
+    <Card
+      sx={{
+        ...styles.mainCard,
+        p: 8,
+        gap: 4,
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          textAlign: "center",
+          gap: 2,
+        }}
+      >
+        {getMessage()}
+      </Box>
 
-      {response.results && Object.entries(response.results).map(([fileName, result], i) => (
-        <Typography key={i}>
-          {`${fileName}: rmsd=${result.rmsd}`}
-        </Typography>
-      ))}
-
+      {response.results &&
+        Object.entries(response.results).map(([fileName, result], i) => (
+          <Typography key={i}>{`${fileName}: rmsd=${result.rmsd}`}</Typography>
+        ))}
     </Card>
   );
 };
