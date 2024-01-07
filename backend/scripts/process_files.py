@@ -3,9 +3,9 @@ from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict, FileStorage
 from rq import Queue
 
-from config import FILES_DIR, STORAGE_DIR, STATUS_FILE
-from scripts.save_as_json import save_as_json
+from config import FILE_STORAGE_DIR
 from scripts.test import test
+from models.models import db, Task, File
 
 
 def process_files(
@@ -13,33 +13,36 @@ def process_files(
 ):
     try:
         # create directories:
-        # - `{STORAGE_DIR}` if it does not exist yet
-        # - `{task_id}` directory exclusive and identifying current task
-        # - `files` where all files will be stored
-        dir_path = os.path.join(STORAGE_DIR, task_id)
-        files_dir_path = os.path.join(dir_path, FILES_DIR)
-        os.makedirs(files_dir_path, exist_ok=True)
+        # - `{FILE_STORAGE_DIR}` if it does not exist yet
+        # - `{task_id}` directory containing files from current task
+        dir_path = os.path.join(FILE_STORAGE_DIR, task_id)
+        os.makedirs(dir_path, exist_ok=True)
 
-        save_as_json({"status": "PENDING"}, os.path.join(dir_path, STATUS_FILE))
+        # save_as_json({"status": "PENDING"}, os.path.join(dir_path, STATUS_FILE))
+
+        db_task = Task(id=task_id, status="QUEUED")
+        db.session.add(db_task)
 
         # save each file
         for file in files.values():
+            file_name = secure_filename(file.filename)
             # file from protein data bank, download it
             if file.name.endswith("_pdb"):
-                res = requests.get(
-                    f"http://files.rcsb.org/download/{file.filename}.pdb",
-                    allow_redirects=True,
-                )
+                url = f"http://files.rcsb.org/download/{file.filename}.pdb"
+                res = requests.get(url, allow_redirects=True)
                 if res.status_code == 200:
-                    json = res.content
-                    with open(f"{file.filename}.pdb", "wb+") as bin_file:
-                        bin_file.write(json)
+                    with open(f"{file_name}.pdb", "wb+") as bin_file:
+                        bin_file.write(res.content)
                 else:
                     # TODO error while processing file (file does not exists in protein data bank)
                     pass
             else:
-                filepath = os.path.join(files_dir_path, secure_filename(file.filename))
+                filepath = os.path.join(dir_path, file_name)
                 file.save(filepath)
+                db.session.add(File(status="WAITING", name=file_name, task=db_task))
+                
+        db.session.commit()
+                
 
         # TODO remove the dummy output queue and instead execute a command to process saved files
         # after files are processed, write to their corresponding `status.json` file in this format:

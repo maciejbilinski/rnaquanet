@@ -3,18 +3,17 @@ from flask import Flask, abort, request, jsonify, json
 from flask_cors import CORS
 from flasgger import Swagger
 from flask_rq2 import RQ
-from flask_sqlalchemy import SQLAlchemy
 
 from scripts.generate_task_id import generate_task_id
 from scripts.process_files import process_files
+from models.models import db, Task
 
 # from a import eo
-from config import APP_CONFIG, STORAGE_DIR, STATUS_FILE, SWAGGER_TEMPLATE
+from config import APP_CONFIG, FILE_STORAGE_DIR, SWAGGER_TEMPLATE
 
 
 app = Flask(__name__)
 app.config.update(APP_CONFIG)
-db = SQLAlchemy()
 
 CORS(app)
 Swagger(app, template=SWAGGER_TEMPLATE)  # Swagger UI is located at `api.url/apidocs/`
@@ -50,8 +49,6 @@ def request_rmsd():
     # generate unique task id
     task_id = generate_task_id()
 
-    # `request.form` - files sent as string (PDB ids)
-    # `request.files` - files sent as file type
     if len(request.files):
         # process files
         error = process_files(queue, request.files, task_id)
@@ -88,15 +85,20 @@ def check_rmsd(url_path: str):
       404:
         description: Task not found.
     """
-    # try to find the status file of a request and send it back if it exists
-    if url_path in os.listdir(STORAGE_DIR):
-        dir_path = os.path.join(STORAGE_DIR, url_path)
+    # try to find requested resources and send it back if it exists
+    # else return with 404
+    task = db.get_or_404(Task, url_path)
+    print(task.status)
+    if url_path in os.listdir(FILE_STORAGE_DIR):
+        dir_path = os.path.join(FILE_STORAGE_DIR, url_path)
 
-        if STATUS_FILE in os.listdir(dir_path):
-            return jsonify(json.load(open(os.path.join(dir_path, STATUS_FILE))))
+        # if STATUS_FILE in os.listdir(dir_path):
+        #     return jsonify(json.load(open(os.path.join(dir_path, STATUS_FILE))))
 
     return abort(404)  # not found
 
 
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
     app.run()

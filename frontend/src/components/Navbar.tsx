@@ -1,9 +1,10 @@
 import { Dispatch, SetStateAction } from "react";
 import { Box, Button, Card, Typography } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
-
+import LightModeIcon from "@mui/icons-material/LightMode";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
 import { styles } from "../utils/styles";
 import { projectName } from "../../config";
 
@@ -13,8 +14,6 @@ interface Props {
 }
 
 const Navbar = ({ colorMode, setColorMode }: Props) => {
-  const navigate = useNavigate();
-
   return (
     <Card
       sx={{
@@ -23,7 +22,7 @@ const Navbar = ({ colorMode, setColorMode }: Props) => {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        py: 1,
+        p: 1,
       }}
     >
       {/* filler box */}
@@ -41,7 +40,7 @@ const Navbar = ({ colorMode, setColorMode }: Props) => {
           to={window.origin}
           style={{
             textDecoration: "none",
-            color: "inherit",
+            color: "#fff",
           }}
         >
           <Typography variant="h4" sx={{ fontFamily: "initial" }}>
@@ -60,13 +59,10 @@ const Navbar = ({ colorMode, setColorMode }: Props) => {
       >
         <Button
           size="large"
+          sx={{ color: "#fff" }}
           onClick={() => setColorMode(colorMode === "light" ? "dark" : "light")}
         >
-          {colorMode === "light" ? (
-            <Brightness7Icon color="action" />
-          ) : (
-            <Brightness4Icon color="action" />
-          )}
+          {colorMode === "light" ? <LightModeIcon /> : <DarkModeIcon />}
         </Button>
       </Box>
     </Card>
