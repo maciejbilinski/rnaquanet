@@ -1,8 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { Box, Button, Card, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Brightness7Icon from "@mui/icons-material/Brightness7";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import { styles } from "../utils/styles";

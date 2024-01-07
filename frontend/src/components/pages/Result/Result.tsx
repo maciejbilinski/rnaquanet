@@ -1,99 +1,89 @@
 import { useEffect, useState } from "react";
-import { Box, Card, CircularProgress, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CircularProgress,
+  Step,
+  StepContent,
+  StepLabel,
+  Stepper,
+  Typography,
+} from "@mui/material";
 
 import { API_ADDRESS, REQUEST_RETRY_DELAY } from "../../../../config";
 import { styles } from "../../../utils/styles";
+import { steps, getCurrentStep } from "./steps";
 
 const Result = () => {
-  const [response, setResponse] = useState<ITaskResultRes>({});
+  const [response, setResponse] = useState<TaskResult>();
+  const [currentStep, setCurrentStep] = useState<Step>({ id: 0, status: "loading" });
 
   const fetchData = async () => {
     try {
-      const res = await fetch(
-        `${API_ADDRESS}/check_rmsd/${location.pathname.split("/").pop()}`,
-        {
-          method: "GET",
-        }
-      );
-
-      // if the API responded correctly, parse received data
-      let json: TaskResultRes = {};
-      if (res.status === 200) {
-        json = await res.json();
-      }
-      setResponse({
-        status: json.status,
-        results: json.results,
-        reqStatus: res.status,
+      const task_id = location.pathname.split("/").pop();
+      const res = await fetch(`${API_ADDRESS}/check_rmsd/${task_id}`, {
+        method: "GET",
       });
 
-      if (res.status === 200 && json.status !== "DONE") {
+      // parse received data
+      const json: TaskResult = {
+        status_code: res.status,
+        ...(await res.json()),
+      };
+      console.log(json);
+      setResponse(json);
+
+      // if file has not yet finished processing and there were no errors
+      // set a simeout to check again in `REQUEST_RETRY_DELAY` ms
+      if (
+        json.status_code === 200 &&
+        json.status !== "DONE" &&
+        json.status !== "ERROR"
+      ) {
         setTimeout(fetchData, REQUEST_RETRY_DELAY);
       }
     } catch (error) {
-      setResponse({
-        reqStatus: 500,
-      });
-      console.error(error);
+      setResponse({ status_code: 500 });
       setTimeout(fetchData, REQUEST_RETRY_DELAY);
     }
   };
 
-  const getMessage = () => {
-    switch (response.reqStatus) {
-      case 500:
-        return "Server is not responding, please try again later.";
-      case 404:
-        return "The resources you are looking for can't be found. Check the URL that you were given.";
-      case 200:
-        switch (response.status) {
-          case "PENDING":
-            return (
-              <>
-                <Box>
-                  <Typography>Your files are being processed.</Typography>
-                  <Typography>
-                    The page will automatically refresh when the results are
-                    ready.
-                  </Typography>
-                </Box>
-                <CircularProgress size="1.5rem" />
-              </>
-            );
-          case "DONE":
-            return "Your files have been succesfully processed.";
-          case "ERROR":
-            return "There was an error when processing your files. This is most likely due to them being invalid.";
-          default:
-            return "Unknown error.";
-        }
-      default:
-        return <CircularProgress size="1.5rem" />;
-    }
-  };
+  useEffect(() => {
+    setTimeout(fetchData, 1000);
+  }, []);
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    setCurrentStep(getCurrentStep(response));
+  }, [response]);
 
   return (
     <Card sx={styles.mainCard}>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          textAlign: "center",
-          gap: 2,
-        }}
-      >
-        {getMessage()}
-      </Box>
-
-      {response.results &&
-        Object.entries(response.results).map(([fileName, result], i) => (
-          <Typography key={i}>{`${fileName}: rmsd=${result.rmsd}`}</Typography>
+      <Stepper activeStep={currentStep.id} orientation="vertical">
+        {steps.map((step, i) => (
+          <Step key={i}>
+            <StepLabel>{step.label}</StepLabel>
+            <StepContent>
+              <Typography>{step.description}</Typography>
+              {response?.status && response.status !== "DONE" && (
+                <Typography fontSize="12px">
+                  The page will refresh automatically.
+                </Typography>
+              )}
+            </StepContent>
+          </Step>
         ))}
+      </Stepper>
+
+      {response?.files &&
+        response.files.map((file, i) =>
+          file.status === "SUCCESS" ? (
+            <Typography key={i}>{`${file.name}: rmsd=${file.rmsd}`}</Typography>
+          ) : (
+            <Typography
+              key={i}
+            >{`${file.name}: Error, invalid file.`}</Typography>
+          )
+        )}
     </Card>
   );
 };

@@ -3,10 +3,11 @@ from flask import Flask, abort, request, jsonify, json
 from flask_cors import CORS
 from flasgger import Swagger
 from flask_rq2 import RQ
+from sqlalchemy.sql import text
 
 from scripts.generate_task_id import generate_task_id
 from scripts.process_files import process_files
-from models.models import db, Task
+from models.models import db, Task, File
 
 # from a import eo
 from config import APP_CONFIG, FILE_STORAGE_DIR, SWAGGER_TEMPLATE
@@ -64,17 +65,17 @@ def request_rmsd():
     return abort(400)  # bad request
 
 
-@app.route("/check_rmsd/<url_path>", methods=["GET"])
-def check_rmsd(url_path: str):
+@app.route("/check_rmsd/<task_id>", methods=["GET"])
+def check_rmsd(task_id: str):
     """
     Check the status of a task.
     ---
     parameters:
-      - name: url_path
+      - name: task_id
         in: path
         type: string
         required: true
-        description: The URL path containing the task information.
+        description: The URL path containing the task ID.
     responses:
       200:
         description: Task status retrieved successfully.
@@ -87,13 +88,16 @@ def check_rmsd(url_path: str):
     """
     # try to find requested resources and send it back if it exists
     # else return with 404
-    task = db.get_or_404(Task, url_path)
-    print(task.status)
-    if url_path in os.listdir(FILE_STORAGE_DIR):
-        dir_path = os.path.join(FILE_STORAGE_DIR, url_path)
 
-        # if STATUS_FILE in os.listdir(dir_path):
-        #     return jsonify(json.load(open(os.path.join(dir_path, STATUS_FILE))))
+    task: Task = Task.query.get_or_404(task_id)
+    data = {
+        "status": task.status,
+        "files": [],
+    }
+    for file in task.files:
+        print(file)
+        data["files"].append(jsonify(file).json)
+    return data
 
     return abort(404)  # not found
 

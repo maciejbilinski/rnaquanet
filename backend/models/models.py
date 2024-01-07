@@ -1,21 +1,27 @@
+from typing import List
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import Mapped
+from dataclasses import dataclass
 
 from config import TASK_ID_LENGTH
 
 db = SQLAlchemy()
 
 
-class Task(db.Model):
-    id = db.Column(db.String(TASK_ID_LENGTH), primary_key=True)
-    status = db.Column(db.String(16), nullable=False)
-    files = db.relationship("File", backref="task", lazy=True)
-
-
+@dataclass
 class File(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    status = db.Column(db.String(16), nullable=False)
-    name = db.Column(db.String(256), nullable=False)
-    is_temp = db.Column(db.Boolean, nullable=False, default=False)
-    task_id = db.Column(
+    id: int = db.Column(db.Integer, primary_key=True)
+    name: str = db.Column(db.String(256), nullable=False)
+    is_temp: bool = db.Column(db.Boolean, nullable=False, default=False)
+    status: str = db.Column(db.String(16), nullable=False)
+    rmsd: int = db.Column(db.Integer)
+    task_id: str = db.Column(
         db.String(TASK_ID_LENGTH), db.ForeignKey("task.id"), nullable=False
     )
+
+
+@dataclass
+class Task(db.Model):
+    id: str = db.Column(db.String(TASK_ID_LENGTH), primary_key=True)
+    status: str = db.Column(db.String(16), nullable=False)
+    files: Mapped[List[File]] = db.relationship("File", backref="task", lazy=True)

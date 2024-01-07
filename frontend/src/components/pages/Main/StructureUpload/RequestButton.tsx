@@ -11,17 +11,15 @@ interface Props {
 
 const RequestButton = ({ files, setFiles }: Props) => {
   const navigate = useNavigate();
-  const [response, setResponse] = useState<ITaskRequestRes>({
-    waiting: false,
-  });
+  const [response, setResponse] = useState<TaskRequest>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const fetchData = async () => {
+    setLoading(true);
     try {
-      setResponse({ waiting: true });
       // convert file array to FormData
       const formData = new FormData();
-      const x = await fetch("http://files.rcsb.org/download/2hy9.cif");
-      console.log(x)
+
       files.forEach((fileData, i) => {
         if (fileData.file) {
           // files uploaded by user (send file with uniquefied file name)
@@ -37,36 +35,30 @@ const RequestButton = ({ files, setFiles }: Props) => {
         body: formData,
       });
 
-      // if the API responded correctly, parse received data
-      let json: TaskRequestRes = {};
-      if (res.status === 200) {
-        json = await res.json();
-        setFiles([]);
-      }
+      // parse received data
+      const json: TaskRequest = {
+        status_code: res.status,
+        ...(await res.json()),
+      };
 
-      // navigate to task url when `task_id` is returned
+      // navigate to task url if `task_id` is returned
       if (json.task_id) {
+        setFiles([]);
         navigate(`result/${json.task_id}`);
       }
       // else set the error message
       else {
-        setResponse({
-          waiting: false,
-          reqStatus: res.status,
-        });
+        setResponse(json);
       }
     } catch (error) {
-      setResponse({
-        waiting: false,
-        reqStatus: 500,
-      });
-      console.error(error);
+      setResponse({ status_code: 500 });
     }
+    setLoading(false);
   };
 
   const getMessage = () => {
-    if (response.waiting) return <CircularProgress size="1.75rem" />;
-    switch (response.reqStatus) {
+    if (loading) return <CircularProgress size="1.75rem" />;
+    switch (response?.status_code) {
       case 500:
         return "Server is not responding, please try again later";
       case 400:
@@ -83,7 +75,7 @@ const RequestButton = ({ files, setFiles }: Props) => {
         variant="contained"
         size="large"
         onClick={fetchData}
-        disabled={!files.length || response.waiting}
+        disabled={!files.length || loading}
       >
         {getMessage()}
       </Button>
