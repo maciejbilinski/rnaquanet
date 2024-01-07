@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import {
-  Box,
   Card,
   CircularProgress,
-  Fade,
   Step,
-  StepContent,
   StepLabel,
   Stepper,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 
 import { API_ADDRESS, REQUEST_RETRY_DELAY } from "../../../../config";
@@ -16,6 +15,8 @@ import { styles } from "../../../utils/styles";
 import { steps, getCurrentStep } from "./steps";
 
 const Result = () => {
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
   const [response, setResponse] = useState<TaskResult>();
   const [step, setStep] = useState<Step>({
     id: 0,
@@ -63,90 +64,39 @@ const Result = () => {
     <Card
       sx={{
         ...styles.mainCard,
-        position: "relative",
-        transition: "all 1s linear !important",
+        minHeight: 640,
       }}
     >
-      <Box
-        sx={
-          response?.status === "DONE"
-            ? {
-                ...styles.mainCard,
-                flexDirection: "row",
-                justifyContent: "center",
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                m: 0,
-                mt: 3,
-              }
-            : {
-                display: "flex",
-                justifyContent: "center",
-                mt: 3,
-              }
-        }
+      <Stepper
+        activeStep={step.id}
+        orientation={isSmallScreen ? "vertical" : "horizontal"}
       >
-        <Fade in={response?.status !== "DONE"}>
-          <Stepper
-            sx={{
-              width: "100%",
-              maxWidth: 480,
-            }}
-            activeStep={step.id}
-            orientation="vertical"
-          >
-            {steps.map((s, i) => {
-              const cur = step.id === i;
-              const failed = cur && step.status === "failed";
-              const loading = cur && step.status === "loading";
-              const stepCompleted = step.id > i;
+        {steps.map((s, i) => {
+          const cur = step.id === i;
+          const failed = cur && step.status === "failed";
+          const loading = cur && step.status === "loading";
+          const stepCompleted = step.id > i;
 
-              return (
-                <Step key={i}>
-                  <StepLabel
-                    error={failed}
-                    optional="aaaa"
-                    icon={loading && <CircularProgress size="1.5rem" />}
-                  >
-                    {stepCompleted ? s.labelFinished : s.label}
-                  </StepLabel>
-                  <StepContent>
-                    {!step.specialDescription ? (
-                      <>
-                        <Typography>{s.description}</Typography>
-                        <Typography fontSize="12px">
-                          The page will refresh automatically.
-                        </Typography>
-                      </>
-                    ) : (
-                      <>
-                        {Array.isArray(step.specialDescription) ? (
-                          step.specialDescription.map((d) => (
-                            <Typography>{d}</Typography>
-                          ))
-                        ) : (
-                          <Typography>{step.specialDescription}</Typography>
-                        )}
-                      </>
-                    )}
-                  </StepContent>
-                </Step>
-              );
-            })}
-          </Stepper>
-        </Fade>
-      </Box>
-      <Fade in={response?.status === "DONE"}>
-        <Stepper activeStep={steps.length}>
-          {steps.map((s, i) => (
+          return (
             <Step key={i}>
-              <StepLabel>{s.labelFinished}</StepLabel>
+              <StepLabel
+                error={failed}
+                icon={loading && <CircularProgress size="1.5rem" />}
+                optional={
+                  cur && (
+                    <Typography fontSize="12px">
+                      {step.specialDescription ??
+                        "Page will refresh automatically"}
+                    </Typography>
+                  )
+                }
+              >
+                {stepCompleted ? s.labelFinished : s.label}
+              </StepLabel>
             </Step>
-          ))}
-        </Stepper>
-      </Fade>
+          );
+        })}
+      </Stepper>
 
       {response?.files &&
         response.files.map((file, i) =>
