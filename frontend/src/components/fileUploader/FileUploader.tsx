@@ -49,83 +49,85 @@ const FileUploader = ({ files, setFiles }: Props) => {
   };
 
   return (
-    <FileUploaderBase
-      handleChange={handleChange}
-      types={UPLOAD_FILE_TYPES}
-      dropMessageStyle={{
-        opacity: 0.85,
-      }}
-      minSize={MIN_UPLOAD_FILE_SIZE}
-      maxSize={MAX_UPLOAD_FILE_SIZE}
-      onTypeError={() => setError("type")}
-      onSizeError={() => setError("size")}
-      onDrop={() => setError(null)}
-      onSelect={() => setError(null)}
-      children={
-        <Box
-          sx={(theme) => ({
-            display: "flex",
-            alignItems: "center",
-            width: "100%",
-            bgcolor: `${theme.palette[error ? "error" : "primary"].main}30`,
-            border: "2px dashed",
-            borderColor: theme.palette[error ? "error" : "primary"].main,
-            borderRadius: 2,
-            cursor: "pointer",
-            px: 5,
-            gap: 1,
-            overflow: "hidden",
-            "&:hover": {
-              bgcolor: `${theme.palette[error ? "error" : "primary"].main}${
-                theme.palette.mode === "dark" ? 20 : 45
-              }`,
-            },
-          })}
-        >
-          <UploadFileIcon
-            sx={{
-              fontSize: 32,
-              color: `${error ? "error" : "primary"}.main`,
-            }}
-          />
+    <Box sx={{ flexBasis: "50%" }}>
+      <FileUploaderBase
+        handleChange={handleChange}
+        types={UPLOAD_FILE_TYPES}
+        dropMessageStyle={{
+          opacity: 0.85,
+        }}
+        minSize={MIN_UPLOAD_FILE_SIZE}
+        maxSize={MAX_UPLOAD_FILE_SIZE}
+        onTypeError={() => setError("type")}
+        onSizeError={() => setError("size")}
+        onDrop={() => setError(null)}
+        onSelect={() => setError(null)}
+        children={
           <Box
-            sx={{
-              flexGrow: 1,
-            }}
+            sx={(theme) => ({
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              width: "100%",
+              bgcolor: `${theme.palette[error ? "error" : "primary"].main}30`,
+              border: "2px dashed",
+              borderColor: theme.palette[error ? "error" : "primary"].main,
+              borderRadius: 2,
+              cursor: "pointer",
+              px: 5,
+              overflow: "hidden",
+              "&:hover": {
+                bgcolor: `${theme.palette[error ? "error" : "primary"].main}${
+                  theme.palette.mode === "dark" ? 20 : 45
+                }`,
+              },
+            })}
           >
+            <UploadFileIcon
+              sx={{
+                fontSize: 32,
+                color: `${error ? "error" : "primary"}.main`,
+              }}
+            />
+            <Box
+              sx={{
+                flexGrow: 1,
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: 12,
+                  color: "text.secondary",
+                }}
+              >
+                {error === "type" ? (
+                  <span>Invalid file type!</span>
+                ) : error === "size" ? (
+                  <span>File too large!</span>
+                ) : (
+                  <span>
+                    <u>Drop</u> your files here
+                    <br />
+                    or <u>click</u> to choose.
+                  </span>
+                )}
+              </Typography>
+            </Box>
+
             <Typography
               sx={{
                 fontSize: 12,
                 color: "text.secondary",
+                maxWidth: 64,
               }}
             >
-              {error === "type" ? (
-                <span>Invalid file type!</span>
-              ) : error === "size" ? (
-                <span>File too large!</span>
-              ) : (
-                <span>
-                  <u>Drop</u> your files here
-                  <br />
-                  or <u>click</u> to choose.
-                </span>
-              )}
+              {UPLOAD_FILE_TYPES.map((type) => `.${type}`).join(", ")}
             </Typography>
           </Box>
-
-          <Typography
-            sx={{
-              fontSize: 12,
-              color: "text.secondary",
-              maxWidth: 64,
-            }}
-          >
-            {UPLOAD_FILE_TYPES.map((type) => `.${type}`).join(", ")}
-          </Typography>
-        </Box>
-      }
-      multiple
-    />
+        }
+        multiple
+      />
+    </Box>
   );
 };
 

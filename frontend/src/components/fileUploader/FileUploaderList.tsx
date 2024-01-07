@@ -14,26 +14,26 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
     <Box
       sx={{
         ...styles.slimScrollbar,
-        "&::-webkit-scrollbar-track, &::-webkit-scrollbar-thumb": {
+        "&::-webkit-scrollbar-track": {
           borderTopRightRadius: 3,
           borderBottomRightRadius: 3,
         },
         " &::-webkit-scrollbar-thumb": {
           borderRadius: 10,
         },
-        display: "flex",
-        alignContent: "flex-start",
-        flexWrap: "wrap",
-        width: "100%",
-        height: "100%",
-        overflowY: "auto",
         border: "1px solid",
         borderColor: "gray",
         borderRadius: 1,
-        px: 2,
-        py: 1,
-        gap: 1,
         color: "text.primary",
+        display: "flex",
+        flexBasis: "50%",
+        alignContent: "flex-start",
+        flexWrap: "wrap",
+        height: "100%",
+        overflowY: "auto",
+        px: 3,
+        py: 1.5,
+        gap: 2,
       }}
     >
       {files.length ? (
@@ -43,9 +43,9 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
             sx={{
               width: {
                 xs: "100%",
-                sm: "calc(50% - 4px)",
+                sm: "calc(50% - 8px)",
                 md: "100%",
-                lg: "calc(50% - 4px)",
+                lg: "calc(50% - 8px)",
               },
             }}
           >
