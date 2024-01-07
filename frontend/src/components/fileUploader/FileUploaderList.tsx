@@ -50,8 +50,6 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
               "&:hover": {
                 bgcolor: `${theme.palette.primary.main}30`,
               },
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 10,
               borderRadius: 2,
             })}
           >
@@ -96,6 +94,7 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
             alignItems: "center",
             width: "100%",
             height: "100%",
+            fontSize: 14,
           }}
         >
           No files selected

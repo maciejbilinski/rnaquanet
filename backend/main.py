@@ -3,17 +3,24 @@ from flask import Flask, abort, request, jsonify, json
 from flask_cors import CORS
 from flasgger import Swagger
 from flask_rq2 import RQ
+from flask_sqlalchemy import SQLAlchemy
 
 from scripts.generate_task_id import generate_task_id
 from scripts.process_files import process_files
+
 # from a import eo
-from config import DEBUG_MODE, STORAGE_DIR, STATUS_FILE, SWAGGER_TEMPLATE
+from config import APP_CONFIG, STORAGE_DIR, STATUS_FILE, SWAGGER_TEMPLATE
 
 
 app = Flask(__name__)
+app.config.update(APP_CONFIG)
+db = SQLAlchemy()
+
 CORS(app)
-Swagger(app, template=SWAGGER_TEMPLATE) # Swagger UI is located at `api.url/apidocs/`
+Swagger(app, template=SWAGGER_TEMPLATE)  # Swagger UI is located at `api.url/apidocs/`
+db.init_app(app)
 rq = RQ(app)
+
 queue = rq.get_queue()
 
 
@@ -35,25 +42,29 @@ def request_rmsd():
           properties:
             task_id:
               type: string
-              
+
       400:
           description: Bad request.
-    
+
     """
     # generate unique task id
     task_id = generate_task_id()
-    
+
+    # `request.form` - files sent as string (PDB ids)
+    # `request.files` - files sent as file type
     if len(request.files):
         # process files
         error = process_files(queue, request.files, task_id)
 
         if not error:
             # return the task id
-            return jsonify({
-                "task_id": task_id,
-            })
-    
-    return abort(400)   # bad request
+            return jsonify(
+                {
+                    "task_id": task_id,
+                }
+            )
+
+    return abort(400)  # bad request
 
 
 @app.route("/check_rmsd/<url_path>", methods=["GET"])
@@ -80,13 +91,12 @@ def check_rmsd(url_path: str):
     # try to find the status file of a request and send it back if it exists
     if url_path in os.listdir(STORAGE_DIR):
         dir_path = os.path.join(STORAGE_DIR, url_path)
-        
+
         if STATUS_FILE in os.listdir(dir_path):
             return jsonify(json.load(open(os.path.join(dir_path, STATUS_FILE))))
 
-    return abort(404)   # not found
+    return abort(404)  # not found
 
 
 if __name__ == "__main__":
-    app.run(debug=DEBUG_MODE)
-    
+    app.run()

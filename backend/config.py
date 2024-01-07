@@ -1,4 +1,14 @@
-DEBUG_MODE = True
+APP_CONFIG = {
+    "DEBUG": True,
+    "SQLALCHEMY_DATABASE_URI": "sqlite:///rnaquanet.db",
+}
+
+SWAGGER_TEMPLATE = {
+    "info": {
+        "title": "RNAQuANet API",
+        "version": 0.1,
+    }
+}
 
 # path to where the data received from frontend will be saved
 # relative to `{project}/API`
@@ -12,10 +22,3 @@ FILES_DIR = "files"
 
 # how long should the randomly generated `task id` be
 TASK_ID_LENGTH = 12
-
-SWAGGER_TEMPLATE = {
-    "info": {
-        "title": "RNAQuANet API",
-        "version": 0.1,
-    }
-}

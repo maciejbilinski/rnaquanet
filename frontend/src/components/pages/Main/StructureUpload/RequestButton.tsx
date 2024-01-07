@@ -20,9 +20,17 @@ const RequestButton = ({ files, setFiles }: Props) => {
       setResponse({ waiting: true });
       // convert file array to FormData
       const formData = new FormData();
-      files.forEach((fileData, i) =>
-        formData.append(`file_${i}`, fileData.file ?? new Blob(), fileData.name)
-      );
+      const x = await fetch("http://files.rcsb.org/download/2hy9.cif");
+      console.log(x)
+      files.forEach((fileData, i) => {
+        if (fileData.file) {
+          // files uploaded by user (send file with uniquefied file name)
+          formData.append(`file_${i}`, fileData.file, fileData.name);
+        } else {
+          // files from protein data bank (send empty blob with file name as PDB id)
+          formData.append(`file_${i}_pdb`, new Blob(), fileData.name);
+        }
+      });
 
       const res = await fetch(`${API_ADDRESS}/request_rmsd`, {
         method: "POST",
