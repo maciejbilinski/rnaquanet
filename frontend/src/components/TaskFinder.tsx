@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { Box, Button, Card, TextField, Typography } from "@mui/material";
 
-import { styles } from "../../../utils/styles";
+import { styles } from "../utils/styles";
 import { useState } from "react";
 
-const TaskSearch = () => {
+const TaskFinder = () => {
   const navigate = useNavigate();
   const [taskId, setTaskId] = useState<string>();
   const [error, setError] = useState<boolean>(false);
@@ -71,4 +71,4 @@ const TaskSearch = () => {
   );
 };
 
-export default TaskSearch;
+export default TaskFinder;

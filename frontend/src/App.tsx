@@ -1,15 +1,14 @@
 import { useEffect, useMemo } from "react";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useLocalStorage } from "usehooks-ts";
-import { Box } from "@mui/material";
-
-import Navbar from "./components/Navbar";
-import Main from "./components/pages/Main/Main";
-import Footer from "./components/Footer";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { useLocalStorage } from "usehooks-ts";
+import { Box, createTheme, ThemeProvider } from "@mui/material";
+
 import { projectName } from "../config";
-import TaskSearch from "./components/pages/TaskSearch/TaskSearch";
-import TaskResult from "./components/pages/TaskResult/TaskResult";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import Main from "./components/pages/Main/Main";
+import ResultMain from "./components/pages/ResultMain/ResultMain";
+import Result from "./components/pages/Result/Result";
 
 const App = () => {
   const [colorMode, setColorMode] = useLocalStorage<"light" | "dark">(
@@ -77,12 +76,9 @@ const App = () => {
             <Navbar colorMode={colorMode} setColorMode={setColorMode} />
 
             <Routes>
-              <Route
-                path="/"
-                element={<Main />}
-              />
-              <Route path="/result" element={<TaskSearch />} />
-              <Route path="/result/*" element={<TaskResult />} />
+              <Route path="/" element={<Main />} />
+              <Route path="/result" element={<ResultMain />} />
+              <Route path="/result/*" element={<Result />} />
             </Routes>
           </Box>
           <Footer />

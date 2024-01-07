@@ -4,7 +4,7 @@ import { Box, Card, CircularProgress, Typography } from "@mui/material";
 import { API_ADDRESS, REQUEST_RETRY_DELAY } from "../../../../config";
 import { styles } from "../../../utils/styles";
 
-const TaskResult = () => {
+const Result = () => {
   const [response, setResponse] = useState<ITaskResultRes>({});
 
   const fetchData = async () => {
@@ -98,4 +98,4 @@ const TaskResult = () => {
   );
 };
 
-export default TaskResult;
+export default Result;

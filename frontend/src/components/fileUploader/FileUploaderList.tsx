@@ -33,21 +33,27 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
         overflowY: "auto",
         px: 3,
         py: 1.5,
-        gap: 2,
+        columnGap: 2,
       }}
     >
       {files.length ? (
         files.map((fileData, i) => (
           <Box
             key={i}
-            sx={{
+            sx={(theme) => ({
               width: {
                 xs: "100%",
                 sm: "calc(50% - 8px)",
                 md: "100%",
                 lg: "calc(50% - 8px)",
               },
-            }}
+              "&:hover": {
+                bgcolor: `${theme.palette.primary.main}30`,
+              },
+              borderTopLeftRadius: 10,
+              borderTopRightRadius: 10,
+              borderRadius: 2,
+            })}
           >
             <Box
               sx={{
@@ -55,6 +61,7 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
                 justifyContent: "space-between",
                 alignItems: "center",
                 px: 1,
+                py: 0.5,
               }}
             >
               <Typography

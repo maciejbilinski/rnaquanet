@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { Button, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-import { API_ADDRESS } from "../../../../config";
+import { API_ADDRESS } from "../../../../../config";
 
 interface Props {
   files: FileData[];

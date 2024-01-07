@@ -3,7 +3,7 @@ import { Box, Button, CircularProgress, TextField, Typography } from "@mui/mater
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 
-import { dataBankExamples } from "../../../../config";
+import { dataBankExamples } from "../../../../../config";
 
 interface Props {
   files: FileData[];

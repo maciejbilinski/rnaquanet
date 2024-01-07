@@ -78,7 +78,7 @@ const FileUploader = ({ files, setFiles }: Props) => {
               overflow: "hidden",
               "&:hover": {
                 bgcolor: `${theme.palette[error ? "error" : "primary"].main}${
-                  theme.palette.mode === "dark" ? 20 : 45
+                  theme.palette.mode === "light" ? 45 : 20
                 }`,
               },
             })}

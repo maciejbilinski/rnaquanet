@@ -1,9 +1,9 @@
 import { Dispatch, SetStateAction } from "react";
 import { Box, Button, Card, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
+
 import { styles } from "../utils/styles";
 import { projectName } from "../../config";
 
@@ -37,17 +37,17 @@ const Navbar = ({ colorMode, setColorMode }: Props) => {
           justifyContent: "center",
         }}
       >
-        <Button
-          sx={{
-            color: "text.primary",
+        <Link
+          to={window.origin}
+          style={{
+            textDecoration: "none",
+            color: "inherit",
           }}
-          variant="text"
-          onClick={() => navigate("/")}
         >
           <Typography variant="h4" sx={{ fontFamily: "initial" }}>
             {projectName}
           </Typography>
-        </Button>
+        </Link>
       </Box>
 
       {/* theme toggle button */}
@@ -60,9 +60,9 @@ const Navbar = ({ colorMode, setColorMode }: Props) => {
       >
         <Button
           size="large"
-          onClick={() => setColorMode(colorMode === "dark" ? "light" : "dark")}
+          onClick={() => setColorMode(colorMode === "light" ? "dark" : "light")}
         >
-          {colorMode === "dark" ? (
+          {colorMode === "light" ? (
             <Brightness7Icon color="action" />
           ) : (
             <Brightness4Icon color="action" />

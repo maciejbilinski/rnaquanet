@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction } from "react";
 import { Box, Typography } from "@mui/material";
 
-import FileUploaderList from "../../fileUploader/FileUploaderList";
-import FileUploader from "../../fileUploader/FileUploader";
+import FileUploaderList from "../../../fileUploader/FileUploaderList";
+import FileUploader from "../../../fileUploader/FileUploader";
 
 interface Props {
   files: FileData[];
