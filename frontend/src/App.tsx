@@ -14,7 +14,7 @@ import TaskResult from "./components/pages/TaskResult/TaskResult";
 const App = () => {
   const [colorMode, setColorMode] = useLocalStorage<"light" | "dark">(
     "ColorMode",
-    "dark"
+    "light"
   );
 
   useEffect(() => {
@@ -27,11 +27,14 @@ const App = () => {
         palette: {
           mode: colorMode,
           background: {
-            default: colorMode === "light" ? "#dbdbdb" : "#000",
+            default: colorMode === "light" ? "#dbdbdb" : "#121212",
             paper: colorMode === "light" ? "#f9f9f9" : undefined,
           },
           primary: {
             main: "#3ca93c",
+          },
+          secondary: {
+            main: "#194519",
           },
         },
         breakpoints: {
@@ -53,11 +56,12 @@ const App = () => {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "center",
+            flexDirection: "column",
+            alignItems: "center",
             bgcolor: "background.default",
             color: "text.primary",
             minHeight: "100dvh",
-            px: 1,
+            gap: 1.5,
           }}
         >
           <Box
@@ -67,7 +71,7 @@ const App = () => {
               width: "100%",
               maxWidth: 1200,
               gap: 1.5,
-              my: 0.5,
+              mt: 0.5,
             }}
           >
             <Navbar colorMode={colorMode} setColorMode={setColorMode} />
@@ -75,19 +79,13 @@ const App = () => {
             <Routes>
               <Route
                 path="/"
-                element={
-                  <>
-                    <Main />
-                    <TaskSearch />
-                  </>
-                }
+                element={<Main />}
               />
               <Route path="/result" element={<TaskSearch />} />
               <Route path="/result/*" element={<TaskResult />} />
             </Routes>
-
-            <Footer />
           </Box>
+          <Footer />
         </Box>
       </ThemeProvider>
     </BrowserRouter>

@@ -14,6 +14,13 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
     <Box
       sx={{
         ...styles.slimScrollbar,
+        "&::-webkit-scrollbar-track, &::-webkit-scrollbar-thumb": {
+          borderTopRightRadius: 3,
+          borderBottomRightRadius: 3,
+        },
+        " &::-webkit-scrollbar-thumb": {
+          borderRadius: 10,
+        },
         display: "flex",
         alignContent: "flex-start",
         flexWrap: "wrap",
@@ -26,7 +33,7 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
         px: 2,
         py: 1,
         gap: 1,
-        color: "text.primary"
+        color: "text.primary",
       }}
     >
       {files.length ? (
@@ -63,6 +70,7 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
               <IconButton
                 sx={{
                   p: 0.25,
+                  color: "text.secondary",
                 }}
                 onClick={() => setFiles(files.filter((_, fi) => fi !== i))}
               >

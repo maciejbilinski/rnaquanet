@@ -20,7 +20,7 @@ const UploaderDataBank = ({ files, setFiles }: Props) => {
   const [inputState, setInputState] = useState<InputState>({ value: "" });
   const uploadedFileNames = files.map((file) => file.name);
 
-  const onInputChange = async (newValue: string) => {
+  const onInputChange = async (newValue: string, skipPreview?: boolean) => {
     if (inputState.loading) return;
     newValue = newValue.toUpperCase();
 
@@ -33,11 +33,11 @@ const UploaderDataBank = ({ files, setFiles }: Props) => {
         });
       } else {
         // start loading and fetch data
-        setInputState({
-          value: newValue,
+        setInputState((old) => ({
+          value: !skipPreview ? newValue : old.value,
           loading: true,
           status: undefined,
-        });
+        }));
         try {
           const res = await fetch(
             `https://data.rcsb.org/rest/v1/core/entry/${newValue}`
@@ -50,10 +50,10 @@ const UploaderDataBank = ({ files, setFiles }: Props) => {
                 isFromDataBank: true,
               })
             );
-            setInputState({
-              value: "",
-              status: "success",
-            });
+            setInputState((old) => ({
+              value: !skipPreview ? "" : old.value,
+              status: !skipPreview ? "success" : undefined,
+            }));
           } else throw new Error();
         } catch {
           setInputState({
@@ -87,8 +87,8 @@ const UploaderDataBank = ({ files, setFiles }: Props) => {
         {dataBankExamples.map((example, i) => (
           <Button
             key={i}
-            variant="outlined"
-            onClick={() => onInputChange(example.name)}
+            variant="contained"
+            onClick={() => onInputChange(example.name, true)}
             disabled={
               inputState.loading || uploadedFileNames.includes(example.name)
             }

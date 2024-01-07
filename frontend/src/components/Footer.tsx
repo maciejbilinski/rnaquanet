@@ -1,19 +1,24 @@
-import { Card, Link } from "@mui/material";
+import { Box, Link, Typography } from "@mui/material";
 
-import { repositoryLink } from "../../config";
-import { styles } from "../utils/styles";
+import { projectName, repositoryLink } from "../../config";
 
 const Footer = () => {
   return (
-    <Card sx={{
-      ...styles.mainCard,
-      alignItems: "center",
-      py: 2
-    }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        p: 3,
+      }}
+    >
       <Link href={repositoryLink} target="_blank">
         Learn more about the project
       </Link>
-    </Card>
+      <Typography>
+        {projectName} 2024 | Poznan University of Technology
+      </Typography>
+    </Box>
   );
 };
 

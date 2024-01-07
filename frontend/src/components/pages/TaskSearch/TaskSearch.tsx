@@ -38,6 +38,7 @@ const TaskSearch = () => {
         >
           <TextField
             sx={{ flex: 1 }}
+            label="Task id"
             value={taskId ?? ""}
             onChange={(v) => {
               setError(false);

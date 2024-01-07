@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { Box, Button, Card, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
@@ -13,22 +13,21 @@ interface Props {
 }
 
 const Navbar = ({ colorMode, setColorMode }: Props) => {
+  const navigate = useNavigate();
+
   return (
     <Card
       sx={{
         ...styles.mainCard,
+        bgcolor: "primary.main",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        py: 2,
+        py: 1,
       }}
     >
       {/* filler box */}
-      <Box
-        sx={{
-          flex: 1,
-        }}
-      />
+      <Box sx={{ flex: 1 }} />
 
       {/* project name */}
       <Box
@@ -38,23 +37,16 @@ const Navbar = ({ colorMode, setColorMode }: Props) => {
           justifyContent: "center",
         }}
       >
-        <Button variant="text">
-          <Link
-            to={location.origin}
-            style={{
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            <Typography
-              variant="h4"
-              sx={{
-                fontFamily: "initial",
-              }}
-            >
-              {projectName}
-            </Typography>
-          </Link>
+        <Button
+          sx={{
+            color: "text.primary",
+          }}
+          variant="text"
+          onClick={() => navigate("/")}
+        >
+          <Typography variant="h4" sx={{ fontFamily: "initial" }}>
+            {projectName}
+          </Typography>
         </Button>
       </Box>
 

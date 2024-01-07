@@ -67,24 +67,26 @@ const FileUploader = ({ files, setFiles }: Props) => {
             display: "flex",
             alignItems: "center",
             width: "100%",
-            bgcolor: error ? "#ff000033" : undefined,
+            bgcolor: `${theme.palette[error ? "error" : "primary"].main}30`,
             border: "2px dashed",
-            borderColor: theme.palette.primary.main,
+            borderColor: theme.palette[error ? "error" : "primary"].main,
             borderRadius: 2,
             cursor: "pointer",
             px: 5,
             gap: 1,
             overflow: "hidden",
             "&:hover": {
-              opacity: 0.75,
+              bgcolor: `${theme.palette[error ? "error" : "primary"].main}${
+                theme.palette.mode === "dark" ? 20 : 45
+              }`,
             },
           })}
         >
           <UploadFileIcon
-            sx={(theme) => ({
-              color: theme.palette.primary.main,
+            sx={{
               fontSize: 32,
-            })}
+              color: `${error ? "error" : "primary"}.main`,
+            }}
           />
           <Box
             sx={{
@@ -94,7 +96,7 @@ const FileUploader = ({ files, setFiles }: Props) => {
             <Typography
               sx={{
                 fontSize: 12,
-                color: "#666",
+                color: "text.secondary",
               }}
             >
               {error === "type" ? (
@@ -114,7 +116,7 @@ const FileUploader = ({ files, setFiles }: Props) => {
           <Typography
             sx={{
               fontSize: 12,
-              color: "#666",
+              color: "text.secondary",
               maxWidth: 64,
             }}
           >
