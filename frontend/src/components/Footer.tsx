@@ -15,7 +15,7 @@ const Footer = () => {
       <Link href={repositoryLink} target="_blank">
         Learn more about the project
       </Link>
-      <Typography>
+      <Typography textAlign="center">
         {projectName} 2024 | Poznan University of Technology
       </Typography>
     </Box>

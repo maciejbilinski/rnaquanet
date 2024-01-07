@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useLocalStorage } from "usehooks-ts";
 import { Box, createTheme, ThemeProvider } from "@mui/material";
 
@@ -76,6 +76,7 @@ const App = () => {
             <Navbar colorMode={colorMode} setColorMode={setColorMode} />
 
             <Routes>
+              <Route path="*" element={<Navigate to="/" />} />
               <Route path="/" element={<Main />} />
               <Route path="/result" element={<ResultMain />} />
               <Route path="/result/*" element={<Result />} />

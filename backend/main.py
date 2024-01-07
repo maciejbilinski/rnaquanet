@@ -1,16 +1,14 @@
-import os
-from flask import Flask, abort, request, jsonify, json
+from flask import Flask, jsonify, abort, request
 from flask_cors import CORS
-from flasgger import Swagger
 from flask_rq2 import RQ
-from sqlalchemy.sql import text
+from flasgger import Swagger
 
 from scripts.generate_task_id import generate_task_id
 from scripts.process_files import process_files
-from models.models import db, Task, File
+from models.models import db, Task
 
 # from a import eo
-from config import APP_CONFIG, FILE_STORAGE_DIR, SWAGGER_TEMPLATE
+from config import APP_CONFIG, SWAGGER_TEMPLATE
 
 
 app = Flask(__name__)
@@ -56,11 +54,7 @@ def request_rmsd():
 
         if not error:
             # return the task id
-            return jsonify(
-                {
-                    "task_id": task_id,
-                }
-            )
+            return jsonify({"task_id": task_id})
 
     return abort(400)  # bad request
 
@@ -78,31 +72,43 @@ def check_rmsd(task_id: str):
         description: The URL path containing the task ID.
     responses:
       200:
-        description: Task status retrieved successfully.
+        description: Task data retrieved successfully.
         schema:
           properties:
             status:
               type: string
+            files:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  is_temp:
+                    type: boolean
+                  status:
+                    type: string
+                  rmsd:
+                    type: number
+                  task_id:
+                    type: string
+                  
       404:
         description: Task not found.
     """
     # try to find requested resources and send it back if it exists
     # else return with 404
-
     task: Task = Task.query.get_or_404(task_id)
-    data = {
-        "status": task.status,
-        "files": [],
-    }
-    for file in task.files:
-        print(file)
-        data["files"].append(jsonify(file).json)
-    return data
 
-    return abort(404)  # not found
+    return {
+        "status": task.status,
+        "files": [jsonify(file).json for file in task.files],
+    }
 
 
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run()
+        app.run()

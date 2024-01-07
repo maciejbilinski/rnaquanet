@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  Box,
   Card,
   CircularProgress,
   Step,
@@ -16,7 +15,10 @@ import { steps, getCurrentStep } from "./steps";
 
 const Result = () => {
   const [response, setResponse] = useState<TaskResult>();
-  const [currentStep, setCurrentStep] = useState<Step>({ id: 0, status: "loading" });
+  const [step, setStep] = useState<Step>({
+    id: 0,
+    status: "loading",
+  });
 
   const fetchData = async () => {
     try {
@@ -28,9 +30,8 @@ const Result = () => {
       // parse received data
       const json: TaskResult = {
         status_code: res.status,
-        ...(await res.json()),
+        ...(res.status === 200 ? await res.json() : {}),
       };
-      console.log(json);
       setResponse(json);
 
       // if file has not yet finished processing and there were no errors
@@ -53,25 +54,56 @@ const Result = () => {
   }, []);
 
   useEffect(() => {
-    setCurrentStep(getCurrentStep(response));
+    setStep(getCurrentStep(step.id, response));
   }, [response]);
+
+
+  const temp = true;
 
   return (
     <Card sx={styles.mainCard}>
-      <Stepper activeStep={currentStep.id} orientation="vertical">
-        {steps.map((step, i) => (
-          <Step key={i}>
-            <StepLabel>{step.label}</StepLabel>
-            <StepContent>
-              <Typography>{step.description}</Typography>
-              {response?.status && response.status !== "DONE" && (
-                <Typography fontSize="12px">
-                  The page will refresh automatically.
-                </Typography>
-              )}
-            </StepContent>
-          </Step>
-        ))}
+      <Stepper
+        // sx={{
+        //   maxWidth: 480,
+        // }}
+        activeStep={step.id}
+        orientation={(step.id === 4 && step.status === "success" || temp) ? "horizontal" : "vertical"}
+      >
+        {steps.map((s, i) => {
+          const cur = step.id === i;
+          const failed = cur && step.status === "failed";
+          const loading = cur && step.status === "loading";
+          const completed = step.id > i;
+
+          return (
+            <Step key={i}>
+              <StepLabel
+                error={failed}
+                icon={loading && <CircularProgress size="1.5rem" />}
+              >
+                {completed ? s.labelFinished : s.label}
+              </StepLabel>
+              <StepContent>
+                {!step.specialDescription ? (
+                  <>
+                    <Typography>{s.description}</Typography>
+                    {response?.status && response.status !== "DONE" && (
+                      <Typography fontSize="12px">
+                        The page will refresh automatically.
+                      </Typography>
+                    )}
+                  </>
+                ) : (
+                  <Typography>
+                    {Array.isArray(step.specialDescription)
+                      ? step.specialDescription.map((d) => <Typography>{d}</Typography>)
+                      : step.specialDescription}
+                  </Typography>
+                )}
+              </StepContent>
+            </Step>
+          );
+        })}
       </Stepper>
 
       {response?.files &&
@@ -79,9 +111,11 @@ const Result = () => {
           file.status === "SUCCESS" ? (
             <Typography key={i}>{`${file.name}: rmsd=${file.rmsd}`}</Typography>
           ) : (
-            <Typography
-              key={i}
-            >{`${file.name}: Error, invalid file.`}</Typography>
+            file.status === "ERROR" && (
+              <Typography
+                key={i}
+              >{`${file.name}: Error, invalid file.`}</Typography>
+            )
           )
         )}
     </Card>

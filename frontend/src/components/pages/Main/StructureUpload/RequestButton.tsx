@@ -38,7 +38,7 @@ const RequestButton = ({ files, setFiles }: Props) => {
       // parse received data
       const json: TaskRequest = {
         status_code: res.status,
-        ...(await res.json()),
+        ...(res.status === 200 ? await res.json() : {}),
       };
 
       // navigate to task url if `task_id` is returned

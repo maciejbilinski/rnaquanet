@@ -5,7 +5,7 @@ declare type ReqStatus = number;
 declare type TaskStatus = "QUEUED" | "PENDING" | "DONE" | "ERROR";
 
 /** Processing status of a single file. */
-declare type FileStatus = "SUCCESS" | "ERROR";
+declare type FileStatus = "WAITING" | "SUCCESS" | "ERROR";
 
 /** Information about a single file. */
 declare interface FileData {

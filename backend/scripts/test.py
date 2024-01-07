@@ -1,29 +1,21 @@
-import os
 from random import randrange
 from time import sleep
-
-from config import FILE_STORAGE_DIR
-from scripts.save_as_json import save_as_json
+from models.models import db, Task
 
 
 def test(task_id):
+    sleep(2)
+
     print(f"???Started: {task_id}")
-    sleep(15)
+    task: Task | None = Task.query.get(task_id)
+    for file in task.files:
+        file.status = "PENDING"
+    db.session.commit()
 
-    file_names = os.listdir(os.path.join(FILE_STORAGE_DIR, task_id))
+    sleep(2)
 
-    if len(file_names):
-        # save_as_json(
-        #     {
-        #         "status": "DONE",
-        #         "results": {
-        #             file_name: {"rmsd": randrange(0, 20), "error": 0}
-        #             for file_name in file_names
-        #         },
-        #     },
-        #     os.path.join(dir_path, STATUS_FILE),
-        # )
-        print(f"!!!Finished: {task_id}")
-        return
-
-    # save_as_json({"status": "ERROR"}, os.path.join(dir_path, STATUS_FILE))
+    for file in task.files:
+        file.rmsd = randrange(1, 20, 1)
+        file.status = "DONE"
+    db.session.commit()
+    print(f"!!!Finished: {task_id}")
