@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import {
+  Box,
   Card,
   CircularProgress,
+  Fade,
   Step,
   StepContent,
   StepLabel,
@@ -57,54 +59,94 @@ const Result = () => {
     setStep(getCurrentStep(step.id, response));
   }, [response]);
 
-
-  const temp = true;
-
   return (
-    <Card sx={styles.mainCard}>
-      <Stepper
-        // sx={{
-        //   maxWidth: 480,
-        // }}
-        activeStep={step.id}
-        orientation={(step.id === 4 && step.status === "success" || temp) ? "horizontal" : "vertical"}
+    <Card
+      sx={{
+        ...styles.mainCard,
+        position: "relative",
+        transition: "all 1s linear !important",
+      }}
+    >
+      <Box
+        sx={
+          response?.status === "DONE"
+            ? {
+                ...styles.mainCard,
+                flexDirection: "row",
+                justifyContent: "center",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                m: 0,
+                mt: 3,
+              }
+            : {
+                display: "flex",
+                justifyContent: "center",
+                mt: 3,
+              }
+        }
       >
-        {steps.map((s, i) => {
-          const cur = step.id === i;
-          const failed = cur && step.status === "failed";
-          const loading = cur && step.status === "loading";
-          const completed = step.id > i;
+        <Fade in={response?.status !== "DONE"}>
+          <Stepper
+            sx={{
+              width: "100%",
+              maxWidth: 480,
+            }}
+            activeStep={step.id}
+            orientation="vertical"
+          >
+            {steps.map((s, i) => {
+              const cur = step.id === i;
+              const failed = cur && step.status === "failed";
+              const loading = cur && step.status === "loading";
+              const stepCompleted = step.id > i;
 
-          return (
-            <Step key={i}>
-              <StepLabel
-                error={failed}
-                icon={loading && <CircularProgress size="1.5rem" />}
-              >
-                {completed ? s.labelFinished : s.label}
-              </StepLabel>
-              <StepContent>
-                {!step.specialDescription ? (
-                  <>
-                    <Typography>{s.description}</Typography>
-                    {response?.status && response.status !== "DONE" && (
-                      <Typography fontSize="12px">
-                        The page will refresh automatically.
-                      </Typography>
+              return (
+                <Step key={i}>
+                  <StepLabel
+                    error={failed}
+                    optional="aaaa"
+                    icon={loading && <CircularProgress size="1.5rem" />}
+                  >
+                    {stepCompleted ? s.labelFinished : s.label}
+                  </StepLabel>
+                  <StepContent>
+                    {!step.specialDescription ? (
+                      <>
+                        <Typography>{s.description}</Typography>
+                        <Typography fontSize="12px">
+                          The page will refresh automatically.
+                        </Typography>
+                      </>
+                    ) : (
+                      <>
+                        {Array.isArray(step.specialDescription) ? (
+                          step.specialDescription.map((d) => (
+                            <Typography>{d}</Typography>
+                          ))
+                        ) : (
+                          <Typography>{step.specialDescription}</Typography>
+                        )}
+                      </>
                     )}
-                  </>
-                ) : (
-                  <Typography>
-                    {Array.isArray(step.specialDescription)
-                      ? step.specialDescription.map((d) => <Typography>{d}</Typography>)
-                      : step.specialDescription}
-                  </Typography>
-                )}
-              </StepContent>
+                  </StepContent>
+                </Step>
+              );
+            })}
+          </Stepper>
+        </Fade>
+      </Box>
+      <Fade in={response?.status === "DONE"}>
+        <Stepper activeStep={steps.length}>
+          {steps.map((s, i) => (
+            <Step key={i}>
+              <StepLabel>{s.labelFinished}</StepLabel>
             </Step>
-          );
-        })}
-      </Stepper>
+          ))}
+        </Stepper>
+      </Fade>
 
       {response?.files &&
         response.files.map((file, i) =>

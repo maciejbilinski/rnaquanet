@@ -1,11 +1,10 @@
 from typing import List
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped
 from dataclasses import dataclass
 
 from config import TASK_ID_LENGTH
+from app import db
 
-db = SQLAlchemy()
 
 
 @dataclass

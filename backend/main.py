@@ -1,25 +1,17 @@
-from flask import Flask, jsonify, abort, request
+from flask import jsonify, abort, request
 from flask_cors import CORS
-from flask_rq2 import RQ
 from flasgger import Swagger
 
 from scripts.generate_task_id import generate_task_id
 from scripts.process_files import process_files
-from models.models import db, Task
+from models.models import Task
 
 # from a import eo
-from config import APP_CONFIG, SWAGGER_TEMPLATE
-
-
-app = Flask(__name__)
-app.config.update(APP_CONFIG)
+from config import SWAGGER_TEMPLATE
+from app import app, db, queue
 
 CORS(app)
 Swagger(app, template=SWAGGER_TEMPLATE)  # Swagger UI is located at `api.url/apidocs/`
-db.init_app(app)
-rq = RQ(app)
-
-queue = rq.get_queue()
 
 
 @app.route("/request_rmsd", methods=["POST"])
@@ -94,14 +86,14 @@ def check_rmsd(task_id: str):
                     type: number
                   task_id:
                     type: string
-                  
+
       404:
         description: Task not found.
     """
     # try to find requested resources and send it back if it exists
     # else return with 404
     task: Task = Task.query.get_or_404(task_id)
-
+    
     return {
         "status": task.status,
         "files": [jsonify(file).json for file in task.files],
