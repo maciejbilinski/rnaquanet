@@ -2,10 +2,12 @@ import os, requests
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict, FileStorage
 from rq import Queue
+import pandas as pd
 
-from config import FILE_STORAGE_DIR
+from config import FILE_STORAGE_DIR, TEMP_FILE_STORAGE_DIR
 from scripts.test import test
 from models.models import db, Task, File
+from scripts.form_file_handler import get_models_with_chains, process
 
 
 def process_files(
@@ -15,10 +17,10 @@ def process_files(
         # create directories:
         # - `{FILE_STORAGE_DIR}` if it does not exist yet
         # - `{task_id}` directory containing files from current task
+        # - `temp`
         dir_path = os.path.join(FILE_STORAGE_DIR, task_id)
         os.makedirs(dir_path, exist_ok=True)
-
-        # save_as_json({"status": "PENDING"}, os.path.join(dir_path, STATUS_FILE))
+        os.makedirs(TEMP_FILE_STORAGE_DIR, exist_ok=True)
 
         db_task = Task(id=task_id, status="QUEUED")
         db.session.add(db_task)
@@ -26,6 +28,7 @@ def process_files(
         # save each file
         for file in files.values():
             file_name = secure_filename(file.filename)
+            
             # file from protein data bank, download it
             if file.name.endswith("_pdb"):
                 url = f"http://files.rcsb.org/download/{file.filename}.pdb"
@@ -39,10 +42,16 @@ def process_files(
             else:
                 filepath = os.path.join(dir_path, file_name)
                 file.save(filepath)
+                models = get_models_with_chains(task_id, file_name)
+
+                if not models:
+                    return 1
+
+                p = process(task_id, file_name, "xdd", "0", [0, 9])
+                print(p)
                 db.session.add(File(status="WAITING", name=file_name, task=db_task))
-                
+
         db.session.commit()
-                
 
         # TODO remove the dummy output queue and instead execute a command to process saved files
         # after files are processed, write to their corresponding `status.json` file in this format:

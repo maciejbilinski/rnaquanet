@@ -6,7 +6,7 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import {
   MAX_UPLOAD_FILE_SIZE,
   MIN_UPLOAD_FILE_SIZE,
-  UPLOAD_FILE_TYPES,
+  ALLOWED_FILE_TYPES,
 } from "../../../config";
 
 interface Props {
@@ -52,7 +52,7 @@ const FileUploader = ({ files, setFiles }: Props) => {
     <Box sx={{ flexBasis: "50%" }}>
       <FileUploaderBase
         handleChange={handleChange}
-        types={UPLOAD_FILE_TYPES}
+        types={ALLOWED_FILE_TYPES}
         dropMessageStyle={{
           opacity: 0.85,
         }}
@@ -121,7 +121,7 @@ const FileUploader = ({ files, setFiles }: Props) => {
                 maxWidth: 64,
               }}
             >
-              {UPLOAD_FILE_TYPES.map((type) => `.${type}`).join(", ")}
+              {ALLOWED_FILE_TYPES.map((type) => `.${type}`).join(", ")}
             </Typography>
           </Box>
         }

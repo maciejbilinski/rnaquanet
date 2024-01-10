@@ -8,7 +8,7 @@ export const MAX_UPLOAD_FILE_SIZE = 20;
 export const REQUEST_RETRY_DELAY = 5000;
 
 /** List of available file types available for user to upload. */
-export const UPLOAD_FILE_TYPES = ["pdb"];
+export const ALLOWED_FILE_TYPES = ["pdb", "cif"];
 
 /** URL to the API. */
 export const API_ADDRESS = "http://localhost:5000";
