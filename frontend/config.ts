@@ -18,7 +18,7 @@ export const API_ADDRESS = "http://localhost:5000";
 
 
 /** Example structures that will be displayed in the structure selector. */
-export const dataBankExamples = [
+export const dataBankExamples: DataBankExample[] = [
   {
     name: "2HY9",
   },
