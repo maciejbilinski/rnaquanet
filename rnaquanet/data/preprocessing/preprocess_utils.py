@@ -23,7 +23,7 @@ from .extract.node.nucleotides_features import extract_nucleotides
 from .extract_features import extract_features
 from .pdb_filter import filter_file
 
-def process_single_structure(params: tuple[str, RnaquanetConfig, float|None,int,str]) -> tuple[str, Data]:
+def process_single_structure(params: tuple[str, RnaquanetConfig, float|None,int]) -> tuple[str, Data]:
     """
     Process single structure
 
@@ -37,7 +37,7 @@ def process_single_structure(params: tuple[str, RnaquanetConfig, float|None,int,
 
     Raises exception if any of the files in 'features_file_path' does not exist.
     """
-    file_path, config, target, path = params
+    file_path, config, target = params
     structure_name = os.path.splitext(os.path.basename(file_path))[0]
     
     # filtering
