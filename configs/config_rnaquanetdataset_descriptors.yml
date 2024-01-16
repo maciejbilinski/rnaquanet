@@ -16,9 +16,9 @@ data:
     csv_rmsd_column_name: 'rmsd' # nazwa kolumny w pliku CSV z wartością RMSD
     csv_structure_column_name: 'file' # nazwa kolumny w pliku CSV z nazwą plików której dotyczy RMSD
   download_preprocessed:
-    train_url: '' # adres do pobrania pliku H5 ze zbiorem treningowym
-    val_url: '' # adres do pobrania pliku H5 ze zbiorem walidacyjnym
-    test_url: '' # adres do pobrania pliku H5 ze zbiorem testowym
+    train_url: 'https://rnasolo.cs.put.poznan.pl/media/train.h5' # adres do pobrania pliku H5 ze zbiorem treningowym
+    val_url: 'https://rnasolo.cs.put.poznan.pl/media/val.h5' # adres do pobrania pliku H5 ze zbiorem walidacyjnym
+    test_url: 'https://rnasolo.cs.put.poznan.pl/media/test.h5' # adres do pobrania pliku H5 ze zbiorem testowym
   features:
     atom_for_distance_calculations: "C1'"
     max_euclidean_distance: '16.0'
