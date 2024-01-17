@@ -20,16 +20,16 @@ export const API_ADDRESS = "http://localhost:5000";
 /** Example structures that will be displayed in the structure selector. */
 export const dataBankExamples: DataBankExample[] = [
   {
-    name: "2HY9",
+    name: "1FFK",
   },
   {
-    name: "6RS3",
+    name: "7PS8",
   },
   {
-    name: "1JJP",
+    name: "7C7L",
   },
   {
-    name: "6FC9",
+    name: "6XLJ",
   },
 ];
 

@@ -50,6 +50,7 @@ const UploaderDataBank = ({ files, setFiles }: Props) => {
                 isFromDataBank: true,
               })
             );
+            console.log(await res.json());
             setInputState((old) => ({
               value: !skipPreview ? "" : old.value,
               status: !skipPreview ? "success" : undefined,
@@ -98,7 +99,7 @@ const UploaderDataBank = ({ files, setFiles }: Props) => {
         ))}
         <TextField
           size="small"
-          label="PDB id (e.g. 2HY9)"
+          label="PDB id (e.g. 1FFK)"
           sx={{
             width: 200,
           }}

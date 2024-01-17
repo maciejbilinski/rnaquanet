@@ -7,7 +7,7 @@ from typing import Literal
 from Bio.PDB import PDBIO, Select
 import json, os
 
-from config import FILE_STORAGE_DIR, ALLOWED_FILE_TYPES
+from config import TEMP_FILE_STORAGE_DIR, ALLOWED_FILE_TYPES
 
 
 def resname(res):
@@ -40,17 +40,17 @@ def parse_file(file_handle: TextIOWrapper, file_type: Literal["pdb", "cif"]):
 
 
 def get_models_with_chains(task_id: str, file_name: str):
-    dir_path = os.path.join(FILE_STORAGE_DIR, task_id)
+    file_path = os.path.join(TEMP_FILE_STORAGE_DIR, task_id, file_name)
     file_type = file_name.split(".")[-1].lower()
-
+    # print(file_path, file_type)
     try:
         if file_type not in ALLOWED_FILE_TYPES:
             raise
-
-        with open(os.path.join(dir_path, file_name)) as file_handle:
+        with open(file_path) as file_handle:
             return json.dumps(find_rna_chains(parse_file(file_handle, file_type)))
 
-    except Exception:
+    except Exception as e:
+        print(e)
         return None
 
 
@@ -72,19 +72,20 @@ def process(
     model_no: int,
     chains_list: list[int],
 ):
-    dir_path = os.path.join(FILE_STORAGE_DIR, task_id)
+    dir_path = os.path.join(TEMP_FILE_STORAGE_DIR, task_id, file_name)
     file_type = file_name.split(".")[-1].lower()
 
     try:
-        with open(os.path.join(dir_path, file_name)) as file_handle:
-            structure_model = parse_file(file_handle, file_type)[int(model_no)]
+        with open(dir_path) as file_handle:
+            structure_model = parse_file(file_handle, file_type)[model_no]
             io = PDBIO()
             io.set_structure(structure_model)
             io.save(end_file_name, ChainsSelect(chains_list))
 
             return 0
 
-    except Exception:
+    except Exception as e:
+        print(e)
         return 1
 
 
