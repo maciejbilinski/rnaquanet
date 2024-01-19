@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 
 from multiprocessing import Pool
+import multiprocessing as mp
 from contextlib import closing
 from torch_geometric.data import Data
 from tqdm import tqdm
@@ -23,7 +24,7 @@ from .extract.node.nucleotides_features import extract_nucleotides
 from .extract_features import extract_features
 from .pdb_filter import filter_file
 
-def process_single_structure(params: tuple[str, RnaquanetConfig, float|None,int]) -> tuple[str, Data]:
+def process_single_structure(params: tuple[str, RnaquanetConfig, float|None]) -> tuple[str, Data]:
     """
     Process single structure
 
@@ -98,18 +99,15 @@ def process_structures(config: RnaquanetConfig):
             os.makedirs(path, exist_ok=True)
             print(f'Preprocessing {dataset} dataset')
             with tqdm(unit="f", total=df.shape[0]) as pbar:
-                for output in pool.imap_unordered(
-                        process_single_structure,
-                        [
-                            [
-                                row["description"],
-                                config,
-                                row["target"],
-                                path
-                            ]
-                            for index, row in df.iterrows() if os.path.exists(row["description"])
-                        ],chunksize=1000
-                    ):
+                for output in pool.imap_unordered(process_single_structure, [
+                    [
+                        row["description"],
+                        config,
+                        row["target"],
+                    ]
+                    for index, row in df.iterrows() if os.path.exists(row["description"])
+                    ]
+                ):
                     structure_name, data = output
                     save_data_to_hdf5(
                         structure_name,
