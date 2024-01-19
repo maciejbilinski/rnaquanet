@@ -2,11 +2,16 @@ import torch
 import h5py
 from torch.utils.data import Dataset
 from torch_geometric.data import Data
+import random
 
 class H5GraphDataset(Dataset):
-    def __init__(self, filename):
+    def __init__(self, filename, max_iterations = None):
         self.filename = filename
         self.collection = None
+        self.max_iterations = max_iterations
+
+    def shuffle(self):
+        random.shuffle(self.keys)
 
     def __getitem__(self, idx) -> Data:
         if self.collection is None:
@@ -14,7 +19,7 @@ class H5GraphDataset(Dataset):
         value = self.collection[self.keys[idx]]
         if isinstance(value, h5py.Group):
             return Data(
-                x=torch.tensor(value['x'][()]),
+                x=torch.tensor(value['x'][()])[:, :9],
                 edge_index=torch.tensor(value['edge_index'][()]),
                 edge_attr=torch.tensor(value['edge_attr'][()]),
                 y=torch.tensor(value['y'][()]) if value.get('y') is not None else None
@@ -26,8 +31,11 @@ class H5GraphDataset(Dataset):
     def __len__(self) -> int:
         if self.collection is None:
             raise ValueError('To get length of dataset you have to first call __enter__ method or use "with" statement')
-        return len(self.collection.values())
-    
+        if self.max_iterations is None:
+            return len(self.collection.values())
+        else:
+            return self.max_iterations
+
     def __enter__(self):
         self.collection = h5py.File(self.filename, 'r')
         self.collection.__enter__()
