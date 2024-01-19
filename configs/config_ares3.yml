@@ -27,7 +27,8 @@ network:
   model_output_path: '/app/models'
   hidden_dim: 128
   layer_type: 3
-  num_of_layers: 4
+  num_of_heads: 1
+  num_of_layers: 8
   num_of_node_features: 96
   batch_norm: False
   gat_dropout: 0.5

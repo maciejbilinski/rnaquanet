@@ -25,7 +25,7 @@ class InputsConfig:
         self.TRAIN_FILES = glob.glob(f'{config.data.path}/{__download_subdir}/archive/train/*.pdb', recursive=True)
         """Contains 'train' files (data/[...]/archive/train/*.pdb)"""
 
-        self.VAL_FILES = glob.glob(f'{config.data.path}/{__download_subdir}/archive/train/*.pdb', recursive=True)
+        self.VAL_FILES = glob.glob(f'{config.data.path}/{__download_subdir}/archive/val/*.pdb', recursive=True)
         """Contains 'val' files (data/[...]/archive/val/*.pdb)"""
         
         self.TEST_FILES = glob.glob(f'{config.data.path}/{__download_subdir}/archive/test/*.pdb', recursive=True)
