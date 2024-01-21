@@ -5,10 +5,11 @@ from torch_geometric.data import Data
 import random
 
 class H5GraphDataset(Dataset):
-    def __init__(self, filename, max_iterations = None):
+    def __init__(self, filename, max_iterations = None, nan_replacement = 1000):
         self.filename = filename
         self.collection = None
         self.max_iterations = max_iterations
+        self.nan = nan_replacement
 
     def shuffle(self):
         random.shuffle(self.keys)
@@ -19,7 +20,7 @@ class H5GraphDataset(Dataset):
         value = self.collection[self.keys[idx]]
         if isinstance(value, h5py.Group):
             return Data(
-                x=torch.tensor(value['x'][()])[:, :9],
+                x=torch.nan_to_num(torch.tensor(value['x'][()]), nan=self.nan),
                 edge_index=torch.tensor(value['edge_index'][()]),
                 edge_attr=torch.tensor(value['edge_attr'][()]),
                 y=torch.tensor(value['y'][()]) if value.get('y') is not None else None
