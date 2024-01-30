@@ -7,6 +7,7 @@ import {
   MAX_UPLOAD_FILE_SIZE,
   MIN_UPLOAD_FILE_SIZE,
   ALLOWED_FILE_TYPES,
+  API_ADDRESS,
 } from "../../../config";
 
 interface Props {
@@ -17,35 +18,62 @@ interface Props {
 const FileUploader = ({ files, setFiles }: Props) => {
   const [error, setError] = useState<"type" | "size" | null>(null);
 
-  const handleChange = (newFiles: FileList) => {
+  const handleChange = async (newFiles: FileList) => {
     const oldFileNames = files.map((d) => d.name);
     const newFilesArr = Array.from(newFiles);
 
-    for (const file of newFilesArr) {
-      let id = 2;
-      // add a numeric suffix to the file name if it already exists
-      if (oldFileNames.includes(file.name)) {
-        const [fileName, fileExt] = file.name.split(".");
-        let newFileName = "";
-        do {
-          newFileName = `${fileName} (${id++})${fileExt ? "." : ""}${fileExt}`;
-        } while (oldFileNames.includes(newFileName));
+    try {
+      for (const file of newFilesArr) {
+        let id = 2;
+        // add a numeric suffix to the file name if it already exists
+        if (oldFileNames.includes(file.name)) {
+          const [fileName, fileExt] = file.name.split(".");
+          let newFileName = "";
+          do {
+            newFileName = `${fileName} (${id++})${
+              fileExt ? "." : ""
+            }${fileExt}`;
+          } while (oldFileNames.includes(newFileName));
 
-        Object.defineProperty(file, "name", {
-          writable: true,
-          value: newFileName,
-        });
+          Object.defineProperty(file, "name", {
+            writable: true,
+            value: newFileName,
+          });
+        }
       }
+
+      // request models and chains
+      const formData = new FormData();
+      newFilesArr.forEach((file, i) => {
+        formData.append(`file_${i}`, file, file.name);
+      });
+
+      const res = await fetch(`${API_ADDRESS}/get_models_and_chains`, {
+        method: "POST",
+        body: formData,
+      });
+      const json: { [key: string]: StructureModel } = await res.json();
+
+      setFiles((old) =>
+        old.concat(
+          newFilesArr.map((file) => {
+            const [model, chains] = Object.entries(json[file.name])[0];
+
+            return {
+              name: file.name,
+              isFromDataBank: false,
+              file,
+              models: json[file.name],
+              selectedModel: model,
+              selectedChain: chains[0],
+            };
+          })
+        )
+      );
+    } catch (error) {
+      setError("type");
+      console.error(error);
     }
-    setFiles((old) =>
-      old.concat(
-        newFilesArr.map((file) => ({
-          name: file.name,
-          isFromDataBank: false,
-          file,
-        }))
-      )
-    );
   };
 
   return (

@@ -12,4 +12,9 @@ declare interface FileData {
   name: string;
   isFromDataBank: boolean;
   file?: File;
+  models?: StructureModel;
+  selectedModel?: string;
+  selectedChain?: string;
 }
+
+declare type StructureModel = { [key: string]: string[] };

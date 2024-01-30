@@ -1,5 +1,12 @@
 import { Dispatch, SetStateAction } from "react";
-import { Box, Divider, IconButton, Typography } from "@mui/material";
+import {
+  Box,
+  Divider,
+  IconButton,
+  MenuItem,
+  TextField,
+  Typography,
+} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import { styles } from "../../utils/styles";
@@ -31,8 +38,7 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
         flexWrap: "wrap",
         height: "100%",
         overflowY: "auto",
-        px: 3,
-        py: 1.5,
+        p: 1,
         columnGap: 2,
       }}
     >
@@ -41,12 +47,13 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
           <Box
             key={i}
             sx={(theme) => ({
-              width: {
-                xs: "100%",
-                sm: "calc(50% - 8px)",
-                md: "100%",
-                lg: "calc(50% - 8px)",
-              },
+              // width: {
+              //   xs: "100%",
+              //   sm: "calc(50% - 8px)",
+              //   md: "100%",
+              //   lg: "calc(50% - 8px)",
+              // },
+              width: "100%",
               "&:hover": {
                 bgcolor: `${theme.palette.primary.main}30`,
               },
@@ -58,8 +65,8 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                px: 1,
-                py: 0.5,
+                p: 1,
+                gap: 0.5,
               }}
             >
               <Typography
@@ -72,9 +79,60 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
                 {fileData.name}
               </Typography>
 
+              <TextField
+                label="Model"
+                size="small"
+                sx={{ minWidth: 70 }}
+                value={fileData.selectedModel ?? null}
+                onChange={(event) =>
+                  setFiles((old) =>
+                    old.map((file) =>
+                      file.name == fileData.name
+                        ? {
+                            ...file,
+                            selectedModel: event.target.value,
+                          }
+                        : file
+                    )
+                  )
+                }
+                select
+              >
+                {Object.keys(fileData.models!).map((model, i) => (
+                  <MenuItem key={i} value={model}>
+                    {model}
+                  </MenuItem>
+                ))}
+              </TextField>
+
+              <TextField
+                label="Chain"
+                size="small"
+                sx={{ minWidth: 70 }}
+                value={fileData.selectedChain ?? null}
+                onChange={(event) =>
+                  setFiles((old) =>
+                    old.map((file) =>
+                      file.name == fileData.name
+                        ? {
+                            ...file,
+                            selectedChain: event.target.value,
+                          }
+                        : file
+                    )
+                  )
+                }
+                select
+              >
+                {fileData.models![fileData.selectedModel!].map((chain, i) => (
+                  <MenuItem key={i} value={chain}>
+                    {chain}
+                  </MenuItem>
+                ))}
+              </TextField>
+
               <IconButton
                 sx={{
-                  p: 0.25,
                   color: "text.secondary",
                 }}
                 onClick={() => setFiles(files.filter((_, fi) => fi !== i))}

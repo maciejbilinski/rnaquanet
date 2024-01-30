@@ -1,9 +1,19 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  TextField,
+  Typography,
+} from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 
-import { dataBankExamples } from "../../../../../config";
+import {
+  ALLOWED_FILE_TYPES,
+  API_ADDRESS,
+  dataBankExamples,
+} from "../../../../../config";
 
 interface Props {
   files: FileData[];
@@ -23,6 +33,7 @@ const UploaderDataBank = ({ files, setFiles }: Props) => {
   const onInputChange = async (newValue: string, skipPreview?: boolean) => {
     if (inputState.loading) return;
     newValue = newValue.toUpperCase();
+    const fileName = `${newValue}.pdb`;
 
     if (newValue.length === 4) {
       // if file with the same name is already added to file list
@@ -40,17 +51,35 @@ const UploaderDataBank = ({ files, setFiles }: Props) => {
         }));
         try {
           const res = await fetch(
-            `https://data.rcsb.org/rest/v1/core/entry/${newValue}`
+            `https://mirna.cs.put.poznan.pl/api/query/structure/package?pdbid=${newValue}`
           );
+
           // if file exists
           if (res.status === 200) {
+            const file = (await (
+              await fetch(`http://files.rcsb.org/download/${fileName}`)
+            ).blob()) as File;
+
+            const formData = new FormData();
+            formData.append("f", file, `${fileName}`);
+
+            const resAPI = await fetch(`${API_ADDRESS}/get_models_and_chains`, {
+              method: "POST",
+              body: formData,
+            });
+            const json: { [key: string]: StructureModel } = await resAPI.json();
+            const [model, chains] = Object.entries(json[fileName])[0];
+
             setFiles((old) =>
               old.concat({
-                name: newValue,
+                name: fileName,
                 isFromDataBank: true,
+                file,
+                models: json[fileName],
+                selectedModel: model,
+                selectedChain: chains[0],
               })
             );
-            console.log(await res.json());
             setInputState((old) => ({
               value: !skipPreview ? "" : old.value,
               status: !skipPreview ? "success" : undefined,
@@ -91,7 +120,10 @@ const UploaderDataBank = ({ files, setFiles }: Props) => {
             variant="contained"
             onClick={() => onInputChange(example.name, true)}
             disabled={
-              inputState.loading || uploadedFileNames.includes(example.name)
+              inputState.loading ||
+              ALLOWED_FILE_TYPES.some((type) =>
+                uploadedFileNames.includes(`${example.name}.${type}`)
+              )
             }
           >
             {example.name}

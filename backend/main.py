@@ -6,14 +6,33 @@ from scripts.generate_task_id import generate_task_id
 from scripts.process_files import process_files
 from models.models import Task
 
-# from a import eo
 from config import SWAGGER_TEMPLATE
 from app import app, db, queue
+from scripts.form_file_handler import retrieve_models_and_chains
 
 CORS(app)
 Swagger(app, template=SWAGGER_TEMPLATE)  # Swagger UI is located at `api.url/apidocs/`
 
 
+@app.route("/get_models_and_chains", methods=["POST", "GET"])
+def get_models_and_chains():
+    """
+    Request an analysis and return of files' models and chains.
+    ---
+    parameters:
+      - name: files
+        in: formData
+        type: file
+        required: true
+        description: The files to analyze.
+        ...
+    """
+    return jsonify(
+        {file.filename: retrieve_models_and_chains(file) for file in request.files.values()}
+    )
+
+
+# @app.route("/request_rmsd/<task_id>", methods=["POST"])
 @app.route("/request_rmsd", methods=["POST"])
 def request_rmsd():
     """
@@ -91,9 +110,9 @@ def check_rmsd(task_id: str):
         description: Task not found.
     """
     # try to find requested resources and send it back if it exists
-    # else return with 404
+    # else return 404
     task: Task = Task.query.get_or_404(task_id)
-    
+
     return {
         "status": task.status,
         "files": [jsonify(file).json for file in task.files],

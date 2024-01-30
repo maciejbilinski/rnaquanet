@@ -2,6 +2,7 @@ from Bio.PDB import FastMMCIFParser, Structure
 from Bio.PDB.PDBParser import PDBParser
 from io import TextIOWrapper
 from typing import Literal
+from werkzeug.datastructures import FileStorage
 
 # from backend.models import TemporaryFile
 from Bio.PDB import PDBIO, Select
@@ -39,15 +40,18 @@ def parse_file(file_handle: TextIOWrapper, file_type: Literal["pdb", "cif"]):
             return FastMMCIFParser(QUIET=True).get_structure("str", file_handle)
 
 
-def get_models_with_chains(task_id: str, file_name: str):
-    file_path = os.path.join(TEMP_FILE_STORAGE_DIR, task_id, file_name)
-    file_type = file_name.split(".")[-1].lower()
-    # print(file_path, file_type)
+def retrieve_models_and_chains(file: FileStorage):
     try:
+        print(file)
+        file_path = os.path.join(TEMP_FILE_STORAGE_DIR, file.filename)
+        file_type = file.filename.split(".")[-1].lower()
+
+        file.save(file_path)
+
         if file_type not in ALLOWED_FILE_TYPES:
             raise
         with open(file_path) as file_handle:
-            return json.dumps(find_rna_chains(parse_file(file_handle, file_type)))
+            return find_rna_chains(parse_file(file_handle, file_type))
 
     except Exception as e:
         print(e)

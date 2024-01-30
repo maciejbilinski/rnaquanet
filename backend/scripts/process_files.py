@@ -6,7 +6,7 @@ from rq import Queue
 from config import FILE_STORAGE_DIR, TEMP_FILE_STORAGE_DIR
 from scripts.test import test
 from models.models import db, Task, File
-from scripts.form_file_handler import get_models_with_chains, process
+from scripts.form_file_handler import retrieve_models_and_chains, process
 
 
 def process_files(
@@ -21,13 +21,13 @@ def process_files(
 
         db_task = Task(id=task_id, status="QUEUED")
         db.session.add(db_task)
-
+        
         # save each file
         for file in files.values():
             # file from protein data bank, download it
             if file.name.endswith("_pdb"):
                 file_name = f"{file.filename}.pdb"
-                url = f"http://files.rcsb.org/download/{file_name}"
+                url = f"http://files.rcsb.org/download/{file_name}.pdb"
                 res = requests.get(url, allow_redirects=True)
 
                 if res.status_code == 200:
@@ -42,10 +42,10 @@ def process_files(
                 temp_file_path = os.path.join(dir_path, file_name)
                 file.save(temp_file_path)
 
-            models = get_models_with_chains(task_id, file_name)
-            print(models)
-            if not models:
-                return 1
+            # models = get_models_with_chains(task_id, file_name)
+            # print(models)
+            # if not models:
+            #     return 1
 
             p = process(task_id, file_name, "xdd", 0, [0, 9])
             # print(p)
