@@ -2,7 +2,6 @@
 data/**
 dataLocal/**
 logs/**
-models/**
 
 checkpoints*/
 lightning_logs*/
@@ -15,8 +14,6 @@ tb_logs*/
 *.iml
 out/
 .idea_modules/
-notebooks/**/
-analysis/**
 
 ### macOS
 *.DS_Store
