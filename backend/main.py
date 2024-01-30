@@ -1,6 +1,7 @@
 from flask import jsonify, abort, request
 from flask_cors import CORS
 from flasgger import Swagger
+import json
 
 from scripts.generate_task_id import generate_task_id
 from scripts.process_files import process_files
@@ -37,7 +38,7 @@ def get_models_and_chains():
 def request_rmsd():
     """
     Request file processing and get the task ID.
-    ---
+    ---      
     parameters:
       - name: files
         in: formData
@@ -58,10 +59,11 @@ def request_rmsd():
     """
     # generate unique task id
     task_id = generate_task_id()
+    data = json.loads(request.form.get("data"))
 
     if len(request.files):
         # process files
-        error = process_files(queue, request.files, task_id)
+        error = process_files(queue, request.files, data, task_id)
 
         if not error:
             # return the task id

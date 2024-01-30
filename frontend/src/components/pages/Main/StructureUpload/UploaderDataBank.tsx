@@ -73,7 +73,6 @@ const UploaderDataBank = ({ files, setFiles }: Props) => {
             setFiles((old) =>
               old.concat({
                 name: fileName,
-                isFromDataBank: true,
                 file,
                 models: json[fileName],
                 selectedModel: model,

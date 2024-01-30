@@ -98,7 +98,7 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
                 }
                 select
               >
-                {Object.keys(fileData.models!).map((model, i) => (
+                {Object.keys(fileData.models).map((model, i) => (
                   <MenuItem key={i} value={model}>
                     {model}
                   </MenuItem>
@@ -124,7 +124,7 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
                 }
                 select
               >
-                {fileData.models![fileData.selectedModel!].map((chain, i) => (
+                {fileData.models[fileData.selectedModel].map((chain, i) => (
                   <MenuItem key={i} value={chain}>
                     {chain}
                   </MenuItem>

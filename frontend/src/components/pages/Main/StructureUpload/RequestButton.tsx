@@ -30,6 +30,18 @@ const RequestButton = ({ files, setFiles }: Props) => {
         }
       });
 
+      const data: {
+        [key: string]: { selectedModel: string; selectedChain: string };
+      } = {};
+      for (const file of files) {
+        data[file.name] = {
+          selectedModel: file.selectedModel,
+          selectedChain: file.selectedChain,
+        };
+      }
+
+      formData.append("data", JSON.stringify(data));
+
       const res = await fetch(`${API_ADDRESS}/request_rmsd`, {
         method: "POST",
         body: formData,

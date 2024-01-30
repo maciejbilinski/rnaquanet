@@ -14,7 +14,7 @@ ALLOWED_FILE_TYPES = ["pdb", "cif"]
 
 # path to where the files received from frontend will be saved
 # relative to `{project}/API`
-FILE_STORAGE_DIR = "instance/files"
+FILE_STORAGE_DIR = "instance/tasks"
 
 # path to where the temp files are stored
 TEMP_FILE_STORAGE_DIR = "instance/temp"

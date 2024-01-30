@@ -61,12 +61,11 @@ const FileUploader = ({ files, setFiles }: Props) => {
 
             return {
               name: file.name,
-              isFromDataBank: false,
               file,
               models: json[file.name],
               selectedModel: model,
               selectedChain: chains[0],
-            };
+            } as FileData;
           })
         )
       );

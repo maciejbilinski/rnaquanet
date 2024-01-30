@@ -8,7 +8,7 @@ from werkzeug.datastructures import FileStorage
 from Bio.PDB import PDBIO, Select
 import json, os
 
-from config import TEMP_FILE_STORAGE_DIR, ALLOWED_FILE_TYPES
+from config import FILE_STORAGE_DIR, TEMP_FILE_STORAGE_DIR, ALLOWED_FILE_TYPES
 
 
 def resname(res):
@@ -42,7 +42,7 @@ def parse_file(file_handle: TextIOWrapper, file_type: Literal["pdb", "cif"]):
 
 def retrieve_models_and_chains(file: FileStorage):
     try:
-        print(file)
+        os.makedirs(TEMP_FILE_STORAGE_DIR, exist_ok=True)
         file_path = os.path.join(TEMP_FILE_STORAGE_DIR, file.filename)
         file_type = file.filename.split(".")[-1].lower()
 
@@ -51,7 +51,9 @@ def retrieve_models_and_chains(file: FileStorage):
         if file_type not in ALLOWED_FILE_TYPES:
             raise
         with open(file_path) as file_handle:
-            return find_rna_chains(parse_file(file_handle, file_type))
+            out = find_rna_chains(parse_file(file_handle, file_type))
+        os.remove(file_path)
+        return out
 
     except Exception as e:
         print(e)
@@ -66,27 +68,28 @@ class ChainsSelect(Select):
 
     def accept_residue(self, residue):
         id: str = residue.get_parent().id
-        return id.isnumeric() and int(id) in self.chains and residue.id[0] == " "
+        return id in self.chains and residue.id[0] == " "
 
 
-def process(
+def extract_chain(
     task_id: str,
     file_name: str,
-    end_file_name: str,
-    model_no: int,
-    chains_list: list[int],
+    model_no: str,
+    chains: list[str],
 ):
-    dir_path = os.path.join(TEMP_FILE_STORAGE_DIR, task_id, file_name)
+    dir_path = os.path.join(FILE_STORAGE_DIR, task_id)
+    os.makedirs(dir_path, exist_ok=True)
+    temp_file_path = os.path.join(TEMP_FILE_STORAGE_DIR, task_id, file_name)
     file_type = file_name.split(".")[-1].lower()
 
     try:
-        with open(dir_path) as file_handle:
-            structure_model = parse_file(file_handle, file_type)[model_no]
+        with open(temp_file_path) as file_handle:
+            structure_model = parse_file(file_handle, file_type)[int(model_no)]
             io = PDBIO()
             io.set_structure(structure_model)
-            io.save(end_file_name, ChainsSelect(chains_list))
+            io.save(os.path.join(dir_path, file_name), ChainsSelect(chains))
 
-            return 0
+        return 0
 
     except Exception as e:
         print(e)
