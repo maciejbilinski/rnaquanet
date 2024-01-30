@@ -3,10 +3,13 @@ import os
 import torch
 import numpy as np
 import pandas as pd
+
 from multiprocessing import Pool
 import multiprocessing as mp
-
+from contextlib import closing
 from torch_geometric.data import Data
+from tqdm import tqdm
+from rnaquanet.data.preprocessing.extract.node.coordinates_features import extract_coordinates
 from rnaquanet.data.preprocessing.hdf5_utils import concat_hdf5_files, save_data_to_hdf5
 
 from rnaquanet.utils.dataclasses import ConfigData
@@ -51,12 +54,14 @@ def process_single_structure(params: tuple[str, RnaquanetConfig, float|None]) ->
         bon_features = get_features_from_file(features_file_path, 'bon')
         ang_features = get_features_from_file(features_file_path, 'ang')
         atr_features = get_features_from_file(features_file_path, 'atr')
+        cor_features = extract_coordinates(config, filtered_file_path)
         x_df = pd.concat([
             sequence_feature,
             basepairs_feature,
             bon_features,
             ang_features,
-            atr_features
+            atr_features,
+            cor_features
         ], axis=1)
         x = torch.from_numpy(
             x_df.to_numpy(dtype=np.float32)
@@ -70,9 +75,6 @@ def process_single_structure(params: tuple[str, RnaquanetConfig, float|None]) ->
     except FileNotFoundError as e:
         e.add_note(f'File {e.filename} was not found. Perhaps you tried returning data list without prior feature extraction?')
         raise
-
-
-    
 
 def process_structures(config: RnaquanetConfig):
     """
@@ -88,46 +90,33 @@ def process_structures(config: RnaquanetConfig):
     - torch_geometric.data.Data result
 
     """
-    ic = InputsConfig(config)
-    for dataset in ['train', 'val', 'test']:
-        df = read_target_csv(config, dataset)
-        if dataset == 'train':
-            files = ic.TRAIN_FILES
-        elif dataset == 'val':
-            files = ic.VAL_FILES
-        else:
-            files = ic.TEST_FILES
 
-        with Pool(mp.cpu_count()) as pool:
+    for dataset in [ 'train','test','val']:
+        df = read_target_csv(config, dataset)
+
+        with closing(Pool(mp.cpu_count())) as pool:
             path = os.path.join(config.data.path, config.name, 'h5', dataset)
             os.makedirs(path, exist_ok=True)
             print(f'Preprocessing {dataset} dataset')
-            for _, output in SafeTqdm(
-                config,
-                enumerate(
-                    pool.imap_unordered(
-                        process_single_structure,
-                        [
-                            [
-                                structure,
-                                config,
-                                df[
-                                    df["description"] == os.path.splitext(os.path.basename(structure))[0]
-                                ]["target"].item(),
-                            ]
-                            for structure in files
-                        ],
+            with tqdm(unit="f", total=df.shape[0]) as pbar:
+                for output in pool.imap_unordered(process_single_structure, [
+                    [
+                        row["description"],
+                        config,
+                        row["target"],
+                    ]
+                    for index, row in df.iterrows() if os.path.exists(row["description"])
+                    ]
+                ):
+                    structure_name, data = output
+                    save_data_to_hdf5(
+                        structure_name,
+                        os.path.join(path, f'{structure_name}.h5'),
+                        data
                     )
-                ),
-                total=len(files),
-                unit="f",
-            ):
-                structure_name, data = output
-                save_data_to_hdf5(
-                    structure_name,
-                    os.path.join(path, f'{structure_name}.h5'),
-                    data
-                )
+                    pbar.update()
+
+
         concat_hdf5_files(
             os.path.join(config.data.path, config.name, f'{dataset}.h5'),
             glob.glob(
@@ -137,9 +126,3 @@ def process_structures(config: RnaquanetConfig):
                 )
             ),
         )
-
-
-    
-
-    
-    

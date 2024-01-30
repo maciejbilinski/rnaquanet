@@ -2,8 +2,8 @@ import os
 import shutil
 import tarfile
 import requests
-from rnaquanet.utils.dialogs import ensure_directory_not_exist, ensure_file_not_exist
 
+from rnaquanet.utils.dialogs import ensure_directory_not_exist, ensure_file_not_exist
 from rnaquanet.utils.rnaquanet_config import RnaquanetConfig
 from rnaquanet.utils.safe_print import safe_print
 from rnaquanet.utils.safe_tqdm import SafeTqdm
@@ -102,15 +102,18 @@ def download_preprocessed(config: RnaquanetConfig) -> None:
 
     for url, name in [(config.data.download_preprocessed.train_url, 'train.h5'), (config.data.download_preprocessed.val_url, 'val.h5'), (config.data.download_preprocessed.test_url, 'test.h5')]:
         file_path = os.path.join(path, name)
-        ensure_file_not_exist(config, file_path)
-        os.makedirs(path, exist_ok=True)
+        try:
+            ensure_file_not_exist(config, file_path)
+            os.makedirs(path, exist_ok=True)
 
-        response = requests.get(url, stream=True)
-        total_size = int(response.headers.get('content-length', 0))
-        block_size = 1024  # 1 Kibibyte
-        safe_print(config, f'Downloading preprocessed {name} file...')
-        with SafeTqdm(config, total=total_size, unit='iB', unit_scale=True) as progress_bar:
-            with open(file_path, 'wb') as file:
-                for data in response.iter_content(block_size):
-                    progress_bar.update(len(data))
-                    file.write(data)
+            response = requests.get(url, stream=True)
+            total_size = int(response.headers.get('content-length', 0))
+            block_size = 1024  # 1 Kibibyte
+            safe_print(config, f'Downloading preprocessed {name} file...')
+            with SafeTqdm(config, total=total_size, unit='iB', unit_scale=True) as progress_bar:
+                with open(file_path, 'wb') as file:
+                    for data in response.iter_content(block_size):
+                        progress_bar.update(len(data))
+                        file.write(data)
+        except Exception:
+            pass

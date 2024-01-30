@@ -1,5 +1,6 @@
 # ignore everything in the following folders
 data/**
+dataLocal/**
 logs/**
 models/**
 
@@ -14,7 +15,7 @@ tb_logs*/
 *.iml
 out/
 .idea_modules/
-
+notebooks/**/
 analysis/**
 
 ### macOS

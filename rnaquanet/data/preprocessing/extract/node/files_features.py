@@ -1,11 +1,11 @@
 import os
 import pandas as pd
+import numpy as np
 from typing import Literal
 from rnaquanet.utils.custom_types import PathType
 
 
 def get_features_from_file(feature_directory_path: PathType, file_type: Literal['bon', 'ang', 'atr'],
-                                nan_replacement: float = 0.0,
                                 exclude_columns: list[str] = ['Chain', 'ResNum', 'iCode', 'Name']
                                 ) -> pd.DataFrame:
     """
@@ -25,8 +25,8 @@ def get_features_from_file(feature_directory_path: PathType, file_type: Literal[
     
     
     df = pd.read_csv(os.path.join(feature_directory_path, f"{os.path.splitext(os.path.basename(feature_directory_path))[0]}.{file_type}"), sep='\t')
+
     return (df.reset_index(drop=True)
             .drop(columns=exclude_columns)
-            .replace('-', nan_replacement)
-            .fillna(nan_replacement)
+            .replace('-', np.nan)
             .add_prefix(f'{file_type}_'))
