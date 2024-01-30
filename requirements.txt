@@ -11,3 +11,14 @@ pytorch_lightning==2.0.7
 openpyxl==3.1.2
 matplotlib==3.8.2
 tensorboard==2.15.1
+
+ipykernel==6.29.0
+
+flasgger==0.9.7.1
+Flask==3.0.0
+Flask_Cors==4.0.0
+Flask_RQ2==18.3
+flask_sqlalchemy==3.1.1
+Requests==2.31.0
+SQLAlchemy==2.0.25
+Werkzeug==3.0.1

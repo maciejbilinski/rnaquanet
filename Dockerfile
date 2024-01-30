@@ -2,32 +2,37 @@ FROM nvidia/cuda:11.8.0-runtime-ubuntu22.04
 
 RUN ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONTAINER_TIMEZONE > /etc/timezone
 
+# packages installation
 RUN apt-get update  
 RUN apt-get upgrade -y 
 RUN apt install -y tzdata wget build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev \
-        libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev software-properties-common openjdk-8-jdk git
+        libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev software-properties-common openjdk-8-jdk git \
+        curl redis-server
+
+# python installation
 RUN add-apt-repository -y ppa:deadsnakes/ppa 
 RUN apt-get -y install python3.11 
 RUN ln -sf /usr/bin/python3.11 /usr/bin/python 
 RUN ln -sf /usr/bin/python3.11 /usr/bin/python3 
-
-
 RUN wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py && \
 python3.11 get-pip.py
 
-
+# pytorch installation
 RUN python -m pip install torch==2.0.1 --index-url https://download.pytorch.org/whl/cu118
-
 RUN python -m pip install torch-geometric==2.3.1
-
 RUN python -m pip install --no-index torch-scatter==2.1.1 -f https://pytorch-geometric.com/whl/torch-2.0.1+cu118.html
 
-COPY . /app
+# node installation
+RUN dpkg --remove --force-remove-reinstreq libnode-dev && dpkg --remove --force-remove-reinstreq libnode72:amd64
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
+RUN apt install -y nodejs
 
+# file configuration
+COPY . /app
 WORKDIR /app
 
-RUN python -m pip install -r requirements.txt
-
+# python configuration
+RUN python -m pip install --ignore-installed -r requirements.txt
 ENV PYTHONPATH=/app
 
 RUN bash
