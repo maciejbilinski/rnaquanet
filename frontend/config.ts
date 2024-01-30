@@ -8,13 +8,30 @@ export const MAX_UPLOAD_FILE_SIZE = 20;
 export const REQUEST_RETRY_DELAY = 5000;
 
 /** List of available file types available for user to upload. */
-export const UPLOAD_FILE_TYPES = ["pdb"];
+export const ALLOWED_FILE_TYPES = ["pdb", "cif"];
 
 /** URL to the API. */
 export const API_ADDRESS = "http://localhost:5000";
 
 
 // more constants
+
+
+/** Example structures that will be displayed in the structure selector. */
+export const dataBankExamples: DataBankExample[] = [
+  {
+    name: "1FFK",
+  },
+  {
+    name: "7PS8",
+  },
+  {
+    name: "7C7L",
+  },
+  {
+    name: "6XLJ",
+  },
+];
 
 
 /** Name of the project. */

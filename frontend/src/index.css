@@ -23,3 +23,7 @@ label {
 * {
   box-sizing: border-box;
 }
+
+body div {
+  transition: all 0.2s linear !important;
+}
