@@ -7,14 +7,16 @@ if __name__ == '__main__':
     download_archive(config)
     
     # TEST if `archive.tar` exists
-    assert os.path.isfile(os.path.join(config.data.path, config.name, 'archive.tar'))
+    assert os.path.isfile(os.path.join(config.data.path, config.name, 'archive.' + config.data.download.archive_ext))
     
     extract_archive(config)
     
     list_dir = os.listdir(os.path.join(config.data.path, config.name, 'archive'))
     
-    # TEST if `target.csv` exists
-    assert 'target.csv' in list_dir
+    # TEST if csv exists
+    assert 'train.csv' in list_dir
+    assert 'val.csv' in list_dir
+    assert 'test.csv' in list_dir
     
     # TEST if `train` and `test` directories exist
     assert 'train' in list_dir

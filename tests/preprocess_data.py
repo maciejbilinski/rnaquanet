@@ -18,7 +18,9 @@ if __name__ == '__main__':
     if not os.path.isfile(file):
         raise Exception('Please download dataset first `python cli/download_raw_data.py -c tests/config_test.yml` or run download_raw_data test')
     
-    shutil.rmtree(os.path.join(config.data.path, config.name, 'preprocessing'))
+    preprocessing_path = os.path.join(config.data.path, config.name, 'preprocessing')
+    if os.path.exists(preprocessing_path):
+        shutil.rmtree(preprocessing_path)
 
     filtered_file_path = filter_file(config, file)
     assert os.path.isfile(filtered_file_path)
@@ -49,13 +51,10 @@ if __name__ == '__main__':
     
     structure_name, data = process_single_structure([file, config, None])
     assert structure_name == filename.split('.')[0]
-    assert str(data) == 'Data(x=[24, 96], edge_index=[2, 198], edge_attr=[198, 2])'
+    assert str(data) == 'Data(x=[24, 99], edge_index=[2, 198], edge_attr=[198, 2])'
 
     shutil.rmtree(os.path.join(config.data.path, config.name, 'preprocessing'))
 
     structure_name, data = process_single_structure([file, config, 12])
     assert structure_name == filename.split('.')[0]
-    assert str(data) == 'Data(x=[24, 96], edge_index=[2, 198], edge_attr=[198, 2], y=12)'
-
-    # TODO: test read_target_csv
-    # TODO: test h5 functions
+    assert str(data) == 'Data(x=[24, 99], edge_index=[2, 198], edge_attr=[198, 2], y=12)'

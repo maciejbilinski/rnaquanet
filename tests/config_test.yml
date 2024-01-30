@@ -16,9 +16,9 @@ data:
     csv_rmsd_column_name: 'new_rms' # nazwa kolumny w pliku CSV z wartością RMSD
     csv_structure_column_name: 'description' # nazwa kolumny w pliku CSV z nazwą plików której dotyczy RMSD
   download_preprocessed:
-    train_url: 'https://www.dropbox.com/scl/fi/8jqgmqvf0ex46gqlaxn1q/train_tiny.h5?rlkey=w22wtod6qnyy43h4imcjgillw&dl=1' # adres do pobrania pliku H5 ze zbiorem treningowym
-    val_url: 'https://www.dropbox.com/scl/fi/61x0hkb3zoip5oyo99k78/val_tiny.h5?rlkey=l4r295pksynplo86wje1fn2lq&dl=1' # adres do pobrania pliku H5 ze zbiorem walidacyjnym 
-    test_url: 'https://www.dropbox.com/scl/fi/338heabf8sqrrv33gl64d/test_tiny.h5?rlkey=56wfxdrvbltw287v9ymbsodld&dl=1' # adres do pobrania pliku H5 ze zbiorem testowym
+    train_url: '' # adres do pobrania pliku H5 ze zbiorem treningowym
+    val_url: '' # adres do pobrania pliku H5 ze zbiorem walidacyjnym 
+    test_url: '' # adres do pobrania pliku H5 ze zbiorem testowym
   features:
     atom_for_distance_calculations: "C1'"
     max_euclidean_distance: '16.0'
@@ -28,7 +28,7 @@ network:
   hidden_dim: 128
   layer_type: 3
   num_of_layers: 4
-  num_of_node_features: 96
+  num_of_node_features: 99
   batch_norm: False
   gat_dropout: 0.5
   lr: 0.001
@@ -41,3 +41,4 @@ network:
   shuffle_val: False
   shuffle_test: False
   max_epochs: 50
+  num_of_heads: 4
