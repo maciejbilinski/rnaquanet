@@ -21,10 +21,7 @@ Aby wykorzystać istniejący już zbiór danych trzeba stworzyć archiwum `.tar
 
 Jeżeli zbiór danych nie posiada danych walidacyjnych lub testowych to należy stworzyć te foldery, ale zostawić je puste oraz stworzyć pliki CSV z odpowiednimi kolumnami, ale bez rekordów. Takie podejście może jednak zakłócić pewne etapy tworzenia modelu i zaleca się zawsze stworzenie trzech zestawów danych np. z podziałem 60:20:20 i zwracając uwagę, aby ta sama struktura nie znalazła się w więcej niż jednym zestawie. 
 
-Podejście z gotowym zbiorem wykorzystywaliśmy do dostosowania zbioru danych ARES, który zawiera 18 struktur RNA, po 1000 wariancji każdej. Ares nie posiadał zbioru walidacyjnego, a jedynie treningowy i testowy. Wypróbowaliśmy 3 podziały Aresa, aby otrzymać zbiór walidacyjny:
-- Zbiorem walidacyjnym były pierwsze 4 struktury zbioru treningowego (`configs/config_ares1.yml`)
-- Zbiorem walidacyjnym były ostatnie 4 struktury zbioru treningowego (`configs/config_ares2.yml`)
-- Zbiorem walidacyjnym były ostatnie 4 struktury zbioru treningowego, ale wymieniliśmy pierwsze 2 struktury zbioru testowego na pierwsze 2 struktury zbioru treningowego (`configs/config_ares3.yml`)
+Podejście z gotowym zbiorem wykorzystywaliśmy do dostosowania zbioru danych ARES, który zawiera 18 struktur RNA, po 1000 wariacji każdej. Ares nie posiadał zbioru walidacyjnego, a jedynie treningowy i testowy. Ustaliliśmy, że zbiorem walidacyjnym są 4 pierwsze4 struktury ze zbioru treningowego. Plik konfiguracyjny dostępny jest jako `configs/config_ares.yml`.
 
 ##### Generowanie zbioru danych
 <Tutaj może niech Bartek coś napisze o przebiegu, podziale, przygotowywaniu archiwum i potencjalną automatyzacją tego procesu i umieszczeniu w repozytorium kroków reprodukcji - dla mnie najważniejsze jest, że otrzymaliśmy archiwum, które jest w idealnym formacie pod domyślny plik konfiguracyjny>
