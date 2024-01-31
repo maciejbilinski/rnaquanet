@@ -9,9 +9,9 @@ data:
     train_folder: 'train' # ścieżka do folderu wewnątrz archiwum ze zbiorem treningowym
     val_folder: 'val' # ścieżka do folderu wewnątrz archiwum ze zbiorem walidacyjnym
     test_folder: 'test' # ścieżka do folderu wewnątrz archiwum ze zbiorem testowym
-    train_csv: 'train.csv' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA zbioru treningowego
-    val_csv: 'val.csv' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA zbioru walidacyjnego
-    test_csv: 'test.csv' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA zbioru testowego
+    train_csv: 'filtered_s1_train.csv' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA zbioru treningowego
+    val_csv: 'filtered_s1_val.csv' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA zbioru walidacyjnego
+    test_csv: 'filtered_s1_test.csv' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA zbioru testowego
     csv_delimiter: ',' # separator stosowany wewnątrz pliku CSV (zazwyczaj jest to przecinek)
     csv_rmsd_column_name: 'rmsd' # nazwa kolumny w pliku CSV z wartością RMSD
     csv_structure_column_name: 'file' # nazwa kolumny w pliku CSV z nazwą plików której dotyczy RMSD
