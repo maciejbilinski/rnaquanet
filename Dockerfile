@@ -5,7 +5,7 @@ RUN ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONT
 # packages installation
 RUN apt-get update  
 RUN apt-get upgrade -y 
-RUN apt install -y tzdata wget build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev \
+RUN apt-get install -y tzdata wget build-essential libncursesw5-dev libssl-dev libsqlite3-dev tk-dev \
         libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev software-properties-common openjdk-8-jdk git \
         curl redis-server
 

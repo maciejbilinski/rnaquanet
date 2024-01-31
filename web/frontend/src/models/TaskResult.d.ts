@@ -10,10 +10,12 @@ declare interface TaskResult {
 declare interface FileResult {
   /** File id given by the db. */
   id: number;
-  /** Is file temporary (removed from backend after processing). */
-  is_temp: boolean;
   /** File name. */
   name: string;
+  /** Structure's model selected by the user. */
+  selectedModel: string;
+  /** Structure's chain selected by the user. */
+  selectedChain: string;
   /** (`undefined` on error or if processing not complete) Calculated rmsd score. */
   rmsd?: number;
   /** Status of the file. */

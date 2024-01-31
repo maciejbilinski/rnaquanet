@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  Box,
   Card,
   CircularProgress,
   Step,
@@ -98,18 +99,45 @@ const Result = () => {
         })}
       </Stepper>
 
-      {response?.files &&
-        response.files.map((file, i) =>
-          file.status === "SUCCESS" ? (
-            <Typography key={i}>{`${file.name}: rmsd=${file.rmsd}`}</Typography>
-          ) : (
-            file.status === "ERROR" && (
-              <Typography
-                key={i}
-              >{`${file.name}: Error, invalid file.`}</Typography>
-            )
-          )
-        )}
+      {response?.status === "DONE" && response.files && (
+        <Box
+          sx={{
+            mt: 5,
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <table style={{ width: "100%", maxWidth: 500 }}>
+            <thead>
+              <tr>
+                <th style={{ padding: "5px 2px" }}>File name</th>
+                <th style={{ padding: "5px 2px" }}>Model</th>
+                <th style={{ padding: "5px 2px" }}>Chain</th>
+                <th style={{ padding: "5px 2px" }}>RMSD</th>
+              </tr>
+            </thead>
+            <tbody>
+              {response.files.map((file, i) => (
+                <tr key={i}>
+                  <td style={{ padding: "5px 10px" }}>{file.name}</td>
+                  <td style={{ padding: "5px 10px" }}>{file.selectedModel}</td>
+                  <td style={{ padding: "5px 10px" }}>{file.selectedChain}</td>
+                  <td
+                    style={{
+                      padding: "5px 10px",
+                      textAlign: file.status === "SUCCESS" ? "right" : "center",
+                    }}
+                  >
+                    {file.status === "SUCCESS"
+                      ? file.rmsd?.toFixed(4)
+                      : "Invalid file!"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Box>
+      )}
     </Card>
   );
 };
