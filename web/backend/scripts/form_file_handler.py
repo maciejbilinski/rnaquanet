@@ -6,7 +6,7 @@ from werkzeug.datastructures import FileStorage
 
 # from backend.models import TemporaryFile
 from Bio.PDB import PDBIO, Select
-import json, os
+import os
 
 from config import FILE_STORAGE_DIR, TEMP_FILE_STORAGE_DIR, ALLOWED_FILE_TYPES
 
@@ -81,7 +81,6 @@ def extract_chain(
     os.makedirs(dir_path, exist_ok=True)
     temp_file_path = os.path.join(TEMP_FILE_STORAGE_DIR, task_id, file_name)
     file_type = file_name.split(".")[-1].lower()
-
     try:
         with open(temp_file_path) as file_handle:
             structure_model = parse_file(file_handle, file_type)[int(model_no)]

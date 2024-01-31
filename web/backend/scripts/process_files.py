@@ -45,6 +45,7 @@ def process_files(
                     task=db_task,
                 )
             )
+            
 
         job = queue.enqueue(test, task_id)
 

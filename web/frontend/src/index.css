@@ -27,3 +27,8 @@ label {
 body div {
   transition: all 0.2s linear !important;
 }
+
+table, th, td {
+  border: 1px solid;
+  border-collapse: collapse;
+}
