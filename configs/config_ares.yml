@@ -5,13 +5,13 @@ data:
   path: '/app/data' # ścieżka do folderu gdzie mają być zapisywane dane
   download:
     url: 'https://www.dropbox.com/scl/fi/oze5qkzya4kgjnn1rugqt/ares1.tar.gz?rlkey=8si0eai4rbbzujbwsmhhz7raj&dl=1' # adres do pobrania zbioru danych
-    archive_ext: 'tar.gz' # rodzaj archiwum: tar/tar.gz
+    archive_ext: 'tar.xz' # rodzaj archiwum: tar/tar.gz
     train_folder: 'train' # ścieżka do folderu wewnątrz archiwum ze zbiorem treningowym
     val_folder: 'val' # ścieżka do folderu wewnątrz archiwum ze zbiorem walidacyjnym
     test_folder: 'test' # ścieżka do folderu wewnątrz archiwum ze zbiorem testowym
-    train_csv: 'target.csv' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA zbioru treningowego
-    val_csv: 'target.csv' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA zbioru walidacyjnego
-    test_csv: 'target.csv' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA zbioru testowego
+    train_csv: 'train.csv' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA zbioru treningowego
+    val_csv: 'val.csv' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA zbioru walidacyjnego
+    test_csv: 'test.csv' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA zbioru testowego
     csv_delimiter: ' ' # separator stosowany wewnątrz pliku CSV (zazwyczaj jest to przecinek)
     csv_rmsd_column_name: 'new_rms' # nazwa kolumny w pliku CSV z wartością RMSD
     csv_structure_column_name: 'description' # nazwa kolumny w pliku CSV z nazwą plików której dotyczy RMSD
