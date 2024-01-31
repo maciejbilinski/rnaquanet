@@ -19,9 +19,9 @@ import numpy as np
 from rnaquanet.utils.rnaquanet_config import RnaquanetConfig
 
 class GRNLayerType(Enum):
-    GCN = 1,
-    GAT = 2,
-    GCN_GAT = 3,
+    GCN = 1
+    GAT = 2
+    GCN_GAT = 3
     GAT_TRANSFORMER = 4
 
 class GraphRegressionNetwork(pl.LightningModule):
