@@ -6,13 +6,13 @@ from config import TASK_ID_LENGTH
 from app import db
 
 
-
 @dataclass
 class File(db.Model):
     id: int = db.Column(db.Integer, primary_key=True)
     name: str = db.Column(db.String(256), nullable=False)
-    is_temp: bool = db.Column(db.Boolean, nullable=False, default=False)
     status: str = db.Column(db.String(16), nullable=False)
+    selectedModel: str = db.Column(db.String(16), nullable=False)
+    selectedChain: str = db.Column(db.String(16), nullable=False)
     rmsd: float = db.Column(db.Float)
     task_id: str = db.Column(
         db.String(TASK_ID_LENGTH), db.ForeignKey("task.id"), nullable=False

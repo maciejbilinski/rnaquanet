@@ -40,23 +40,24 @@ def process_files(
             # add file info to the db
             db.session.add(
                 File(
-                    status=("ERROR" if error else "WAITING"),
                     name=file_name,
+                    status=("ERROR" if error else "WAITING"),
+                    selectedModel=data[file.filename]["selectedModel"],
+                    selectedChain=data[file.filename]["selectedChain"],
                     task=db_task,
                 )
             )
-            
 
         job = queue.enqueue(test, task_id)
 
     except Exception as e:
         db_task: Task | None = Task.query.get(task_id)
         db_task.status = "ERROR"
-        
+
         print(e)
         return 1
     finally:
         db.session.commit()
         shutil.rmtree(temp_dir_path)
-        
+
     return 0

@@ -109,38 +109,28 @@ const Result = () => {
         >
           <table style={{ width: "100%", maxWidth: 500 }}>
             <thead>
-              <th
-                style={{
-                  padding: "5px 2px",
-                }}
-              >
-                File name
-              </th>
-              <th
-                style={{
-                  padding: "5px 2px",
-                }}
-              >
-                RMSD
-              </th>
+              <tr>
+                <th style={{ padding: "5px 2px" }}>File name</th>
+                <th style={{ padding: "5px 2px" }}>Model</th>
+                <th style={{ padding: "5px 2px" }}>Chain</th>
+                <th style={{ padding: "5px 2px" }}>RMSD</th>
+              </tr>
             </thead>
             <tbody>
               {response.files.map((file, i) => (
-                <tr>
-                  <td
-                    style={{
-                      padding: "5px 10px",
-                    }}
-                  >
-                    {file.name}
-                  </td>
+                <tr key={i}>
+                  <td style={{ padding: "5px 10px" }}>{file.name}</td>
+                  <td style={{ padding: "5px 10px" }}>{file.selectedModel}</td>
+                  <td style={{ padding: "5px 10px" }}>{file.selectedChain}</td>
                   <td
                     style={{
                       padding: "5px 10px",
                       textAlign: file.status === "SUCCESS" ? "right" : "center",
                     }}
                   >
-                    {file.status === "SUCCESS" ? file.rmsd?.toFixed(4) : "Invalid file!"}
+                    {file.status === "SUCCESS"
+                      ? file.rmsd?.toFixed(4)
+                      : "Invalid file!"}
                   </td>
                 </tr>
               ))}

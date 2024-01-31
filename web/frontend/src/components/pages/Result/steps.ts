@@ -1,6 +1,6 @@
 export const steps = [
   {
-    label: "Submitting the task",
+    label: "Finding the task",
     labelFinished: "Task submitted",
   },
   {
