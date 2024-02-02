@@ -66,6 +66,8 @@ export const defaultMlModel: MLModel = mlModels[1];
 /** Name of the project. */
 export const projectName = "RNAQuANet";
 
+export const pageTitle = `${projectName} | Quality assessment of 3D RNA structures`;
+
 /** List of project creators. */
 export const creators = [
   {
