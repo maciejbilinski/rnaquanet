@@ -7,10 +7,10 @@ declare type TaskStatus = "QUEUED" | "PENDING" | "DONE" | "ERROR";
 /** Processing status of a single file. */
 declare type FileStatus = "WAITING" | "SUCCESS" | "ERROR";
 
-declare type MLModel = "ares" | "seg1" | "seg2" | "seg3" | "transfer_seg2_ares";
+declare type MLModelName = "ares" | "seg1" | "seg2" | "seg3" | "transfer_seg2_ares";
 
-declare interface MLModels {
-  value: MLModel;
+declare interface MLModel {
+  value: MLModelName;
   name: string;
   description: string;
 }

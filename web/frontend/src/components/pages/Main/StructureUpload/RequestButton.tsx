@@ -7,7 +7,7 @@ import { API_ADDRESS } from "../../../../../config";
 interface Props {
   files: FileData[];
   setFiles: Dispatch<SetStateAction<FileData[]>>;
-  mlModel: MLModels;
+  mlModel: MLModel;
 }
 
 const RequestButton = ({ files, setFiles, mlModel }: Props) => {
