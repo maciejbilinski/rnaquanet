@@ -13,9 +13,7 @@ export const ALLOWED_FILE_TYPES = ["pdb", "cif"];
 /** URL to the API. */
 export const API_ADDRESS = "http://localhost:5000";
 
-
 // more constants
-
 
 /** Example structures that will be displayed in the structure selector. */
 export const dataBankExamples: DataBankExample[] = [
@@ -36,11 +34,6 @@ export const dataBankExamples: DataBankExample[] = [
 /** Available machine learning models. */
 export const mlModels: MLModels[] = [
   {
-    value: "ares",
-    name: "ARES",
-    description: "model trained on ARES dataset",
-  },
-  {
     value: "seg1",
     name: "seg1",
     description: "model trained on only one segment descriptor",
@@ -56,12 +49,19 @@ export const mlModels: MLModels[] = [
     description: "model trained on only three and more segment descriptors",
   },
   {
+    value: "ares",
+    name: "ARES",
+    description: "model trained on ARES dataset",
+  },
+  {
     value: "transfer_seg2_ares",
     name: "transfer_seg2_ares",
     description: "model applies transfer learning on seg2 and ARES datasets",
   },
 ];
 
+/** Which ML model should be selected by default. */
+export const defaultMlModel: MLModels = mlModels[1];
 
 /** Name of the project. */
 export const projectName = "RNAQuANet";

@@ -13,12 +13,15 @@ import UploaderUserFile from "./UploaderUserFile";
 import RequestButton from "./RequestButton";
 
 import { styles } from "../../../../utils/styles";
-import { mlModels } from "../../../../../config";
-
+import { mlModels, defaultMlModel } from "../../../../../config";
+import { useSessionStorage } from "usehooks-ts";
 
 const StructureUpload = () => {
   const [files, setFiles] = useState<FileData[]>([]);
-  const [mlModel, setMlModel] = useState<MLModels>(mlModels[3]);
+  const [mlModel, setMlModel] = useSessionStorage<MLModels>(
+    "mlModel",
+    defaultMlModel
+  );
 
   return (
     <Card sx={styles.mainCard}>
