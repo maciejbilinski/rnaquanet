@@ -110,13 +110,13 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
                 size="small"
                 sx={{ minWidth: 70 }}
                 value={fileData.selectedChain ?? null}
-                onChange={(event) =>
+                onChange={(e) =>
                   setFiles((old) =>
                     old.map((file) =>
                       file.name == fileData.name
                         ? {
                             ...file,
-                            selectedChain: event.target.value,
+                            selectedChain: e.target.value,
                           }
                         : file
                     )

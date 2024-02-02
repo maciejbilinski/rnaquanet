@@ -1,18 +1,18 @@
 import os, shutil
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict, FileStorage
-from rq import Queue
 
 from config import TEMP_FILE_STORAGE_DIR
+from models.models import Task, File
+from app import db, queue
 from scripts.test import test
-from models.models import db, Task, File
 from scripts.form_file_handler import extract_chain
 
 
 def process_files(
-    queue: Queue,
     files: ImmutableMultiDict[str, FileStorage],
     data: dict[str, dict[str, str]],
+    model_name: str,
     task_id: str,
 ):
     # create directories:
@@ -37,6 +37,7 @@ def process_files(
                 data[file.filename]["selectedModel"],
                 [data[file.filename]["selectedChain"]],
             )
+
             # add file info to the db
             db.session.add(
                 File(
@@ -48,16 +49,18 @@ def process_files(
                 )
             )
 
-        job = queue.enqueue(test, task_id)
+        db.session.commit()
+        
+        queue.enqueue(test, model_name, task_id)
 
     except Exception as e:
         db_task: Task | None = Task.query.get(task_id)
         db_task.status = "ERROR"
+        db.session.commit()
 
         print(e)
         return 1
     finally:
-        db.session.commit()
         shutil.rmtree(temp_dir_path)
 
     return 0

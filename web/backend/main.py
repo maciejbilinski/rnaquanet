@@ -7,8 +7,8 @@ from scripts.generate_task_id import generate_task_id
 from scripts.process_files import process_files
 from models.models import Task
 
-from config import SWAGGER_TEMPLATE
-from app import app, db, queue
+from config import SWAGGER_TEMPLATE, AVAILABLE_MODELS
+from app import app, db
 from scripts.form_file_handler import retrieve_models_and_chains
 
 CORS(app)
@@ -26,10 +26,19 @@ def get_models_and_chains():
         type: file
         required: true
         description: The files to analyze.
-        ...
+    responses:
+      200:
+        description: Files analyzed successfully.
+        type: object
+
+      404:
+        description: No chains/models found.
     """
     return jsonify(
-        {file.filename: retrieve_models_and_chains(file) for file in request.files.values()}
+        {
+            file.filename: retrieve_models_and_chains(file)
+            for file in request.files.values()
+        }
     )
 
 
@@ -38,20 +47,28 @@ def get_models_and_chains():
 def request_rmsd():
     """
     Request file processing and get the task ID.
-    ---      
+    ---
     parameters:
       - name: files
         in: formData
         type: file
         required: true
         description: The files to process.
+      - name: form
+        in: json string
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+        description: Object containing files and their chosen models & chains.
     responses:
       200:
-        description: File processing has started and task ID was generated successfully.
         schema:
           properties:
             task_id:
               type: string
+        description: File processing has started and task ID was generated successfully.
 
       400:
           description: Bad request.
@@ -60,10 +77,11 @@ def request_rmsd():
     # generate unique task id
     task_id = generate_task_id()
     data = json.loads(request.form.get("data"))
+    model_name = request.form.get("modelName")
 
-    if len(request.files):
+    if len(request.files) and model_name in AVAILABLE_MODELS:
         # process files
-        error = process_files(queue, request.files, data, task_id)
+        error = process_files(request.files, data, model_name, task_id)
 
         if not error:
             # return the task id
@@ -99,9 +117,11 @@ def check_rmsd(task_id: str):
                     type: integer
                   name:
                     type: string
-                  is_temp:
-                    type: boolean
                   status:
+                    type: string
+                  selectedModel:
+                    type: string
+                  selectedChain:
                     type: string
                   rmsd:
                     type: number
@@ -124,4 +144,4 @@ def check_rmsd(task_id: str):
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-        app.run(host='0.0.0.0', port=5000)
+        app.run(host="0.0.0.0", port=5000)

@@ -27,7 +27,6 @@ const App = () => {
           mode: colorMode,
           background: {
             default: colorMode === "light" ? "#dbdbdb" : "#121212",
-            paper: colorMode === "light" ? "#f9f9f9" : undefined,
           },
           primary: {
             main: "#3ca93c",

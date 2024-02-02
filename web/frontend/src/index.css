@@ -25,10 +25,15 @@ label {
 }
 
 body div {
-  transition: all 0.2s linear !important;
+  transition: color 0.2s linear !important;
+  transition: background-color 0.2s linear !important;
 }
 
 table, th, td {
   border: 1px solid;
   border-collapse: collapse;
+}
+
+li {
+  opacity: 1;
 }
