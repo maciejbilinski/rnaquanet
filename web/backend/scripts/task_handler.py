@@ -6,7 +6,7 @@ from app import app, db
 from config import FILE_STORAGE_DIR
 
 
-def test(model_name: str, task_id: str):
+def task_handler(model_name: str, task_id: str):
     with app.app_context():
         db_task: Task | None = Task.query.get(task_id)
         db_task.status = "PENDING"
@@ -15,7 +15,7 @@ def test(model_name: str, task_id: str):
         dir_path = os.path.join(FILE_STORAGE_DIR, task_id)
         for file in db_task.files:
             try:
-                rmsd = get_rmsd(model_name, os.path.join(dir_path, file.name))
+                rmsd = abs(get_rmsd(model_name, os.path.join(dir_path, file.name)))
                 if rmsd:
                     file.rmsd = rmsd
                     file.status = "SUCCESS"
@@ -28,4 +28,3 @@ def test(model_name: str, task_id: str):
 
         db_task.status = "DONE"
         db.session.commit()
-        print(f"TASK Finished: {task_id}")

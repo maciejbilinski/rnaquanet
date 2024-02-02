@@ -1,5 +1,5 @@
 APP_CONFIG = {
-    "DEBUG": True,
+    "DEBUG": False,
     "SQLALCHEMY_DATABASE_URI": "sqlite:///rnaquanet.db",
 }
 

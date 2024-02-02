@@ -5,7 +5,7 @@ from werkzeug.datastructures import ImmutableMultiDict, FileStorage
 from config import TEMP_FILE_STORAGE_DIR
 from models.models import Task, File
 from app import db, queue
-from scripts.test import test
+from web.backend.scripts.task_handler import task_handler
 from scripts.form_file_handler import extract_chain
 
 
@@ -50,8 +50,8 @@ def process_files(
             )
 
         db.session.commit()
-        
-        queue.enqueue(test, model_name, task_id)
+
+        queue.enqueue(task_handler, model_name, task_id)
 
     except Exception as e:
         db_task: Task | None = Task.query.get(task_id)
