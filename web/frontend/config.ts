@@ -43,7 +43,7 @@ export const mlModels: MLModels[] = [
   {
     value: "seg1",
     name: "seg1",
-    description: "model trained on only one segment descriptors",
+    description: "model trained on only one segment descriptor",
   },
   {
     value: "seg2",
@@ -58,7 +58,7 @@ export const mlModels: MLModels[] = [
   {
     value: "transfer_seg2_ares",
     name: "transfer_seg2_ares",
-    description: "apply transfer learning on seg2 and ARES datasets",
+    description: "model applies transfer learning on seg2 and ARES datasets",
   },
 ];
 
