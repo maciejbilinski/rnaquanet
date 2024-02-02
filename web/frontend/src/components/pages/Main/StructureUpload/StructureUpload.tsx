@@ -23,7 +23,7 @@ const StructureUpload = () => {
   return (
     <Card sx={styles.mainCard}>
       <Typography variant="h5" sx={{ textAlign: "center" }}>
-        Upload RNA structures
+        Upload 3D RNA structures
       </Typography>
       <UploaderDataBank files={files} setFiles={setFiles} />
       <Divider variant="middle" />
@@ -58,7 +58,7 @@ const StructureUpload = () => {
               <li {...props}>
                 <span>
                   <i>{option.name}</i>
-                  {` - ${option.description}`}
+                  {` – ${option.description}`}
                 </span>
               </li>
             </div>
