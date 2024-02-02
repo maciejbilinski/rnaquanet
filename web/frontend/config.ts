@@ -32,7 +32,7 @@ export const dataBankExamples: DataBankExample[] = [
 ];
 
 /** Available machine learning models. */
-export const mlModels: MLModels[] = [
+export const mlModels: MLModel[] = [
   {
     value: "seg1",
     name: "seg1",
@@ -61,7 +61,7 @@ export const mlModels: MLModels[] = [
 ];
 
 /** Which ML model should be selected by default. */
-export const defaultMlModel: MLModels = mlModels[1];
+export const defaultMlModel: MLModel = mlModels[1];
 
 /** Name of the project. */
 export const projectName = "RNAQuANet";

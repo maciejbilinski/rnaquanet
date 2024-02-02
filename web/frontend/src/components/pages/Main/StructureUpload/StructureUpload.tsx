@@ -18,7 +18,7 @@ import { useSessionStorage } from "usehooks-ts";
 
 const StructureUpload = () => {
   const [files, setFiles] = useState<FileData[]>([]);
-  const [mlModel, setMlModel] = useSessionStorage<MLModels>(
+  const [mlModel, setMlModel] = useSessionStorage<MLModel>(
     "mlModel",
     defaultMlModel
   );
@@ -39,7 +39,7 @@ const StructureUpload = () => {
           gap: 2,
         }}
       >
-        <Autocomplete<MLModels, false, true>
+        <Autocomplete<MLModel, false, true>
           sx={{ width: "100%", maxWidth: 280 }}
           options={mlModels}
           value={mlModel}
