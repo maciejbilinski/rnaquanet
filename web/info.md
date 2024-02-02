@@ -1,3 +1,5 @@
+## It's recommended to just run the `runAll.py` script. It will start both front and backend, as well as rq in `silent` modes.
+
 Frontend:
 - `(npm run dev --prefix web/frontend&)`
 
