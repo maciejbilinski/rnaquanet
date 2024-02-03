@@ -41,7 +41,7 @@ const Navbar = ({ colorMode, setColorMode }: Props) => {
             color: "#fff",
           }}
         >
-          <Typography variant="h4" sx={{ fontFamily: "initial" }}>
+          <Typography variant="h4">
             {projectName}
           </Typography>
         </Link>

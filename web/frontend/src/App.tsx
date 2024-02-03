@@ -3,7 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useLocalStorage } from "usehooks-ts";
 import { Box, createTheme, ThemeProvider } from "@mui/material";
 
-import { projectName } from "../config";
+import { pageTitle } from "../config";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Main from "./components/pages/Main/Main";
@@ -17,7 +17,7 @@ const App = () => {
   );
 
   useEffect(() => {
-    document.title = projectName;
+    document.title = pageTitle;
   }, []);
 
   const theme = useMemo(
@@ -27,7 +27,6 @@ const App = () => {
           mode: colorMode,
           background: {
             default: colorMode === "light" ? "#dbdbdb" : "#121212",
-            paper: colorMode === "light" ? "#f9f9f9" : undefined,
           },
           primary: {
             main: "#3ca93c",

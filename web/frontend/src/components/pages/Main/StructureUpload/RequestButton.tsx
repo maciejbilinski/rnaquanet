@@ -7,9 +7,10 @@ import { API_ADDRESS } from "../../../../../config";
 interface Props {
   files: FileData[];
   setFiles: Dispatch<SetStateAction<FileData[]>>;
+  mlModel: MLModel;
 }
 
-const RequestButton = ({ files, setFiles }: Props) => {
+const RequestButton = ({ files, setFiles, mlModel }: Props) => {
   const navigate = useNavigate();
   const [response, setResponse] = useState<TaskRequest>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -41,6 +42,7 @@ const RequestButton = ({ files, setFiles }: Props) => {
       }
 
       formData.append("data", JSON.stringify(data));
+      formData.append("modelName", mlModel.value);
 
       const res = await fetch(`${API_ADDRESS}/request_rmsd`, {
         method: "POST",
@@ -81,49 +83,15 @@ const RequestButton = ({ files, setFiles }: Props) => {
   };
 
   return (
-    <>
-      <Button
-        sx={{ height: 50 }}
-        variant="contained"
-        size="large"
-        onClick={fetchData}
-        disabled={!files.length || loading}
-      >
-        {getMessage()}
-      </Button>
-
-      {/* {response.task_id && (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Typography
-            sx={{
-              textAlign: "center",
-            }}
-          >
-            Your files are being processed.
-          </Typography>
-
-          <Box>
-            <Typography>Id of your task:</Typography>
-            <Typography>{response.task_id}</Typography>
-            <Typography></Typography>
-            <Link
-              to={response.task_id ? `result/${response.task_id}` : ""}
-              style={{
-                color: theme.palette.primary.main,
-              }}
-            >
-              {response.task_url}
-            </Link>
-          </Box>
-        </Box>
-      )} */}
-    </>
+    <Button
+      sx={{ width: "100%" }}
+      variant="contained"
+      size="large"
+      onClick={fetchData}
+      disabled={!files.length || loading}
+    >
+      {getMessage()}
+    </Button>
   );
 };
 

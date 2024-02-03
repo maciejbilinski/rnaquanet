@@ -1,5 +1,27 @@
+@font-face {
+  font-family: "LibertinusSerif";
+  src: local("LibertinusSerif"), url(./fonts/LibertinusSerif-Regular.otf) format("opentype");
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: local("Roboto"), url(./fonts/Roboto-Regular.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "Roboto";
+  font-style: italic;
+  src: local("Roboto"), url(./fonts/Roboto-Italic.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "Roboto";
+  font-weight: bold;
+  src: local("Roboto"), url(./fonts/Roboto-Bold.ttf) format("truetype");
+}
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Roboto, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -22,13 +44,24 @@ label {
 
 * {
   box-sizing: border-box;
+  font-family: Roboto, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif !important;
 }
 
 body div {
-  transition: all 0.2s linear !important;
+  transition: color 0.2s linear !important;
+  transition: background-color 0.2s linear !important;
 }
 
 table, th, td {
   border: 1px solid;
   border-collapse: collapse;
+}
+
+li {
+  opacity: 1;
+}
+
+h4 {
+  font-family: LibertinusSerif !important;
+  font-feature-settings: "calt";
 }

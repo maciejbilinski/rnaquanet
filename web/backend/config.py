@@ -1,5 +1,5 @@
 APP_CONFIG = {
-    "DEBUG": True,
+    "DEBUG": False,
     "SQLALCHEMY_DATABASE_URI": "sqlite:///rnaquanet.db",
 }
 
@@ -11,6 +11,9 @@ SWAGGER_TEMPLATE = {
 }
 
 ALLOWED_FILE_TYPES = ["pdb", "cif"]
+
+# list of available ml models
+AVAILABLE_MODELS = ["ares", "seg1", "seg2", "seg3", "transfer_seg2_ares"]
 
 # path to where the files received from frontend will be saved
 # relative to `{project}/API`

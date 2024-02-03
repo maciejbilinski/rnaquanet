@@ -4,7 +4,6 @@ from io import TextIOWrapper
 from typing import Literal
 from werkzeug.datastructures import FileStorage
 
-# from backend.models import TemporaryFile
 from Bio.PDB import PDBIO, Select
 import os
 
@@ -16,20 +15,6 @@ def resname(res):
     while name[0] == "D":
         name = name[1:]
     return name
-
-
-def analyze_structure(structure: Structure):
-    dk: dict[str, dict[str, list[str]]] = {}
-    for model in structure:
-        model_name = str(int(model.id) + 1)
-        # model_name = file.name.split(".")[0]+": "+str(int(model.id)+1)
-        dk[model_name] = {}
-        for chain in model:
-            dk[model_name][chain.id] = []
-            for residue in chain:
-                if "P" in [i.name for i in residue.get_atoms()]:
-                    dk[model_name][chain.id].append(resname(residue))
-    return dk
 
 
 def parse_file(file_handle: TextIOWrapper, file_type: Literal["pdb", "cif"]):
