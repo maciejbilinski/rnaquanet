@@ -14,7 +14,7 @@ data:
     test_csv: 'test.csv' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA zbioru testowego
     csv_delimiter: ',' # separator stosowany wewnątrz pliku CSV (zazwyczaj jest to przecinek)
     csv_rmsd_column_name: 'rmsd' # nazwa kolumny w pliku CSV z wartością RMSD
-    csv_structure_column_name: 'description' # nazwa kolumny w pliku CSV z nazwą plików której dotyczy RMSD
+    csv_structure_column_name: 'file' # nazwa kolumny w pliku CSV z nazwą plików której dotyczy RMSD
   download_preprocessed:
     train_url: '' # adres do pobrania pliku H5 ze zbiorem treningowym
     val_url: '' # adres do pobrania pliku H5 ze zbiorem walidacyjnym

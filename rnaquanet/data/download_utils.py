@@ -61,7 +61,7 @@ def extract_archive(config: RnaquanetConfig) -> None:
     if os.path.exists(path):
         archive = os.path.join(path, f'archive.{config_download.archive_ext}')
         if os.path.exists(archive):
-            if config_download.archive_ext in ['tar', 'tar.gz']:
+            if config_download.archive_ext in ['tar', 'tar.gz', 'tar.xz']:
                 path = os.path.join(path, 'archive')
                 ensure_directory_not_exist(config, path)
                 os.makedirs(path)
@@ -71,6 +71,9 @@ def extract_archive(config: RnaquanetConfig) -> None:
                         tar.extractall(tmp)
                 elif config_download.archive_ext == 'tar.gz':
                     with tarfile.open(archive, 'r:gz') as tar:
+                        tar.extractall(tmp)
+                elif config_download.archive_ext == 'tar.xz':
+                    with tarfile.open(archive, 'r:xz') as tar:
                         tar.extractall(tmp)
                 # else other extensions
 

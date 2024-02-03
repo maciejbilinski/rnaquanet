@@ -4,20 +4,20 @@ verbose: True
 data:
   path: '/app/data' # ścieżka do folderu gdzie mają być zapisywane dane
   download:
-    url: 'https://www.dropbox.com/scl/fi/1l884d5v5w7phlz27692y/ares_tiny.tar.gz?rlkey=xr1tv1yhvretn92wdwu6a3hja&dl=1' # adres do pobrania zbioru danych
-    archive_ext: 'tar.gz' # rodzaj archiwum: tar/tar.gz
+    url: 'https://rnasolo.cs.put.poznan.pl/media/ares_tiny.tar.xz' # adres do pobrania zbioru danych
+    archive_ext: 'tar.xz' # rodzaj archiwum: tar/tar.gz
     train_folder: 'train' # ścieżka do folderu wewnątrz archiwum ze zbiorem treningowym
     val_folder: 'val' # ścieżka do folderu wewnątrz archiwum ze zbiorem walidacyjnym
     test_folder: 'test' # ścieżka do folderu wewnątrz archiwum ze zbiorem testowym
-    train_csv: 'target.csv' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA zbioru treningowego
-    val_csv: 'target.csv' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA zbioru walidacyjnego
-    test_csv: 'target.csv' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA zbioru testowego
-    csv_delimiter: ' ' # separator stosowany wewnątrz pliku CSV (zazwyczaj jest to przecinek)
-    csv_rmsd_column_name: 'new_rms' # nazwa kolumny w pliku CSV z wartością RMSD
+    train_csv: 'train.csv' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA zbioru treningowego
+    val_csv: 'val.csv' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA zbioru walidacyjnego
+    test_csv: 'test.csv' # ścieżka do pliku CSV, w którym znajdują wartości RMSD dla każdej struktury RNA zbioru testowego
+    csv_delimiter: ',' # separator stosowany wewnątrz pliku CSV (zazwyczaj jest to przecinek)
+    csv_rmsd_column_name: 'rew_rmsd' # nazwa kolumny w pliku CSV z wartością RMSD
     csv_structure_column_name: 'description' # nazwa kolumny w pliku CSV z nazwą plików której dotyczy RMSD
   download_preprocessed:
     train_url: '' # adres do pobrania pliku H5 ze zbiorem treningowym
-    val_url: '' # adres do pobrania pliku H5 ze zbiorem walidacyjnym 
+    val_url: '' # adres do pobrania pliku H5 ze zbiorem walidacyjnym
     test_url: '' # adres do pobrania pliku H5 ze zbiorem testowym
   features:
     atom_for_distance_calculations: "C1'"
@@ -27,6 +27,7 @@ network:
   model_output_path: '/app/models'
   hidden_dim: 128
   layer_type: 3
+  num_of_heads: 1
   num_of_layers: 4
   num_of_node_features: 99
   batch_norm: False
@@ -41,4 +42,3 @@ network:
   shuffle_val: False
   shuffle_test: False
   max_epochs: 50
-  num_of_heads: 4
