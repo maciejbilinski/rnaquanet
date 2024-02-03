@@ -59,7 +59,7 @@ const App = () => {
             bgcolor: "background.default",
             color: "text.primary",
             minHeight: "100dvh",
-            gap: 1.5,
+            gap: { xs: 1, md: 1.5 },
           }}
         >
           <Box
@@ -68,8 +68,8 @@ const App = () => {
               flexDirection: "column",
               width: "100%",
               maxWidth: 1200,
-              gap: 1.5,
-              mt: 0.5,
+              gap: { xs: 1, md: 1.5 },
+              mt: { xs: 0, md: 0.5 },
             }}
           >
             <Navbar colorMode={colorMode} setColorMode={setColorMode} />

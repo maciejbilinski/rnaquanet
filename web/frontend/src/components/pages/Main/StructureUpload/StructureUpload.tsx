@@ -3,9 +3,11 @@ import {
   Card,
   Typography,
   Divider,
-  TextField,
   Box,
-  Autocomplete,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 
 import UploaderDataBank from "./UploaderDataBank";
@@ -36,38 +38,44 @@ const StructureUpload = () => {
       <Box
         sx={{
           display: "flex",
-          gap: 2,
+          flexDirection: { xs: "column", sm: "row" },
+          gap: { xs: 0.5, md: 2 },
         }}
       >
-        <Autocomplete<MLModel, false, true>
-          sx={{ width: "100%", maxWidth: 280 }}
-          options={mlModels}
-          value={mlModel}
-          onChange={(_, newValue) => setMlModel(newValue)}
-          getOptionLabel={(option) => `${option.name} - ${option.description}`}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              inputProps={{
-                ...params.inputProps,
-                value: mlModel.name,
-              }}
-              label="Computation model"
-            />
-          )}
-          renderOption={(props, option) => (
-            <div key={option.value}>
-              <Divider />
-              <li {...props}>
-                <span>
-                  <i>{option.name}</i>
-                  {` – ${option.description}`}
-                </span>
-              </li>
-            </div>
-          )}
-          disableClearable
-        />
+        <FormControl>
+          <InputLabel>Computation model</InputLabel>
+          <Select
+            sx={{
+              width: "100%",
+              maxWidth: { xs: "100%", sm: 250 },
+            }}
+            label="Computation model"
+            value={mlModel.value}
+            onChange={(e) => {
+              const newM = mlModels.find((m) => m.value === e.target.value);
+              if (newM) setMlModel(newM);
+            }}
+            renderValue={() => mlModel.name}
+          >
+            {mlModels.map((m, i) => (
+              <MenuItem
+                key={m.value}
+                value={m.value}
+                sx={{
+                  p: 0,
+                  width: "100%",
+                  maxWidth: { xs: "100%", sm: 250 },
+                  whiteSpace: "normal",
+                }}
+              >
+                <div>
+                  {i !== 0 && <Divider />}
+                  <Typography sx={{ p: 1 }}><i>{m.name}</i>{` - ${m.description}`}</Typography>
+                </div>
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
         <RequestButton files={files} setFiles={setFiles} mlModel={mlModel} />
       </Box>

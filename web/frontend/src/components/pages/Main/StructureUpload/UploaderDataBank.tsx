@@ -110,7 +110,8 @@ const UploaderDataBank = ({ files, setFiles }: Props) => {
         sx={{
           display: "flex",
           flexWrap: "wrap",
-          gap: 1,
+          columnGap: 1,
+          rowGap: 2,
         }}
       >
         {dataBankExamples.map((example, i) => (

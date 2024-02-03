@@ -21,6 +21,7 @@ const Navbar = ({ colorMode, setColorMode }: Props) => {
         justifyContent: "space-between",
         alignItems: "center",
         p: 1,
+        borderRadius: { xs: 0, md: 1 },
       }}
     >
       {/* filler box */}
