@@ -57,7 +57,7 @@ const UploaderDataBank = ({ files, setFiles }: Props) => {
           // if file exists
           if (res.status === 200) {
             const file = (await (
-              await fetch(`http://files.rcsb.org/download/${fileName}`)
+              await fetch(`https://files.rcsb.org/download/${fileName}`)
             ).blob()) as File;
 
             const formData = new FormData();
