@@ -16,7 +16,9 @@ interface Props {
 }
 
 const FileUploader = ({ files, setFiles }: Props) => {
-  const [error, setError] = useState<"type" | "size" | "files" | "server" | null>(null);
+  const [error, setError] = useState<
+    "type" | "size" | "files" | "server" | null
+  >(null);
   const [invalidFilesList, setInvalidFilesList] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -33,8 +35,9 @@ const FileUploader = ({ files, setFiles }: Props) => {
           const [fileName, fileExt] = file.name.split(".");
           let newFileName = "";
           do {
-            newFileName = `${fileName} (${id++})${fileExt ? "." : ""
-              }${fileExt}`;
+            newFileName = `${fileName}_${id++}${
+              fileExt ? "." : ""
+            }${fileExt}`;
           } while (oldFileNames.includes(newFileName));
 
           Object.defineProperty(file, "name", {
@@ -57,29 +60,30 @@ const FileUploader = ({ files, setFiles }: Props) => {
       const json: { [key: string]: StructureModel } = await res.json();
 
       const invalidFileNames: string[] = [];
+
       Object.entries(json).forEach(([fileName, file]) => {
-        if (Object.keys(file).length < 1) {
+        if (!file || Object.keys(file).length < 1) {
           invalidFileNames.push(fileName);
           setError("files");
         }
-      })
+      });
       setInvalidFilesList(invalidFileNames);
 
-      setFiles((old) =>
-        old.concat(
-          newFilesArr.filter((file) => !invalidFileNames.includes(file.name)).map((file) => {
-            const [model, chains] = Object.entries(json[file.name])[0];
+      const newFiles = newFilesArr
+        .filter((file) => !invalidFileNames.includes(file.name))
+        .map((file) => {
+          const [model, chains] = Object.entries(json[file.name])[0];
 
-            return {
-              name: file.name,
-              file,
-              models: json[file.name],
-              selectedModel: model,
-              selectedChain: chains[0],
-            } as FileData;
-          })
-        )
-      );
+          return {
+            name: file.name,
+            file,
+            models: json[file.name],
+            selectedModel: model,
+            selectedChain: chains[0],
+          } as FileData;
+        });
+
+      setFiles((old) => old.concat(newFiles));
     } catch (error) {
       setError("server");
       console.error(error);
@@ -117,8 +121,9 @@ const FileUploader = ({ files, setFiles }: Props) => {
               px: 5,
               overflow: "hidden",
               "&:hover": {
-                bgcolor: `${theme.palette[error ? "error" : "primary"].main}${theme.palette.mode === "light" ? 45 : 20
-                  }`,
+                bgcolor: `${theme.palette[error ? "error" : "primary"].main}${
+                  theme.palette.mode === "light" ? 45 : 20
+                }`,
               },
             })}
           >
@@ -132,7 +137,6 @@ const FileUploader = ({ files, setFiles }: Props) => {
                 }}
               />
             )}
-
 
             <Box
               sx={{
@@ -153,7 +157,9 @@ const FileUploader = ({ files, setFiles }: Props) => {
                   <span>
                     Following files contain invalid 3D RNA structures:
                     <br />
-                        <i>{invalidFilesList.map((name) => `"${name}"`).join(", ")}</i>
+                    <i>
+                      {invalidFilesList.map((name) => `"${name}"`).join(", ")}
+                    </i>
                   </span>
                 ) : error === "server" ? (
                   <span>
