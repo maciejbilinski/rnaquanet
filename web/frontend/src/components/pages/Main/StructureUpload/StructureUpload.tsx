@@ -39,16 +39,12 @@ const StructureUpload = () => {
         sx={{
           display: "flex",
           flexDirection: { xs: "column", sm: "row" },
-          gap: { xs: 0.5, md: 2 },
+          gap: { xs: 0, sm: 1 },
         }}
       >
-        <FormControl>
+        <FormControl sx={{ width: "100%", maxWidth: { xs: "100%", sm: 250 } }}>
           <InputLabel>Computation model</InputLabel>
           <Select
-            sx={{
-              width: "100%",
-              maxWidth: { xs: "100%", sm: 250 },
-            }}
             label="Computation model"
             value={mlModel.value}
             onChange={(e) => {

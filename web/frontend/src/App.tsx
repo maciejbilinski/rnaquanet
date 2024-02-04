@@ -69,7 +69,7 @@ const App = () => {
               width: "100%",
               maxWidth: 1200,
               gap: { xs: 1, md: 1.5 },
-              mt: { xs: 0, md: 0.5 },
+              mt: { xs: 0, md: 0.25 },
             }}
           >
             <Navbar colorMode={colorMode} setColorMode={setColorMode} />

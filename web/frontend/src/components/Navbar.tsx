@@ -20,7 +20,7 @@ const Navbar = ({ colorMode, setColorMode }: Props) => {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        p: 1,
+        py: 1,
         borderRadius: { xs: 0, md: 1 },
       }}
     >

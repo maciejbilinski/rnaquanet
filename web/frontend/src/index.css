@@ -44,8 +44,7 @@ label {
 * {
   box-sizing: border-box;
   font-family: Roboto, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif !important;
-  transition: color 0.2s linear !important;
-  transition: background-color 0.2s linear !important;
+  transition: background-color 0.2s linear, color 0.2s linear;
 }
 
 table, th, td {

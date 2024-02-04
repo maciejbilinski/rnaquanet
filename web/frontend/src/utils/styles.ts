@@ -28,4 +28,10 @@ export const styles: { [name: string]: SxProps } = {
       background: "#555",
     },
   } as SxProps,
+
+  gaps: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 1,
+  }
 };
