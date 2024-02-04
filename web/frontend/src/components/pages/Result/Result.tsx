@@ -120,7 +120,7 @@ const Result = () => {
               {response.files.map((file, i) => (
                 <tr key={i}>
                   <td style={{ padding: "5px 10px" }}>{file.name}</td>
-                  <td style={{ padding: "5px 10px" }}>{file.selectedModel}</td>
+                  <td style={{ padding: "5px 10px" }}>{file.selectedModel + 1}</td>
                   <td style={{ padding: "5px 10px" }}>{file.selectedChain}</td>
                   <td
                     style={{

@@ -47,6 +47,10 @@ label {
   transition: background-color 0.2s linear, color 0.2s linear;
 }
 
+.MuiPaper-root {
+  transition: background-color 0.2s linear, color 0.2s linear !important;
+}
+
 table, th, td {
   border: 1px solid;
   border-collapse: collapse;

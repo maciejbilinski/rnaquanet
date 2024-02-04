@@ -47,12 +47,6 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
           <Box
             key={i}
             sx={(theme) => ({
-              // width: {
-              //   xs: "100%",
-              //   sm: "calc(50% - 8px)",
-              //   md: "100%",
-              //   lg: "calc(50% - 8px)",
-              // },
               width: "100%",
               "&:hover": {
                 bgcolor: `${theme.palette.primary.main}30`,
@@ -100,7 +94,7 @@ const FileUploaderList = ({ files, setFiles }: Props) => {
               >
                 {Object.keys(fileData.models).map((model, i) => (
                   <MenuItem key={i} value={model}>
-                    {model}
+                    {Number(model) + 1}
                   </MenuItem>
                 ))}
               </TextField>
