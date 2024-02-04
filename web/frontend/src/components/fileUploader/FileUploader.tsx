@@ -23,7 +23,7 @@ const FileUploader = ({ files, setFiles }: Props) => {
   const handleChange = async (newFiles: FileList) => {
     setLoading(true);
     const oldFileNames = files.map((d) => d.name);
-    const newFilesArr = Array.from(newFiles);
+    let newFilesArr = Array.from(newFiles);
 
     try {
       for (const file of newFilesArr) {
@@ -60,7 +60,7 @@ const FileUploader = ({ files, setFiles }: Props) => {
       Object.entries(json).forEach(([fileName, file]) => {
         if (Object.keys(file).length < 1) {
           invalidFileNames.push(fileName);
-          if (error !== "files") setError("files");
+          setError("files");
         }
       })
       setInvalidFilesList(invalidFileNames);
