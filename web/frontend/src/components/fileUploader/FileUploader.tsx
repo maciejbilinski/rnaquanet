@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { FileUploader as FileUploaderBase } from "react-drag-drop-files";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
@@ -16,23 +16,25 @@ interface Props {
 }
 
 const FileUploader = ({ files, setFiles }: Props) => {
-  const [error, setError] = useState<"type" | "size" | null>(null);
+  const [error, setError] = useState<"type" | "size" | "files" | "server" | null>(null);
+  const [invalidFilesList, setInvalidFilesList] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleChange = async (newFiles: FileList) => {
+    setLoading(true);
     const oldFileNames = files.map((d) => d.name);
     const newFilesArr = Array.from(newFiles);
 
     try {
       for (const file of newFilesArr) {
-        let id = 2;
+        let id = 1;
         // add a numeric suffix to the file name if it already exists
         if (oldFileNames.includes(file.name)) {
           const [fileName, fileExt] = file.name.split(".");
           let newFileName = "";
           do {
-            newFileName = `${fileName} (${id++})${
-              fileExt ? "." : ""
-            }${fileExt}`;
+            newFileName = `${fileName} (${id++})${fileExt ? "." : ""
+              }${fileExt}`;
           } while (oldFileNames.includes(newFileName));
 
           Object.defineProperty(file, "name", {
@@ -54,9 +56,18 @@ const FileUploader = ({ files, setFiles }: Props) => {
       });
       const json: { [key: string]: StructureModel } = await res.json();
 
+      const invalidFileNames: string[] = [];
+      Object.entries(json).forEach(([fileName, file]) => {
+        if (Object.keys(file).length < 1) {
+          invalidFileNames.push(fileName);
+          if (error !== "files") setError("files");
+        }
+      })
+      setInvalidFilesList(invalidFileNames);
+
       setFiles((old) =>
         old.concat(
-          newFilesArr.map((file) => {
+          newFilesArr.filter((file) => !invalidFileNames.includes(file.name)).map((file) => {
             const [model, chains] = Object.entries(json[file.name])[0];
 
             return {
@@ -70,8 +81,10 @@ const FileUploader = ({ files, setFiles }: Props) => {
         )
       );
     } catch (error) {
-      setError("type");
+      setError("server");
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -104,18 +117,23 @@ const FileUploader = ({ files, setFiles }: Props) => {
               px: 5,
               overflow: "hidden",
               "&:hover": {
-                bgcolor: `${theme.palette[error ? "error" : "primary"].main}${
-                  theme.palette.mode === "light" ? 45 : 20
-                }`,
+                bgcolor: `${theme.palette[error ? "error" : "primary"].main}${theme.palette.mode === "light" ? 45 : 20
+                  }`,
               },
             })}
           >
-            <UploadFileIcon
-              sx={{
-                fontSize: 32,
-                color: `${error ? "error" : "primary"}.main`,
-              }}
-            />
+            {loading ? (
+              <CircularProgress size="1.5rem" sx={{ mx: 0.5 }} />
+            ) : (
+              <UploadFileIcon
+                sx={{
+                  fontSize: 32,
+                  color: `${error ? "error" : "primary"}.main`,
+                }}
+              />
+            )}
+
+
             <Box
               sx={{
                 flexGrow: 1,
@@ -130,7 +148,19 @@ const FileUploader = ({ files, setFiles }: Props) => {
                 {error === "type" ? (
                   <span>Invalid file type!</span>
                 ) : error === "size" ? (
-                  <span>File too large!</span>
+                  <span>Files are too large!</span>
+                ) : error === "files" ? (
+                  <span>
+                    Following files contain invalid 3D RNA structures:
+                    <br />
+                        <i>{invalidFilesList.map((name) => `"${name}"`).join(", ")}</i>
+                  </span>
+                ) : error === "server" ? (
+                  <span>
+                    Server is not responding.
+                    <br />
+                    Try again later.
+                  </span>
                 ) : (
                   <span>
                     <u>Drop</u> your files here
