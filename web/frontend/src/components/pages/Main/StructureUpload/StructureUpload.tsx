@@ -8,6 +8,7 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  ListSubheader,
 } from "@mui/material";
 
 import UploaderDataBank from "./UploaderDataBank";
@@ -51,25 +52,56 @@ const StructureUpload = () => {
               const newM = mlModels.find((m) => m.value === e.target.value);
               if (newM) setMlModel(newM);
             }}
-            renderValue={() => mlModel.name}
+            renderValue={() => `${mlModel.name}  (${mlModel.type})`}
           >
-            {mlModels.map((m, i) => (
-              <MenuItem
-                key={m.value}
-                value={m.value}
-                sx={{
-                  p: 0,
-                  width: "100%",
-                  maxWidth: { xs: "100%", sm: 250 },
-                  whiteSpace: "normal",
-                }}
-              >
-                <div>
-                  {i !== 0 && <Divider />}
-                  <Typography sx={{ p: 1 }}><i>{m.name}</i>{` - ${m.description}`}</Typography>
-                </div>
-              </MenuItem>
-            ))}
+            <ListSubheader color="primary">Global analysis</ListSubheader>
+            {mlModels
+              .filter((m) => m.type === "global")
+              .map((m, i) => (
+                <MenuItem
+                  key={m.value}
+                  value={m.value}
+                  sx={{
+                    p: 0,
+                    width: "100%",
+                    maxWidth: { xs: "100%", sm: 250 },
+                    whiteSpace: "normal",
+                  }}
+                >
+                  <div>
+                    {i === 0 && <Divider />}
+                    <Typography sx={{ p: 1 }}>
+                      <i>{m.name}</i>
+                      {` - ${m.description}`}
+                    </Typography>
+                    <Divider />
+                  </div>
+                </MenuItem>
+              ))}
+            <ListSubheader color="primary">Local analysis</ListSubheader>
+            {mlModels
+              .filter((m) => m.type === "local")
+              .map((m, i) => (
+                <MenuItem
+                  key={m.value}
+                  value={m.value}
+                  sx={{
+                    p: 0,
+                    width: "100%",
+                    maxWidth: { xs: "100%", sm: 250 },
+                    whiteSpace: "normal",
+                  }}
+                >
+                  <div>
+                    {i === 0 && <Divider />}
+                    <Typography sx={{ p: 1 }}>
+                      <i>{m.name}</i>
+                      {` - ${m.description}`}
+                    </Typography>
+                    <Divider />
+                  </div>
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
 

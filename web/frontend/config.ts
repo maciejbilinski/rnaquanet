@@ -34,26 +34,31 @@ export const dataBankExamples: DataBankExample[] = [
 /** Available machine learning models. */
 export const mlModels: MLModel[] = [
   {
+    type: "global",
     value: "ares",
     name: "ARES",
     description: "model trained on ARES dataset",
   },
   {
+    type: "local",
     value: "seg1",
     name: "seg1",
     description: "model trained on only one segment descriptor",
   },
   {
+    type: "local",
     value: "seg2",
     name: "seg2",
     description: "model trained on only two segment descriptors",
   },
   {
+    type: "local",
     value: "seg3",
     name: "seg3",
     description: "model trained on only three and more segment descriptors",
   },
   {
+    type: "local",
     value: "transfer_seg2_ares",
     name: "transfer_seg2_ares",
     description: "model applies transfer learning on seg2 and ARES datasets",
@@ -61,7 +66,7 @@ export const mlModels: MLModel[] = [
 ];
 
 /** Which ML model should be selected by default. */
-export const defaultMlModel: MLModel = mlModels[2];
+export const defaultMlModel: MLModel = mlModels[0];
 
 /** Name of the project. */
 export const projectName = "RNAQuANet";

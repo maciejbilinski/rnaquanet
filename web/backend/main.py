@@ -11,7 +11,7 @@ from config import SWAGGER_TEMPLATE, AVAILABLE_MODELS
 from app import app, db
 from scripts.form_file_handler import retrieve_models_and_chains
 
-CORS(app, resources={r"/*": {"origins": "https://rnaquanet.maciejbilinski.pl"}})
+CORS(app)
 Swagger(app, template=SWAGGER_TEMPLATE)  # Swagger UI is located at `api.url/apidocs/`
 
 
