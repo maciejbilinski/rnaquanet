@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 APP_CONFIG = {
     "DEBUG": False,
     "SQLALCHEMY_DATABASE_URI": "sqlite:///rnaquanet.db",
@@ -24,3 +26,6 @@ TEMP_FILE_STORAGE_DIR = "instance/temp"
 
 # how long should the randomly generated `task id` be
 TASK_ID_LENGTH = 12
+
+# how old the records should be to be cleared on db clear cycle
+DB_CLEAR_INTERVAL = timedelta(minutes=1)
