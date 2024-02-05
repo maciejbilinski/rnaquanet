@@ -22,6 +22,6 @@ def clear_old_tasks():
         for t in old_tasks:
             dir_path = os.path.join(FILE_STORAGE_DIR, t.id)
             if os.path.exists(dir_path):
-                shutil.rmtree(os.path.join(FILE_STORAGE_DIR, t.id))
+                shutil.rmtree(dir_path)
         old_tasks_q.delete()
         db.session.commit()
