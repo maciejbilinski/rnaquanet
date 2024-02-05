@@ -23,4 +23,5 @@ class File(db.Model):
 class Task(db.Model):
     id: str = db.Column(db.String(TASK_ID_LENGTH), primary_key=True)
     status: str = db.Column(db.String(16), nullable=False)
+    timestamp: int = db.Column(db.Integer)
     files: Mapped[List[File]] = db.relationship("File", backref="task", lazy=True)

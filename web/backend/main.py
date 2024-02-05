@@ -10,6 +10,7 @@ from models.models import Task
 from config import SWAGGER_TEMPLATE, AVAILABLE_MODELS
 from app import app, db
 from scripts.form_file_handler import retrieve_models_and_chains
+from scripts.clear_tasks import clear_old_tasks
 
 CORS(app)
 Swagger(app, template=SWAGGER_TEMPLATE)  # Swagger UI is located at `api.url/apidocs/`
@@ -144,4 +145,5 @@ def check_rmsd(task_id: str):
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
+        clear_old_tasks()
         app.run(host="0.0.0.0", port=5000)

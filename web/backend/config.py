@@ -28,4 +28,4 @@ TEMP_FILE_STORAGE_DIR = "instance/temp"
 TASK_ID_LENGTH = 12
 
 # how old the records should be to be cleared on db clear cycle
-DB_CLEAR_INTERVAL = timedelta(minutes=1)
+DB_CLEAR_INTERVAL = timedelta(weeks=1)

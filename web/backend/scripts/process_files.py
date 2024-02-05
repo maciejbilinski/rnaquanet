@@ -1,6 +1,7 @@
 import os, shutil
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict, FileStorage
+from time import time
 
 from config import TEMP_FILE_STORAGE_DIR
 from models.models import Task, File
@@ -22,6 +23,7 @@ def process_files(
     os.makedirs(temp_dir_path, exist_ok=True)
     try:
         db_task = Task(id=task_id, status="QUEUED")
+        db_task.timestamp = int(time())
         db.session.add(db_task)
 
         # save each file

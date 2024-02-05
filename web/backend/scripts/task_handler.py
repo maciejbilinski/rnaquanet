@@ -3,7 +3,7 @@ import os
 from models.models import Task
 from rnaquanet.network.rnaquanet import get_rmsd
 from app import app, db, queue
-from web.backend.scripts.clear_task import clear_task
+from web.backend.scripts.clear_tasks import clear_task
 from config import FILE_STORAGE_DIR, DB_CLEAR_INTERVAL
 
 
