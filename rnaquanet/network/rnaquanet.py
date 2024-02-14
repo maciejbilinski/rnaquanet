@@ -39,6 +39,12 @@ import matplotlib.pyplot as plt
 from rnaquanet.network.h5_graph_dataset import H5GraphDataset
 import math
 import pandas as pd
+import subprocess
+import sys
+if sys.version_info[0] < 3: 
+    from StringIO import StringIO
+else:
+    from io import StringIO
 
 def get_empty_model(key: str) -> Sequential:
     conv = None
@@ -95,3 +101,12 @@ def get_rmsd(model_name: str, path_to_pdb: str, config_path: str = '/app/config.
     _, data = process_single_structure([path_to_pdb, config, None])
     for sample in DataLoader([data], batch_size=1):
         return model(torch.nan_to_num(sample.x, nan=nan_replacement), sample.edge_index, sample.edge_attr, sample.batch).item()
+    
+def get_local_rmsd(path_to_pdb: str, config_path: str = '/app/config.yml', nan_replacement: float = 1000) -> pd.DataFrame:
+    result = subprocess.run(['/app/descriptors.sh', path_to_pdb], stdout=subprocess.PIPE)
+    df_str = result.stdout.decode('utf-8')
+    df_str_io = StringIO(df_str)
+
+    df = pd.read_csv(df_str_io, sep="\t")
+    df['predicted_rmsd'] = [get_rmsd(f'seg{min(row["num_of_segs"], 3)}', row["file_path"], config_path, nan_replacement) for _, row in df.iterrows()]
+    return df

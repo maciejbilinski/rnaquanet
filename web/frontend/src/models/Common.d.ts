@@ -7,6 +7,8 @@ declare type TaskStatus = "QUEUED" | "PENDING" | "DONE" | "ERROR";
 /** Processing status of a single file. */
 declare type FileStatus = "WAITING" | "SUCCESS" | "ERROR";
 
+declare type AnalysisType = "global" | "local";
+
 declare type MLModelName =
   | "ares"
   | "seg1"
@@ -31,3 +33,12 @@ declare interface FileData {
 }
 
 declare type StructureModel = { [key: string]: string[] };
+
+declare interface Descriptor {
+  id: number;
+  file_id: number;
+  name: string;
+  residue_range: string;
+  sequence: string;
+  rmsd: number;
+} 
