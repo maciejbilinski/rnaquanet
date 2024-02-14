@@ -144,3 +144,5 @@ venv.bak/
 runs*
 lightning_logs
 checkpoints*/*
+
+descs-standalone.tar

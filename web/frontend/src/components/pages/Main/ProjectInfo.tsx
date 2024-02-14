@@ -21,10 +21,21 @@ const ProjectInfo = () => {
 
         <Accordion>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            Available computation models
+            Available computation methods
           </AccordionSummary>
-          <AccordionDetails>
-            <ol
+          <AccordionDetails sx={{ ...styles.gaps, my: 2, px: 5 }}>
+            <Typography>
+              <b>Local analysis</b> involves studying specific regions or
+              segments rather than considering entire structure as a whole.
+              These specific substructures are called 3D RNA local descriptors.
+              In our framework, structural descriptors describe nucleotide
+              neighborhood in pre-determined distance of 16 Å.
+            </Typography>
+            <Typography>
+              We provide three specific computational models according to the
+              number of segments of generated descriptors:
+            </Typography>
+            <ul
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -32,32 +43,27 @@ const ProjectInfo = () => {
               }}
             >
               <li>
-                <em>ARES</em> (default) – model trained on ARES dataset,
-                performing well on ARES datasets and one-segment descriptors,
+                <i>seg1</i> – one segment descriptors,
               </li>
               <li>
-                <em>seg1</em> – model trained on one segment descriptors,
-                performing very well on one segment descriptor dataset and
-                yielding satisfactory results on ARES datasets, albeit worse
-                than (1),
+                <i>seg2</i> – two segment descriptors,
               </li>
               <li>
-                <em>seg2</em> – model trained on two segment descriptors,
-                evaluated to be the best performing model overall, although it
-                does not perform well on ARES datasets,
+                <i>seg3</i> – three or more segment descriptors.
               </li>
-              <li>
-                <em>seg3</em> – model trained on three or more segment
-                descriptors, which has poor performance, even on three segment
-                descriptor dataset,
-              </li>
-              <li>
-                <em>transfer_seg2_ares</em> – model <em>seg2</em> overtrained on
-                ARES data, trying to improve <em>seg2</em>'s performance on ARES
-                data. Unfortunately the resulting model performs very poorly
-                universally on all analyzed datasets.
-              </li>
-            </ol>
+            </ul>
+
+            <Typography>
+              <b>Global analysis</b> considers the overall structure of 3D RNA
+              molecules. Contrary to local analysis, global analysis provides a
+              broader perspective on a macro scale, taking into account
+              relationships and features spanning the entirety of 3D RNA
+              structure.
+            </Typography>
+            <Typography>
+              For global analysis we provide a single model, <i>ARES</i>, that
+              was trained using ARES dataset.
+            </Typography>
           </AccordionDetails>
         </Accordion>
 
