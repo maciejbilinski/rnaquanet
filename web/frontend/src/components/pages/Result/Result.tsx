@@ -3,21 +3,14 @@ import {
   Box,
   Card,
   CircularProgress,
-  Paper,
   Step,
   StepLabel,
   Stepper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -27,7 +20,6 @@ import {
 import { API_ADDRESS, REQUEST_RETRY_DELAY } from "../../../../config";
 import { styles } from "../../../utils/styles";
 import { steps, getCurrentStep } from "./steps";
-import { columnHeaders, columnHeadersDesc } from "./columnHeaders";
 
 const Result = () => {
   const theme = useTheme();
@@ -37,6 +29,60 @@ const Result = () => {
     id: 0,
     status: "loading",
   });
+
+  const columnHeaders: MRT_ColumnDef<FileResult>[] = [
+  {
+    accessorKey: "name",
+    header: "File name",
+  },
+  {
+    header: "Model",
+    accessorFn: (row) => Number(row.selectedModel) + 1,
+  },
+  { accessorKey: "selectedChain", header: "Chain" },
+  {
+    accessorKey: "rmsd",
+    header: response?.analysis_type === "local" ? "Average RMSD" : "RMSD",
+    accessorFn: (row) =>
+      row.status === "SUCCESS" && row.rmsd
+        ? row.rmsd.toFixed(4)
+        : "Invalid file!",
+    muiTableHeadCellProps: {
+      align: "right",
+    },
+    muiTableBodyCellProps: {
+      align: "right",
+    },
+    muiTableFooterCellProps: {
+      align: "right",
+    },
+  },
+];
+
+const columnHeadersDesc: GridColDef<Descriptor>[] = [
+  {
+    field: "name",
+    headerName: "Descriptor name",
+    flex: 1,
+  },
+  {
+    field: "residue_range",
+    headerName: "Residue range",
+    flex: 1,
+  },
+  {
+    field: "sequence",
+    headerName: "Sequence",
+    flex: 1,
+  },
+  {
+    field: "rmsd",
+    headerName: "RMSD",
+    valueFormatter: (row) => row.value.toFixed(4),
+    type: "number",
+    flex: 1,
+  },
+];
 
   const fetchData = async () => {
     try {
