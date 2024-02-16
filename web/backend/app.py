@@ -17,5 +17,5 @@ if not APP_CONFIG["DEBUG"]:
 db = SQLAlchemy()
 db.init_app(app)
 
-rq = RQ(app)
+rq = RQ(app, default_timeout=-1)
 queue: Queue = rq.get_queue()

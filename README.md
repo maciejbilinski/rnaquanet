@@ -78,3 +78,6 @@ Using ready, trained model is different to the previous section, because in our 
 The most convenient way for assessing single structure is using our web interface<!-- TODO: URL -->. You can run it locally using `./web/start.sh` (it starts API, as well as React server). You can stop all running processes by using `./web/stop.sh` respectively.
 
 Another possibility is using the CLI script `python cli/get_rmsd.py -m {model_file} -i {pdb_file}`, which returns a single number – RMSD score.
+
+# Acknowledgements
+We thank dr hab. inż. Maciej Antczak, prof. PP for valuable cooperation, ideas, sharing RNAgrowth and [descs-standalone](https://github.com/mantczak/descs-standalone).

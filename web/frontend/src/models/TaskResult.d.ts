@@ -1,6 +1,8 @@
 declare interface TaskResult {
   /** Received status code. If there was an error, this will be the only available property. */
   status_code: number;
+  /** Chosen type of analysis. */
+  analysis_type?: AnalysisType;
   /** (`undefined` on error) Processing status of the whole task. */
   status?: TaskStatus;
   /** (`undefined` on error) Data of all files that are a part of the task. */
@@ -22,4 +24,6 @@ declare interface FileResult {
   status: FileStatus;
   /** ID of the task. */
   task_id: string;
+  /** List of file descriptors. */
+  descriptors?: Descriptor[];
 }

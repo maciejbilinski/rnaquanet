@@ -7,10 +7,10 @@ import { API_ADDRESS } from "../../../../../config";
 interface Props {
   files: FileData[];
   setFiles: Dispatch<SetStateAction<FileData[]>>;
-  mlModel: MLModel;
+  isLocalAnalysis: boolean;
 }
 
-const RequestButton = ({ files, setFiles, mlModel }: Props) => {
+const RequestButton = ({ files, setFiles, isLocalAnalysis }: Props) => {
   const navigate = useNavigate();
   const [response, setResponse] = useState<TaskRequest>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -42,7 +42,7 @@ const RequestButton = ({ files, setFiles, mlModel }: Props) => {
       }
 
       formData.append("data", JSON.stringify(data));
-      formData.append("modelName", mlModel.value);
+      formData.append("analysisType", isLocalAnalysis ? "local" : "global");
 
       const res = await fetch(`${API_ADDRESS}/request_rmsd`, {
         method: "POST",

@@ -7,7 +7,7 @@ from scripts.generate_task_id import generate_task_id
 from scripts.process_files import process_files
 from models.models import Task
 
-from config import SWAGGER_TEMPLATE, AVAILABLE_MODELS
+from config import SWAGGER_TEMPLATE, AVAILABLE_ANALYSIS_TYPES
 from app import app, db
 from scripts.form_file_handler import retrieve_models_and_chains
 from scripts.clear_tasks import clear_old_tasks
@@ -78,11 +78,11 @@ def request_rmsd():
     # generate unique task id
     task_id = generate_task_id()
     data = json.loads(request.form.get("data"))
-    model_name = request.form.get("modelName")
+    analysis_type = request.form.get("analysisType")
 
-    if len(request.files) and model_name in AVAILABLE_MODELS:
+    if len(request.files) and analysis_type in AVAILABLE_ANALYSIS_TYPES:
         # process files
-        error = process_files(request.files, data, model_name, task_id)
+        error = process_files(request.files, data, analysis_type, task_id)
 
         if not error:
             # return the task id
@@ -135,9 +135,10 @@ def check_rmsd(task_id: str):
     # try to find requested resources and send it back if it exists
     # else return 404
     task: Task = Task.query.get_or_404(task_id)
-
+    
     return {
         "status": task.status,
+        "analysis_type": task.analysis_type,
         "files": [jsonify(file).json for file in task.files],
     }
 

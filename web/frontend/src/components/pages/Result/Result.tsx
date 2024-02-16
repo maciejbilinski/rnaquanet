@@ -10,6 +10,12 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+  type MRT_ColumnDef,
+} from "material-react-table";
 
 import { API_ADDRESS, REQUEST_RETRY_DELAY } from "../../../../config";
 import { styles } from "../../../utils/styles";
@@ -23,6 +29,60 @@ const Result = () => {
     id: 0,
     status: "loading",
   });
+
+  const columnHeaders: MRT_ColumnDef<FileResult>[] = [
+  {
+    accessorKey: "name",
+    header: "File name",
+  },
+  {
+    header: "Model",
+    accessorFn: (row) => Number(row.selectedModel) + 1,
+  },
+  { accessorKey: "selectedChain", header: "Chain" },
+  {
+    accessorKey: "rmsd",
+    header: response?.analysis_type === "local" ? "Average RMSD" : "RMSD",
+    accessorFn: (row) =>
+      row.status === "SUCCESS" && row.rmsd
+        ? row.rmsd.toFixed(4)
+        : "Invalid file!",
+    muiTableHeadCellProps: {
+      align: "right",
+    },
+    muiTableBodyCellProps: {
+      align: "right",
+    },
+    muiTableFooterCellProps: {
+      align: "right",
+    },
+  },
+];
+
+const columnHeadersDesc: GridColDef<Descriptor>[] = [
+  {
+    field: "name",
+    headerName: "Descriptor name",
+    flex: 1,
+  },
+  {
+    field: "residue_range",
+    headerName: "Residue range",
+    flex: 1,
+  },
+  {
+    field: "sequence",
+    headerName: "Sequence",
+    flex: 1,
+  },
+  {
+    field: "rmsd",
+    headerName: "RMSD",
+    valueFormatter: (row) => row.value.toFixed(4),
+    type: "number",
+    flex: 1,
+  },
+];
 
   const fetchData = async () => {
     try {
@@ -60,6 +120,42 @@ const Result = () => {
   useEffect(() => {
     setStep(getCurrentStep(step.id, response));
   }, [response]);
+
+  const table = useMaterialReactTable({
+    // @ts-ignore
+    columns: columnHeaders,
+    data: response?.files ?? [],
+    initialState: { pagination: { pageSize: 10, pageIndex: 0 } },
+    muiPaginationProps: {
+      showRowsPerPage: false,
+    },
+
+    mrtTheme: (theme) => ({
+      baseBackgroundColor:
+        theme.palette.mode === "light" ? "#ffffff" : "#1e1e1e",
+    }),
+
+    //custom expand button rotation
+    muiExpandButtonProps: ({ row }) => ({
+      sx: {
+        transform: row.getIsExpanded() ? "rotate(180deg)" : "rotate(-90deg)",
+        transition: "transform 0.2s",
+      },
+    }),
+
+    //conditionally render detail panel
+    ...(response?.analysis_type === "local"
+      ? {
+          renderDetailPanel: ({ row }) => (
+            <DataGrid
+              columns={columnHeadersDesc}
+              rows={row.original.descriptors ?? []}
+              hideFooter
+            />
+          ),
+        }
+      : {}),
+  });
 
   return (
     <Card
@@ -107,35 +203,7 @@ const Result = () => {
             justifyContent: "center",
           }}
         >
-          <table style={{ width: "100%", maxWidth: 500 }}>
-            <thead>
-              <tr>
-                <th style={{ padding: "5px 2px" }}>File name</th>
-                <th style={{ padding: "5px 2px" }}>Model</th>
-                <th style={{ padding: "5px 2px" }}>Chain</th>
-                <th style={{ padding: "5px 2px" }}>RMSD</th>
-              </tr>
-            </thead>
-            <tbody>
-              {response.files.map((file, i) => (
-                <tr key={i}>
-                  <td style={{ padding: "5px 10px" }}>{file.name}</td>
-                  <td style={{ padding: "5px 10px" }}>{Number(file.selectedModel) + 1}</td>
-                  <td style={{ padding: "5px 10px" }}>{file.selectedChain}</td>
-                  <td
-                    style={{
-                      padding: "5px 10px",
-                      textAlign: file.status === "SUCCESS" ? "right" : "center",
-                    }}
-                  >
-                    {file.status === "SUCCESS"
-                      ? file.rmsd?.toFixed(4)
-                      : "Invalid file!"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <MaterialReactTable table={table} />
         </Box>
       )}
     </Card>

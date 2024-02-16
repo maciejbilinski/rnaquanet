@@ -13,7 +13,7 @@ from scripts.form_file_handler import extract_chain
 def process_files(
     files: ImmutableMultiDict[str, FileStorage],
     data: dict[str, dict[str, str]],
-    model_name: str,
+    analysis_type: str,
     task_id: str,
 ):
     # create directories:
@@ -24,6 +24,7 @@ def process_files(
     try:
         db_task = Task(id=task_id, status="QUEUED")
         db_task.timestamp = int(time())
+        db_task.analysis_type = analysis_type
         db.session.add(db_task)
 
         # save each file
@@ -53,7 +54,7 @@ def process_files(
 
         db.session.commit()
 
-        queue.enqueue(task_handler, model_name, task_id)
+        queue.enqueue(task_handler, analysis_type, task_id)
 
     except Exception as e:
         db_task: Task | None = Task.query.get(task_id)
