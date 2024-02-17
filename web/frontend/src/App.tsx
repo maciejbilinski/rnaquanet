@@ -26,7 +26,7 @@ const App = () => {
         palette: {
           mode: colorMode,
           background: {
-            default: colorMode === "light" ? "#dbdbdb" : "#121212",
+            default: colorMode === "light" ? "#f8f8f8" : "#121212",
           },
           primary: {
             main: "#3ca93c",

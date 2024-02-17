@@ -20,6 +20,7 @@ import {
 import { API_ADDRESS, REQUEST_RETRY_DELAY } from "../../../../config";
 import { styles } from "../../../utils/styles";
 import { steps, getCurrentStep } from "./steps";
+import { renderCellExpand } from "./GridCellExpand";
 
 const Result = () => {
   const theme = useTheme();
@@ -31,58 +32,61 @@ const Result = () => {
   });
 
   const columnHeaders: MRT_ColumnDef<FileResult>[] = [
-  {
-    accessorKey: "name",
-    header: "File name",
-  },
-  {
-    header: "Model",
-    accessorFn: (row) => Number(row.selectedModel) + 1,
-  },
-  { accessorKey: "selectedChain", header: "Chain" },
-  {
-    accessorKey: "rmsd",
-    header: response?.analysis_type === "local" ? "Average RMSD" : "RMSD",
-    accessorFn: (row) =>
-      row.status === "SUCCESS" && row.rmsd
-        ? row.rmsd.toFixed(4)
-        : "Invalid file!",
-    muiTableHeadCellProps: {
-      align: "right",
+    {
+      accessorKey: "name",
+      header: "File name",
     },
-    muiTableBodyCellProps: {
-      align: "right",
+    {
+      header: "Model",
+      accessorFn: (row) => Number(row.selectedModel) + 1,
     },
-    muiTableFooterCellProps: {
-      align: "right",
+    { accessorKey: "selectedChain", header: "Chain" },
+    {
+      accessorKey: "rmsd",
+      header: response?.analysis_type === "local" ? "Average RMSD" : "RMSD",
+      accessorFn: (row) =>
+        row.status === "SUCCESS" && row.rmsd
+          ? row.rmsd.toFixed(4)
+          : "Invalid file!",
+      muiTableHeadCellProps: {
+        align: "right",
+      },
+      muiTableBodyCellProps: {
+        align: "right",
+      },
+      muiTableFooterCellProps: {
+        align: "right",
+      },
     },
-  },
-];
+  ];
 
-const columnHeadersDesc: GridColDef<Descriptor>[] = [
-  {
-    field: "name",
-    headerName: "Descriptor name",
-    flex: 1,
-  },
-  {
-    field: "residue_range",
-    headerName: "Residue range",
-    flex: 1,
-  },
-  {
-    field: "sequence",
-    headerName: "Sequence",
-    flex: 1,
-  },
-  {
-    field: "rmsd",
-    headerName: "RMSD",
-    valueFormatter: (row) => row.value.toFixed(4),
-    type: "number",
-    flex: 1,
-  },
-];
+  const columnHeadersDesc: GridColDef<Descriptor>[] = [
+    {
+      field: "name",
+      headerName: "Descriptor name",
+      flex: 1,
+      renderCell: renderCellExpand,
+    },
+    {
+      field: "residue_range",
+      headerName: "Residue range",
+      flex: 1,
+      renderCell: renderCellExpand,
+    },
+    {
+      field: "sequence",
+      headerName: "Sequence",
+      flex: 1,
+      renderCell: renderCellExpand,
+    },
+    {
+      field: "rmsd",
+      headerName: "RMSD",
+      valueFormatter: (row) => row.value.toFixed(4),
+      type: "number",
+      flex: 1,
+    },
+  ];
 
   const fetchData = async () => {
     try {
@@ -131,8 +135,7 @@ const columnHeadersDesc: GridColDef<Descriptor>[] = [
     },
 
     mrtTheme: (theme) => ({
-      baseBackgroundColor:
-        theme.palette.mode === "light" ? "#ffffff" : "#1e1e1e",
+      baseBackgroundColor: theme.palette.background.default,
     }),
 
     //custom expand button rotation
@@ -144,15 +147,28 @@ const columnHeadersDesc: GridColDef<Descriptor>[] = [
     }),
 
     //conditionally render detail panel
-    ...(response?.analysis_type === "local"
+    ...(response?.analysis_type === "local" && response.status_code === 200
       ? {
-          renderDetailPanel: ({ row }) => (
-            <DataGrid
-              columns={columnHeadersDesc}
-              rows={row.original.descriptors ?? []}
-              hideFooter
-            />
-          ),
+          renderDetailPanel: ({ row }) =>
+            (row.original as FileResult).status === "SUCCESS" && (
+              <DataGrid
+                sx={(theme) => ({
+                  bgcolor: `#ffffff${theme.palette.mode === "light" ? "94" : "09"}`,
+                })}
+                columns={columnHeadersDesc}
+                rows={(row.original as FileResult).descriptors ?? []}
+                pageSizeOptions={[10]}
+                initialState={{
+                  pagination: {
+                    paginationModel: {
+                      pageSize: 10,
+                      page: 0,
+                    },
+                  },
+                }}
+                hideFooterSelectedRowCount
+              />
+            ),
         }
       : {}),
   });
@@ -165,6 +181,7 @@ const columnHeadersDesc: GridColDef<Descriptor>[] = [
       }}
     >
       <Stepper
+        sx={{ mb: 6 }}
         activeStep={step.id}
         orientation={isSmallScreen ? "vertical" : "horizontal"}
       >
@@ -196,15 +213,7 @@ const columnHeadersDesc: GridColDef<Descriptor>[] = [
       </Stepper>
 
       {response?.status === "DONE" && response.files && (
-        <Box
-          sx={{
-            mt: 5,
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <MaterialReactTable table={table} />
-        </Box>
+        <MaterialReactTable table={table} />
       )}
     </Card>
   );
