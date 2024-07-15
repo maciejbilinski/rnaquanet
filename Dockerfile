@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.8.0-runtime-ubuntu22.04
+FROM ubuntu:22.04
 
 RUN ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONTAINER_TIMEZONE > /etc/timezone
 
@@ -18,9 +18,9 @@ RUN wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py && \
 python3.11 get-pip.py
 
 # pytorch installation
-RUN python -m pip install torch==2.0.1 --index-url https://download.pytorch.org/whl/cu118
+RUN python -m pip install torch==2.0.1 --index-url https://download.pytorch.org/whl/cpu
 RUN python -m pip install torch-geometric==2.3.1
-RUN python -m pip install --no-index torch-scatter==2.1.1 -f https://pytorch-geometric.com/whl/torch-2.0.1+cu118.html
+RUN python -m pip install --no-index torch-scatter==2.1.1 -f https://data.pyg.org/whl/torch-2.0.1+cpu.html
 
 # node installation
 RUN dpkg --remove --force-remove-reinstreq libnode-dev && dpkg --remove --force-remove-reinstreq libnode72:amd64
@@ -48,4 +48,4 @@ RUN echo \
 RUN apt-get update && \
     apt-get install -y docker-ce docker-ce-cli containerd.io
 
-RUN bash
+CMD ["/app/run.sh"]

@@ -1,9 +1,9 @@
 #!/bin/bash
 cd /app/web/frontend
 npm install
-npm run dev&
+npm run build
 
 cd /app/web/backend
 service redis-server start
 rq worker --with-scheduler&
-python main.py&
+python main.py

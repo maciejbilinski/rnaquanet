@@ -63,8 +63,8 @@ def process_single_structure(params: tuple[str, RnaquanetConfig, float|None]) ->
             atr_features,
             cor_features
         ], axis=1)
-        x = torch.from_numpy(
-            x_df.to_numpy(dtype=np.float32)
+        x = torch.tensor(
+            x_df.to_numpy(dtype=np.float32).tolist()
         )
         if target is not None:
             target = torch.tensor(target)

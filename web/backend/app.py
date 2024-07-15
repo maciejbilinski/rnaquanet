@@ -7,7 +7,10 @@ import logging, warnings
 from config import APP_CONFIG
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='', 
+            static_folder='/app/web/frontend/dist',
+            template_folder='/app/web/frontend/dist'
+            )
 app.config.update(APP_CONFIG)
 log = logging.getLogger("werkzeug")
 log.disabled = not APP_CONFIG["DEBUG"]

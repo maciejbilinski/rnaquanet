@@ -11,7 +11,7 @@ export const REQUEST_RETRY_DELAY = 5000;
 export const ALLOWED_FILE_TYPES = ["pdb", "cif"];
 
 /** URL to the API. */
-export const API_ADDRESS = "http://localhost:5000";
+export const API_ADDRESS = document.location.protocol + '//' + document.location.host + '/api'
 
 // more constants
 

@@ -1,4 +1,4 @@
-from flask import jsonify, abort, request
+from flask import jsonify, abort, request, render_template
 from flask_cors import CORS
 from flasgger import Swagger
 import json
@@ -16,7 +16,11 @@ CORS(app)
 Swagger(app, template=SWAGGER_TEMPLATE)  # Swagger UI is located at `api.url/apidocs/`
 
 
-@app.route("/get_models_and_chains", methods=["POST", "GET"])
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route("/api/get_models_and_chains", methods=["POST", "GET"])
 def get_models_and_chains():
     """
     Request an analysis and return of files' models and chains.
@@ -44,7 +48,7 @@ def get_models_and_chains():
 
 
 # @app.route("/request_rmsd/<task_id>", methods=["POST"])
-@app.route("/request_rmsd", methods=["POST"])
+@app.route("/api/request_rmsd", methods=["POST"])
 def request_rmsd():
     """
     Request file processing and get the task ID.
@@ -91,7 +95,7 @@ def request_rmsd():
     return abort(400)  # bad request
 
 
-@app.route("/check_rmsd/<task_id>", methods=["GET"])
+@app.route("/api/check_rmsd/<task_id>", methods=["GET"])
 def check_rmsd(task_id: str):
     """
     Check the status of a task.

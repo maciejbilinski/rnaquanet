@@ -81,7 +81,7 @@ def get_empty_model(key: str) -> Sequential:
 
 def get_model(key: str) -> Sequential:
     model = get_empty_model(key)
-    model.load_state_dict(torch.load(f'/app/models/{key}.pt'))
+    model.load_state_dict(torch.load(f'/app/models/{key}.pt', map_location=torch.device('cpu')))
 
     if key == 'transfer_seg2_ares':
         # freeze all layers except MLP

@@ -11,23 +11,11 @@ services:
       - .:/app
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp:/tmp
-    stdin_open: true 
-    tty: true
     ipc: host
-    deploy:
-      resources:
-        reservations:
-          devices:
-          - driver: nvidia
-            count: all
-            capabilities: [gpu]
     networks:
       - net
     ports:
-      - "5000:5000"
-      - "5173:5173"
+      - "80:5000"
 networks:
   net:
     driver: bridge
-volumes:
-  pgdata: {}
