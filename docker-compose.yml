@@ -16,6 +16,7 @@ services:
       - net
     ports:
       - "80:5000"
+    restart: always
 networks:
   net:
     driver: bridge
